@@ -1,0 +1,77 @@
+# ---------------------------------------------------------------------------
+# NOT ACTIVE WHERE IT SITS. Move this file to `.github/workflows/bench.yml` to
+# enable it. It lives under `bench/` only because the agent that authored it did
+# not own `.github/`.
+# ---------------------------------------------------------------------------
+#
+# Deliberately `workflow_dispatch` only — benchmarks are NOT part of PR CI.
+# Shared GitHub runners are noisy, oversubscribed, and vary between jobs, so
+# these numbers are DIRECTIONAL ONLY: useful for spotting an order-of-magnitude
+# regression, useless for anything finer.
+#
+# The source of truth for throughput numbers is a local run on a quiet machine,
+# committed to `bench/results/`.
+
+name: bench (directional only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: Measured seconds per run
+        required: false
+        default: "10"
+      runs:
+        description: Measured runs per arm (median kept)
+        required: false
+        default: "3"
+      connections:
+        description: Concurrent connections
+        required: false
+        default: "64"
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: canary
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Install bench-local dependencies (mitata)
+        working-directory: bench
+        run: bun install
+
+      # bench/run.ts prefers oha and falls back to its built-in Bun load
+      # generator if this step fails, so the job stays green either way.
+      - name: Install oha
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          version=1.15.0
+          url="https://github.com/hatoo/oha/releases/download/v${version}/oha-linux-amd64"
+          curl -fsSL "$url" -o /usr/local/bin/oha
+          chmod +x /usr/local/bin/oha
+          oha --version
+
+      - name: Run benchmarks
+        run: |
+          bun bench/run.ts \
+            --duration "${{ inputs.duration }}" \
+            --runs "${{ inputs.runs }}" \
+            --connections "${{ inputs.connections }}" \
+            --out bench/results/ci-${{ github.run_id }}.json \
+            --note "GitHub shared runner — DIRECTIONAL ONLY, not comparable to committed local results."
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bench-results-${{ github.run_id }}
+          path: bench/results/ci-${{ github.run_id }}.json
+          if-no-files-found: error

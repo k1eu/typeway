@@ -1,0 +1,119 @@
+name: Compatibility matrix
+
+# Upstream (elysia / vite / tanstack / bun) moves fast and the bridge is thin
+# glue over all four. This runs the same suite as CI, but against fresh
+# upstream releases instead of the lockfile, so breakage lands in an issue
+# instead of in a user's project.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  compat:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Control cell: lockfile versions, same as CI. If this fails, the
+          # failure is ours, not upstream's.
+          - name: pinned
+            bun-version: canary
+            install: ""
+
+          - name: elysia-latest
+            bun-version: canary
+            install: |
+              (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
+              (cd apps/playground-with-tanstack && bun add elysia@latest)
+
+          - name: vite-latest
+            bun-version: canary
+            install: |
+              (cd apps/playground-with-tanstack && bun add -d vite@latest)
+
+          - name: tanstack-latest
+            bun-version: canary
+            install: |
+              (cd apps/playground-with-tanstack && bun add @tanstack/react-start@latest @tanstack/react-router@latest)
+
+          - name: all-latest
+            bun-version: canary
+            install: |
+              (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
+              (cd apps/playground-with-tanstack && bun add elysia@latest @tanstack/react-start@latest @tanstack/react-router@latest)
+              (cd apps/playground-with-tanstack && bun add -d vite@latest)
+
+          # Second bun dimension: lockfile deps on the latest stable Bun.
+          - name: bun-stable
+            bun-version: latest
+            install: ""
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.bun-version }}
+
+      - name: Install (lockfile)
+        run: bun install
+
+      # NB: `bun --cwd` wants an absolute path, so the cells `cd` into the
+      # workspace dir instead of using `bun add --cwd <relative>`.
+      - name: Upgrade dependencies
+        if: matrix.install != ''
+        env:
+          INSTALL: ${{ matrix.install }}
+        run: |
+          set -euo pipefail
+          eval "$INSTALL"
+
+      - name: Re-resolve workspace
+        run: bun install
+
+      - name: Installed versions
+        run: |
+          bun pm ls --all | grep -Ei 'elysia|^\s*├──\s*vite@|vite@|@tanstack/react-(start|router)@' || true
+          bun --version
+
+      - name: Unit tests (@typeway/connect)
+        run: bun test packages/
+
+      - name: Integration smoke test (plan 01)
+        run: bun run test:integration
+
+      # Plan 02's kitchen-sink fixture app; skipped when it isn't in the tree.
+      - name: TanStack feature coverage (plan 02 fixture)
+        if: hashFiles('apps/e2e-tanstack/package.json') != ''
+        run: bun run --filter e2e-tanstack test:integration
+
+      - name: Open or update failure issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CELL: ${{ matrix.name }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          title="compat: ${CELL} failing"
+          body=$(printf '%s\n\n%s\n\n%s\n' \
+            "The \`${CELL}\` compatibility cell failed." \
+            "Failed run: ${RUN_URL}" \
+            "Commit: ${GITHUB_SHA}")
+          existing=$(gh issue list --state open --search "\"${title}\" in:title" \
+            --json number,title \
+            --jq "map(select(.title == \"${title}\")) | .[0].number // empty")
+          if [ -n "${existing}" ]; then
+            gh issue comment "${existing}" --body "${body}"
+          else
+            gh issue create --title "${title}" --body "${body}"
+          fi

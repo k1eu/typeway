@@ -4,6 +4,8 @@
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
     "test": "bun test",
+    "test:unit": "bun test packages/",
+    "test:integration": "bun run --filter playground-with-tanstack test:integration",
     "dev": "bun run --filter @typeway/playground dev"
   },
   "devDependencies": {

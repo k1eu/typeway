@@ -13,7 +13,8 @@
     "build:frontend": "bun --bun vite build",
     "build:server": "bun build --target bun --outfile dist/app server.prod.ts",
     "start": "NODE_ENV=production bun dist/app",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:integration": "bun test tests/"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",

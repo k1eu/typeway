@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: unit + integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          # Repo targets Bun 1.4 canary; switch to a pin once 1.4 is stable.
+          bun-version: canary
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Unit tests (@typeway/connect)
+        run: bun test packages/
+
+      - name: Integration smoke test (plan 01)
+        run: bun run test:integration
+
+      # Plan 02's kitchen-sink fixture app. It may not exist yet on this ref —
+      # hashFiles() returns "" when nothing matches, so the step is skipped
+      # rather than failing the build.
+      - name: TanStack feature coverage (plan 02 fixture)
+        if: hashFiles('apps/e2e-tanstack/package.json') != ''
+        run: bun run --filter e2e-tanstack test:integration

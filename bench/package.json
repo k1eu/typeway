@@ -1,0 +1,13 @@
+{
+  "name": "@typeway/bench",
+  "private": true,
+  "type": "module",
+  "description": "Paired A/B throughput benchmarks for the Typeway glue. Deliberately NOT a workspace member — see README.md.",
+  "scripts": {
+    "bench": "bun run.ts",
+    "micro": "bun micro.ts"
+  },
+  "devDependencies": {
+    "mitata": "^1.0.34"
+  }
+}

@@ -1,0 +1,3 @@
+# bench/ has its own install (see README.md — it is not a workspace member).
+# The root .gitignore only ignores /node_modules at the repo root.
+node_modules/

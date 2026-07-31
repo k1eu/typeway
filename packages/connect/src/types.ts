@@ -1,8 +1,18 @@
-import type { NextFunction, Request, Response } from "express";
-import type { MockRequest, MockResponse } from "node-mocks-http";
+import type { IncomingMessage, ServerResponse } from "node:http";
+
+export type NextFunction = (err?: unknown) => void;
 
 export type ConnectMiddleware = (
-	req: MockRequest<Request>,
-	res: MockResponse<Response>,
+	req: IncomingMessage,
+	res: ServerResponse,
 	next: NextFunction,
 ) => unknown;
+
+export interface ConnectOptions {
+	/**
+	 * Called when every middleware passed through via `next()` without
+	 * responding. Headers set by middleware are merged onto the returned
+	 * response. Defaults to a plain 404.
+	 */
+	fallback?: (request: Request) => Response | Promise<Response>;
+}

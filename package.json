@@ -7,6 +7,6 @@
     "dev": "bun run --filter @typeway/playground dev"
   },
   "devDependencies": {
-    "bun-types": "latest"
+    "bun-types": "^1.4.0-canary.20260519T150915"
   }
 }

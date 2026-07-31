@@ -8,6 +8,26 @@
         "bun-types": "^1.4.0-canary.20260519T150915",
       },
     },
+    "apps/e2e-tanstack": {
+      "name": "e2e-tanstack",
+      "dependencies": {
+        "@tanstack/react-router": "latest",
+        "@tanstack/react-start": "latest",
+        "@typeway/connect": "workspace:*",
+        "elysia": "^2.0.0-beta.1",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+      },
+      "devDependencies": {
+        "@tanstack/router-cli": "^1.132.0",
+        "@types/react": "^19.2.0",
+        "@types/react-dom": "^19.2.0",
+        "@vitejs/plugin-react": "^6.0.1",
+        "seroval": "^1.6.0",
+        "typescript": "^6.0.2",
+        "vite": "^8.0.0",
+      },
+    },
     "apps/playground": {
       "name": "@typeway/playground",
       "dependencies": {
@@ -350,6 +370,8 @@
     "deuri": ["deuri@3.0.0", "", {}, "sha512-3rbQr245VesQGHyzUlWmpv3WihImbLT5NBe/mrgsgEvc7aWTYEpDhER8Z3RsdiDSYw1kxQo0kU9fpociUu77/w=="],
 
     "diff": ["diff@8.0.4", "", {}, "sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw=="],
+
+    "e2e-tanstack": ["e2e-tanstack@workspace:apps/e2e-tanstack"],
 
     "electron-to-chromium": ["electron-to-chromium@1.5.399", "", {}, "sha512-lEcqhErbHjXRvd41rnWLpzbyU/IXfIYo7QwaFWmxGeLiLyY2TBCdHnWY88vB+p3ubnihRypDm66panXl7TylLA=="],
 

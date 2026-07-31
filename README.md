@@ -42,9 +42,11 @@ typeway console             # REPL with app context and models preloaded
 
 Bun workspaces monorepo:
 
-- `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia
+- `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
 - `apps/playground` — scratch app for trying packages during development
+- `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through the bridge: Vite middleware + SSR fallback in dev, `Bun.file` static + built handler in prod
+- `plans/` — execution-ready plans for upcoming work (integration tests, feature coverage, benchmarks)
 
 ## Status
 
-Early. Current focus: the Connect middleware bridge (`packages/connect`) that lets Vite — and the wider Node middleware ecosystem — run under Elysia.
+Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Next up (see `plans/`): integration test suite + version-compat CI, TanStack feature-coverage suite, and throughput benchmarks. After that: extracting `@typeway/vite` so app servers shrink to a few lines.

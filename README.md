@@ -12,7 +12,7 @@ Every Rails app looks the same, so every Rails developer is productive on day on
 
 - **[Bun](https://bun.sh) 1.4** (currently `--canary`) — runtime, package manager, test runner, bundler. Also collapses a lot of glue: built-in SQLite, Postgres and S3 clients, `--compile` for single-binary deploys.
 - **[Elysia](https://elysiajs.com) 2.0** (beta) — the core HTTP host. End-to-end type safety, plugin system, Eden for a fully typed client.
-- **[Vite](https://vite.dev)** — frontend dev server and bundling, hosted *under* Elysia via a Connect middleware bridge (in this repo, `src/connect`), so dev runs as one process with HMR.
+- **[Vite](https://vite.dev)** — frontend dev server and bundling, hosted *under* Elysia via a Connect middleware bridge (`packages/connect`), so dev runs as one process with HMR.
 - **[TypeBox](https://github.com/sinclairzx81/typebox)** — validation everywhere: request schemas, typed config/env, model validation.
 
 ## Planned under the umbrella
@@ -38,6 +38,13 @@ typeway db migrate          # database workflows
 typeway console             # REPL with app context and models preloaded
 ```
 
+## Repository layout
+
+Bun workspaces monorepo:
+
+- `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia
+- `apps/playground` — scratch app for trying packages during development
+
 ## Status
 
-Early. Current focus: the Connect middleware bridge (`src/connect`) that lets Vite — and the wider Node middleware ecosystem — run under Elysia.
+Early. Current focus: the Connect middleware bridge (`packages/connect`) that lets Vite — and the wider Node middleware ecosystem — run under Elysia.

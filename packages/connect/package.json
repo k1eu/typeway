@@ -1,0 +1,22 @@
+{
+  "name": "@typeway/connect",
+  "version": "0.1.0",
+  "description": "Run Connect/Express middleware (e.g. Vite dev server) under Elysia",
+  "type": "module",
+  "module": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "connect": "^3.7.0",
+    "node-mocks-http": "^1.17.2"
+  },
+  "peerDependencies": {
+    "elysia": "^2.0.0-beta.1"
+  },
+  "devDependencies": {
+    "@types/connect": "^3.4.38",
+    "@types/express": "^5.0.6",
+    "elysia": "^2.0.0-beta.1"
+  }
+}

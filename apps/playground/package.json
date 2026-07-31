@@ -1,0 +1,14 @@
+{
+  "name": "@typeway/playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "@typeway/connect": "workspace:*",
+    "elysia": "^2.0.0-beta.1",
+    "typebox": "^1.3.8",
+    "exact-mirror": "1.2.2"
+  }
+}

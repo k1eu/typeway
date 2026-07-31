@@ -122,33 +122,44 @@ per-request overhead rather than by bandwidth.
 Bun 1.4.0, Elysia 2.0.0-exp.61, `@tanstack/react-start` 1.168.34, Vite 8.2.0.
 Full data: [`results/2026-07-31-apple-m1-max.json`](./results/2026-07-31-apple-m1-max.json).
 
-> **Measured under contention.** Two sibling coding agents were running builds on
-> the same laptop throughout (load average 7–8 at start, 4–7 at end). Absolute
-> RPS is therefore depressed. Run-to-run spread came out at **3.2 % max**, inside
-> the ~5 % methodology threshold, and the ratios below reproduced across two
-> independent full runs — but **absolute numbers here must not be quoted as
-> Typeway characteristics**. A re-run on an idle machine is still owed.
+> **Measured on an idle machine**, after the `connect()` lazy-body fix (see
+> note below the table). Per-arm run-to-run spread was ≤6.7 % on every arm
+> except the `tanstack-ssr-via-bridge` baseline (9.5 %). Every ratio below
+> reproduced across three independent runs. Still: quote the **ratios**, not
+> the absolute RPS.
 
 | scenario | baseline RPS | typeway RPS | ratio | p99 base | p99 typeway | Δ µs/req |
 |---|---|---|---|---|---|---|
-| registered route (GET /json) | 100.7k | 98.8k | **0.981x** | 1.29 ms | 1.30 ms | +0.2 |
-| bridge res.end (GET /ok) | 104.1k | 50.4k | **0.484x** | 1.25 ms | 2.49 ms | +10.2 |
-| bridge res.end (POST 1 KB) | 81.3k | 28.7k | **0.354x** | 1.71 ms | 4.63 ms | +22.5 |
-| TanStack SSR (GET /) — shipped `dist/app` | 4981 | 2999 | **0.602x** | 24.8 ms | 41.2 ms | +132.7 |
-| TanStack SSR — unbundled `server.prod.ts` | 4968 | 5042 | **1.015x** | 24.8 ms | 24.6 ms | −3.0 |
-| static asset (723 B hashed `.js`) | 23.8k | 26.2k | **1.102x** | 5.24 ms | 4.74 ms | −3.9 |
-| TanStack SSR via `connect()` fallback | 4977 | 4929 | **0.991x** | 24.9 ms | 25.2 ms | +1.9 |
+| registered route (GET /json) | 96.9k | 95.4k | **0.985x** | 1.32 ms | 1.34 ms | +0.2 |
+| bridge res.end (GET /ok) | 100.3k | 48.7k | **0.485x** | 1.27 ms | 2.60 ms | +10.6 |
+| bridge res.end (POST 1 KB) | 78.8k | 27.1k | **0.344x** | 1.88 ms | 4.95 ms | +24.2 |
+| TanStack SSR (GET /) — shipped `dist/app` | 4691 | 4380 | **0.934x** | 26.0 ms | 28.1 ms | +15.1 |
+| TanStack SSR — unbundled `server.prod.ts` | 4647 | 4741 | **1.020x** | 25.7 ms | 25.8 ms | −4.3 |
+| static asset (723 B hashed `.js`) | 26.5k | 26.4k | **0.995x** | 4.70 ms | 4.74 ms | +0.2 |
+| TanStack SSR via `connect()` fallback | 4877 | 4925 | **1.010x** | 26.0 ms | 25.1 ms | −2.0 |
+
+> **These numbers include the lazy-body fix.** `createBridgeRequest` no longer
+> drains `request.body` up front (it used to lock the stream and break every
+> POST that fell through to `fallback`). The lazy wrapper costs **+1–2 µs/req**
+> on the POST path versus the old eager `Readable.fromWeb` — measured
+> back-to-back in one session at 28.2k RPS eager vs 27.1k/26.9k lazy, i.e.
+> inside run-to-run spread. Two rejected alternatives cost far more: a
+> `Readable.from(asyncGenerator)` and a hand-rolled `reader.read()` pull loop
+> both landed at ~11.5k RPS (**~2.4x slower**), because they replace Bun's
+> native `fromWeb` path with JS-level plumbing. If you touch `request.ts`,
+> re-run `bun bench/run.ts --only bridge-res-end-post`.
 
 ## Findings
 
 **1. Mounting `connect()` does not slow down registered routes — claim holds.**
-−1.93 %, inside the ≤ ~2 % claim, and `Δ µs/req` is +0.2 µs (i.e. nothing). The
+−1.54 %, inside the ≤ ~2 % claim, and `Δ µs/req` is +0.2 µs (i.e. nothing). The
 wildcard-route mounting works exactly as advertised: `/json` never enters the
-bridge. Caveat: −1.93 % is *close to* the 2 % boundary, and per-run spread on
-this pair was 1.8–2.4 %, so the honest reading is "no measurable cost, and the
-claim is not violated" rather than "comfortably 1.9 %".
+bridge. Caveat: the measured delta (−1.54 % here, −1.55 % and −1.93 % on earlier runs)
+sits *close to* the 2 % boundary and the typeway arm's own run-to-run spread was
+2.9 %, so the honest reading is "no measurable cost, and the claim is not
+violated" rather than "comfortably under 2 %".
 
-**2. The bridge costs ~10 µs per request (GET), ~22 µs with a 1 KB body.**
+**2. The bridge costs ~10 µs per request (GET), ~24 µs with a 1 KB body.**
 That is the headline answer to "what does the glue cost". Stated as a ratio it
 looks alarming — throughput roughly halves (0.48x) — but that ratio is measured
 against a handler that does *nothing*, where 10 µs is most of the request. The
@@ -156,8 +167,10 @@ useful framing is the absolute cost:
 
 - ~10 µs/req to construct `IncomingMessage`/`ServerResponse` shims, run the
   Connect chain, and stream the response back out.
-- ~22 µs/req when a 1 KB body has to go through `Readable.fromWeb`. The extra
-  ~12 µs is the body-streaming path.
+- ~24 µs/req when a 1 KB body has to go through `Readable.fromWeb` (lazily —
+  see the note under the results table). The extra ~14 µs is the body-streaming
+  path, of which ~1–2 µs is the laziness that keeps the body readable in
+  `fallback`.
 - Micro-benchmarks (`bun bench/micro.ts`) put the in-process `handle()`
   round-trip at **3.75 µs** (GET) and **5.01 µs** (POST 1 KB), vs 291 ns for a
   bare `new Response`. So `handle()` itself is roughly a third of the end-to-end
@@ -167,40 +180,45 @@ useful framing is the absolute cost:
 
 Whether 10 µs matters is entirely a function of what the route does. On a
 no-op route it is a 2x throughput cut. On anything doing real work — the SSR
-scenario below, at ~200 µs/req — it disappears into the noise (0.991x).
+scenario below, at ~200 µs/req — it disappears into the noise (1.010x).
 
 **3. Hosting TanStack Start under Elysia is free.** The unbundled
-`server.prod.ts` is **1.015x** the standalone `Bun.serve` baseline — parity,
-within run-to-run spread. Even routing SSR *through the bridge* (`connect()`'s
-`fallback`, i.e. the dev-mode shape) is **0.991x**. Both directions say the same
-thing: at SSR scale the glue is not measurable.
+`server.prod.ts` is **1.020x** the standalone `Bun.serve` baseline — parity.
+Even routing SSR *through the bridge* (`connect()`'s `fallback`, i.e. the
+dev-mode shape) is **1.010x**. Both directions say the same thing: at SSR scale
+the glue is not measurable.
 
-**4. The prod static-file path is at parity or slightly better** — **1.102x**,
-i.e. Elysia + `Bun.file` beat the bare `Bun.serve` + `Bun.file` baseline by 10 %.
-This reproduced across runs with ≤1 % spread, so it is not noise, but the cause
-was not investigated (this task is measure-only). Treat it as "no cost", not as
-"Elysia makes static files faster".
+**4. The prod static-file path is at parity** — **0.995x** against the bare
+`Bun.serve` + `Bun.file` baseline, with ≤2.7 % spread on both arms. Treat it as
+"no cost".
 
-**5. ⚠️ The shipped prod build costs ~40 % of SSR throughput — and it is not the
-glue.** `bun run start` (`bun dist/app`) manages **0.602x** the standalone
-baseline, which initially reads as a damning number for Typeway. It is not. The
-`tanstack-ssr-unbundled` scenario runs the *same source file* without the
-`bun build --target bun --outfile dist/app` step and gets **1.015x**. Verified
-back-to-back on an otherwise identical setup:
+> An earlier run reported **1.102x** here and wondered why Elysia appeared to
+> beat the baseline by 10 %. It does not; that run was measured under load. The
+> honest result is parity.
+
+**5. The shipped prod build costs ~5 % of SSR throughput.** `bun run start`
+(`bun dist/app`) measures **0.934–0.953x** the standalone baseline, while the
+`tanstack-ssr-unbundled` scenario — the *same source file* without the
+`bun build --target bun --outfile dist/app` step — sits at **0.999–1.020x**. So
+the `build:server` step costs a few percent. Worth knowing, not worth alarm.
 
 | how `server.prod.ts` is run | SSR RPS |
 |---|---|
-| standalone baseline (`Bun.serve` + handler) | 4981 |
-| `bun server.prod.ts` (unbundled) | 5042 |
-| `bun dist/app` (`bun build --target bun`) | 2999 |
+| standalone baseline (`Bun.serve` + handler) | 4691 |
+| `bun server.prod.ts` (unbundled) | 4741 |
+| `bun dist/app` (`bun build --target bun`) | 4380 |
 
-So the app's `build:server` step — which re-bundles Vite's already-built
-`dist/server/server.js` into a second bundle — is where ~40 % of SSR throughput
-goes. **This is a finding about `apps/playground-with-tanstack`'s build
-pipeline, not about `@typeway/connect` or Elysia**, and it is worth its own
-investigation (likely candidates: the double-bundling losing React's production
-build, or module-resolution/`require` shims introduced by `--target bun`). Left
-unfixed here deliberately — plan 03 is measure-and-report only.
+(The two typeway rows come from different pairs, so they carry their own
+baselines — 4691 and 4647 respectively. Compare each to its own, or compare the
+ratios: 0.934x vs 1.020x.)
+
+> **Correction.** The first version of this file reported **0.602x** here and
+> concluded that bundling costs ~40 % of SSR throughput. That did not reproduce.
+> The original figure was measured while two other agents were running builds on
+> the same laptop; re-measured on an idle machine the pair lands at 0.934x, 0.951x
+> and 0.953x across three independent runs, with per-arm spread of 1.2–1.9 %. The 40 % claim was an artifact of contention — treat it as
+> retracted. It is a good illustration of why only same-session paired arms are
+> trustworthy here, and why absolute RPS from a loaded machine is worthless.
 
 
 

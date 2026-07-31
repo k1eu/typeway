@@ -36,6 +36,7 @@ Returns an Elysia plugin.
 
 - **Mounted as a wildcard route, not a global hook.** Elysia's router gives registered routes precedence over wildcards, so your API routes bypass the bridge entirely — no filtering config, no per-request overhead on them. Consequence: the plugin owns the catch-all; put your SSR/catch-all logic in `fallback` instead of a separate `app.all("*")`.
 - **Request bodies are raw streams.** `req` is a real `Readable` over the incoming body — JSON, urlencoded, and multipart all reach middleware untouched, exactly as under Node. `req.body` is *not* pre-parsed; that's body-parsing middleware's job, as in real Connect.
+- **The body is drained lazily.** Building `req` does not read the web stream, so when the chain `next()`s all the way through, `fallback` receives a `Request` whose body is still unread. This matters: SSR in the `fallback` is the common setup, and eager draining would break every POST — server functions, form actions, uploads — with `Body already used`. Middleware that *does* read the body consumes it, as it would under Node.
 - **Responses stream.** The web `Response` is resolved on the first `res.write()` / `res.flushHeaders()` / `res.end()`, with a `ReadableStream` body. SSE works, large files don't buffer, bytes are never coerced to strings.
 - **Header fidelity.** Multiple `Set-Cookie` values survive as separate headers; empty-body statuses (204/304/…) produce `null`-body responses.
 

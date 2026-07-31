@@ -6,16 +6,10 @@
  *   prod — built handler + `Bun.file` statics (the bridge is not involved)
  * They are different failure surfaces, so both matter.
  *
- * ── KNOWN BRIDGE BUG (dev only) ───────────────────────────────────────────
- * `connect()` builds its Node-style `req` with `Readable.fromWeb(request.body)`
- * *before* running the middleware chain, which locks the web stream. When the
- * chain falls through, `options.fallback(request)` receives that same, already
- * consumed Request, so any handler that reads the body throws
- * "Body already used". Every POST with a body is affected — including TanStack
- * server functions, the headline use case. See tests/connect-body-bug.test.ts
- * for a 20-line reproduction. The affected cases below are declared with
- * `test.failing` in dev mode: the suite stays green today and turns RED the
- * moment the bridge is fixed, at which point flip them back to `test`.
+ * Tests 6 and 7 (server functions, multipart) were red in dev until the bridge
+ * stopped draining `request.body` before the middleware chain ran — see
+ * "leaves the request body readable for the fallback" in
+ * packages/connect/src/index.test.ts, which is the unit-level guard.
  */
 
 import { describe, expect, test, beforeAll, afterAll } from "bun:test";
@@ -73,9 +67,6 @@ for (const mode of modes) {
     let server: ServerHandle;
     let base: string;
 
-    // The dev path loses request bodies before the SSR fallback — see the
-    // KNOWN BRIDGE BUG note at the top of this file.
-    const bodyTest = mode.bridged ? test.failing : test;
 
     beforeAll(async () => {
       if (mode.name === "prod") await buildProd();
@@ -154,7 +145,7 @@ for (const mode of modes) {
       expect(await res.text()).toContain("COOKIES_SET");
     });
 
-    bodyTest("6. server function (JSON RPC) round-trips its input", async () => {
+    test("6. server function (JSON RPC) round-trips its input", async () => {
       const { echo } = await serverFnUrls(base);
 
       const res = await fetch(`${base}${echo}`, {
@@ -176,7 +167,7 @@ for (const mode of modes) {
       });
     });
 
-    bodyTest(
+    test(
       "7. multipart upload reaches the server fn with the bytes intact",
       async () => {
         const { upload } = await serverFnUrls(base);

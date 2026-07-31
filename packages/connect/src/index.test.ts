@@ -208,6 +208,48 @@ describe("connect middleware", () => {
 		expect(response.headers.get("x-from-middleware")).toBe("yes");
 	});
 
+	it("leaves the request body readable for the fallback", async () => {
+		// The bridge must not drain the web body just to build `req`: the dev
+		// setup renders SSR inside `fallback`, so eager draining broke every
+		// POST with a body (server functions, form actions, uploads).
+		const app = new Elysia().use(
+			connect((req, res, next) => next(), {
+				fallback: async (request) =>
+					Response.json({ echoed: await request.text() }),
+			}),
+		);
+
+		const response = await app.handle(
+			new Request("http://localhost/page", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: '{"hello":"world"}',
+			}),
+		);
+
+		expect(response.status).toBe(200);
+		expect(await response.json()).toEqual({ echoed: '{"hello":"world"}' });
+	});
+
+	it("still streams the body to middleware that reads it", async () => {
+		const app = new Elysia().use(
+			connect((req, res) => {
+				const chunks: Buffer[] = [];
+				req.on("data", (chunk: Buffer) => chunks.push(chunk));
+				req.on("end", () => res.end(`got:${Buffer.concat(chunks)}`));
+			}),
+		);
+
+		const response = await app.handle(
+			new Request("http://localhost/upload", {
+				method: "POST",
+				body: "payload-bytes",
+			}),
+		);
+
+		expect(await response.text()).toBe("got:payload-bytes");
+	});
+
 	it("never runs middleware for registered routes", async () => {
 		let middlewareCalls = 0;
 

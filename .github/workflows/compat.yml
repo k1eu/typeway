@@ -88,13 +88,12 @@ jobs:
       - name: Unit tests (@typeway/connect)
         run: bun test packages/
 
-      - name: Integration smoke test (plan 01)
+      - name: Integration smoke test
         run: bun run test:integration
 
       # Plan 02's kitchen-sink fixture app; skipped when it isn't in the tree.
-      - name: TanStack feature coverage (plan 02 fixture)
-        if: hashFiles('apps/e2e-tanstack/package.json') != ''
-        run: bun run --filter e2e-tanstack test:integration
+      - name: TanStack feature coverage (dev + prod)
+        run: bun run test:e2e-tanstack
 
       - name: Open or update failure issue
         if: failure()

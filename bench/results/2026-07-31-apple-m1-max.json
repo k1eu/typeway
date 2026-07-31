@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-31T10:59:56.347Z",
+  "generatedAt": "2026-07-31T12:38:07.638Z",
   "generator": {
     "name": "oha",
     "version": "oha 1.15.0",
@@ -23,9 +23,9 @@
     "release": "25.5.0",
     "totalMemGB": 32,
     "loadAvgAtEnd": [
-      4.20703125,
-      6.60302734375,
-      7.25
+      4.67236328125,
+      5.47265625,
+      5.20703125
     ]
   },
   "versions": {
@@ -39,7 +39,7 @@
     "path": "/assets/about--mdxM9_P.js",
     "bytes": 723
   },
-  "note": "Developer laptop with two sibling coding agents running builds concurrently during the run — absolute RPS is depressed and at times bimodal. Paired ratios (taken from the median run of each arm) are the usable signal; absolute numbers must not be quoted as Typeway characteristics without a re-run on an idle machine.",
+  "note": null,
   "results": [
     {
       "id": "registered-route-get",
@@ -53,37 +53,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 101143.56281990028,
-            "p50Ms": 0.613167,
-            "p99Ms": 1.290875,
-            "totalRequests": 1011642,
-            "successRate": 0.9999387172532678,
-            "elapsedSec": 10.002653375
+            "rps": 96893.00527447386,
+            "p50Ms": 0.622208,
+            "p99Ms": 1.3154169999999998,
+            "totalRequests": 969099,
+            "successRate": 0.9999370588963639,
+            "elapsedSec": 10.002373208
           },
           {
-            "rps": 100714.2657023082,
-            "p50Ms": 0.6147499999999999,
-            "p99Ms": 1.288417,
-            "totalRequests": 1007486,
-            "successRate": 0.9999364795791772,
-            "elapsedSec": 10.004044541
+            "rps": 97132.48605413742,
+            "p50Ms": 0.6235,
+            "p99Ms": 1.3097919999999998,
+            "totalRequests": 971503,
+            "successRate": 0.9999351562323094,
+            "elapsedSec": 10.002482583
           },
           {
-            "rps": 98751.14338262907,
-            "p50Ms": 0.626417,
-            "p99Ms": 1.2960420000000001,
-            "totalRequests": 987860,
-            "successRate": 0.9999372420089845,
-            "elapsedSec": 10.004157584
+            "rps": 96363.91440771021,
+            "p50Ms": 0.628667,
+            "p99Ms": 1.317917,
+            "totalRequests": 963896,
+            "successRate": 0.999934644523263,
+            "elapsedSec": 10.00331925
           }
         ],
         "median": {
-          "rps": 100714.2657023082,
-          "p50Ms": 0.6147499999999999,
-          "p99Ms": 1.288417,
-          "totalRequests": 1007486,
-          "successRate": 0.9999364795791772,
-          "elapsedSec": 10.004044541
+          "rps": 96893.00527447386,
+          "p50Ms": 0.622208,
+          "p99Ms": 1.3154169999999998,
+          "totalRequests": 969099,
+          "successRate": 0.9999370588963639,
+          "elapsedSec": 10.002373208
         }
       },
       "typeway": {
@@ -93,45 +93,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 99942.49237432257,
-            "p50Ms": 0.619958,
-            "p99Ms": 1.296125,
-            "totalRequests": 999606,
-            "successRate": 0.9999369791400954,
-            "elapsedSec": 10.002442167
+            "rps": 95401.44252361836,
+            "p50Ms": 0.63025,
+            "p99Ms": 1.3372499999999998,
+            "totalRequests": 954104,
+            "successRate": 0.9999339738221925,
+            "elapsedSec": 10.001599292
           },
           {
-            "rps": 98140.54693339998,
-            "p50Ms": 0.629458,
-            "p99Ms": 1.313,
-            "totalRequests": 981729,
-            "successRate": 0.9999358316221766,
-            "elapsedSec": 10.003938542
+            "rps": 96613.15559089492,
+            "p50Ms": 0.627208,
+            "p99Ms": 1.313125,
+            "totalRequests": 966376,
+            "successRate": 0.9999379162200084,
+            "elapsedSec": 10.003151166
           },
           {
-            "rps": 98768.99653108547,
-            "p50Ms": 0.6174999999999999,
-            "p99Ms": 1.2986250000000001,
-            "totalRequests": 987905,
-            "successRate": 0.9999372448674905,
-            "elapsedSec": 10.002804875
+            "rps": 93886.39977453204,
+            "p50Ms": 0.635625,
+            "p99Ms": 1.368708,
+            "totalRequests": 939100,
+            "successRate": 0.9999318542874301,
+            "elapsedSec": 10.003195375
           }
         ],
         "median": {
-          "rps": 98768.99653108547,
-          "p50Ms": 0.6174999999999999,
-          "p99Ms": 1.2986250000000001,
-          "totalRequests": 987905,
-          "successRate": 0.9999372448674905,
-          "elapsedSec": 10.002804875
+          "rps": 95401.44252361836,
+          "p50Ms": 0.63025,
+          "p99Ms": 1.3372499999999998,
+          "totalRequests": 954104,
+          "successRate": 0.9999339738221925,
+          "elapsedSec": 10.001599292
         }
       },
-      "ratio": 0.9806852668024949,
-      "deltaPercent": -1.9314733197505096,
-      "deltaMicrosPerRequest": 0.19555461608265093,
+      "ratio": 0.9846060843439598,
+      "deltaPercent": -1.5393915656040202,
+      "deltaMicrosPerRequest": 0.16135935944814597,
       "runSpread": {
-        "baseline": 0.02422675176530715,
-        "typeway": 0.018360866096919365
+        "baseline": 0.007975720487810709,
+        "typeway": 0.02904313961245913
       }
     },
     {
@@ -145,37 +145,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 102629.47110253783,
-            "p50Ms": 0.603916,
-            "p99Ms": 1.267125,
-            "totalRequests": 1026579,
-            "successRate": 0.9999396088798324,
-            "elapsedSec": 10.003374167
+            "rps": 99102.49051618838,
+            "p50Ms": 0.606084,
+            "p99Ms": 1.279292,
+            "totalRequests": 991331,
+            "successRate": 0.999936453115512,
+            "elapsedSec": 10.003724375
           },
           {
-            "rps": 105910.26070078528,
-            "p50Ms": 0.587458,
-            "p99Ms": 1.239,
-            "totalRequests": 1059350,
-            "successRate": 0.9999424208357285,
-            "elapsedSec": 10.002911833
+            "rps": 100293.75312778357,
+            "p50Ms": 0.6046670000000001,
+            "p99Ms": 1.2686250000000001,
+            "totalRequests": 1003176,
+            "successRate": 0.999939196819894,
+            "elapsedSec": 10.002985916
           },
           {
-            "rps": 104123.92791321558,
-            "p50Ms": 0.597209,
-            "p99Ms": 1.251125,
-            "totalRequests": 1041482,
-            "successRate": 0.9999395129351109,
-            "elapsedSec": 10.002936125
+            "rps": 101213.51597505162,
+            "p50Ms": 0.597584,
+            "p99Ms": 1.2646249999999999,
+            "totalRequests": 1012416,
+            "successRate": 0.9999397517178168,
+            "elapsedSec": 10.003377417
           }
         ],
         "median": {
-          "rps": 104123.92791321558,
-          "p50Ms": 0.597209,
-          "p99Ms": 1.251125,
-          "totalRequests": 1041482,
-          "successRate": 0.9999395129351109,
-          "elapsedSec": 10.002936125
+          "rps": 100293.75312778357,
+          "p50Ms": 0.6046670000000001,
+          "p99Ms": 1.2686250000000001,
+          "totalRequests": 1003176,
+          "successRate": 0.999939196819894,
+          "elapsedSec": 10.002985916
         }
       },
       "typeway": {
@@ -185,45 +185,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 50388.8539458812,
-            "p50Ms": 1.1731669999999998,
-            "p99Ms": 2.487625,
-            "totalRequests": 504004,
-            "successRate": 0.9998750166148548,
-            "elapsedSec": 10.003541667
+            "rps": 48942.796210065244,
+            "p50Ms": 1.192209,
+            "p99Ms": 2.6127920000000002,
+            "totalRequests": 489530,
+            "successRate": 0.9998733639438553,
+            "elapsedSec": 10.003351625
           },
           {
-            "rps": 50517.69460806235,
-            "p50Ms": 1.167709,
-            "p99Ms": 2.4932090000000002,
-            "totalRequests": 505241,
-            "successRate": 0.9998733438220481,
-            "elapsedSec": 10.002534833
+            "rps": 48667.38153530692,
+            "p50Ms": 1.205292,
+            "p99Ms": 2.6029579999999997,
+            "totalRequests": 486771,
+            "successRate": 0.9998705924401335,
+            "elapsedSec": 10.003291417
           },
           {
-            "rps": 50386.60664407271,
-            "p50Ms": 1.1722499999999998,
-            "p99Ms": 2.502584,
-            "totalRequests": 503989,
-            "successRate": 0.9998769965737594,
-            "elapsedSec": 10.003670292
+            "rps": 48293.88202294535,
+            "p50Ms": 1.212375,
+            "p99Ms": 2.6549159999999996,
+            "totalRequests": 483001,
+            "successRate": 0.9998695824983853,
+            "elapsedSec": 10.002592042
           }
         ],
         "median": {
-          "rps": 50388.8539458812,
-          "p50Ms": 1.1731669999999998,
-          "p99Ms": 2.487625,
-          "totalRequests": 504004,
-          "successRate": 0.9998750166148548,
-          "elapsedSec": 10.003541667
+          "rps": 48667.38153530692,
+          "p50Ms": 1.205292,
+          "p99Ms": 2.6029579999999997,
+          "totalRequests": 486771,
+          "successRate": 0.9998705924401335,
+          "elapsedSec": 10.003291417
         }
       },
-      "ratio": 0.4839315511404729,
-      "deltaPercent": -51.60684488595271,
-      "deltaMicrosPerRequest": 10.241718325520889,
+      "ratio": 0.4852483830503397,
+      "deltaPercent": -51.47516169496603,
+      "deltaMicrosPerRequest": 10.576932654086216,
       "runSpread": {
-        "baseline": 0.03196732442447826,
-        "typeway": 0.002601643030173485
+        "baseline": 0.02130143700594893,
+        "typeway": 0.013436778323423737
       }
     },
     {
@@ -237,37 +237,37 @@
         "method": "POST",
         "runs": [
           {
-            "rps": 80475.36063833097,
-            "p50Ms": 0.7480829999999999,
-            "p99Ms": 1.728917,
-            "totalRequests": 805014,
-            "successRate": 0.9999217466155411,
-            "elapsedSec": 10.004018542
+            "rps": 78774.10142867462,
+            "p50Ms": 0.750167,
+            "p99Ms": 1.882833,
+            "totalRequests": 788018,
+            "successRate": 0.9999200589787091,
+            "elapsedSec": 10.004315958
           },
           {
-            "rps": 81286.7498711045,
-            "p50Ms": 0.7428750000000001,
-            "p99Ms": 1.712792,
-            "totalRequests": 813250,
-            "successRate": 0.9999213096049004,
-            "elapsedSec": 10.005492916
+            "rps": 79943.06101313584,
+            "p50Ms": 0.735166,
+            "p99Ms": 1.909292,
+            "totalRequests": 799685,
+            "successRate": 0.9999199748921224,
+            "elapsedSec": 10.003982708
           },
           {
-            "rps": 81304.32598351946,
-            "p50Ms": 0.741625,
-            "p99Ms": 1.697375,
-            "totalRequests": 813177,
-            "successRate": 0.9999237616494044,
-            "elapsedSec": 10.0024075
+            "rps": 78043.8318237052,
+            "p50Ms": 0.759625,
+            "p99Ms": 1.8825420000000002,
+            "totalRequests": 780599,
+            "successRate": 0.9999205801237669,
+            "elapsedSec": 10.002853291
           }
         ],
         "median": {
-          "rps": 81286.7498711045,
-          "p50Ms": 0.7428750000000001,
-          "p99Ms": 1.712792,
-          "totalRequests": 813250,
-          "successRate": 0.9999213096049004,
-          "elapsedSec": 10.005492916
+          "rps": 78774.10142867462,
+          "p50Ms": 0.750167,
+          "p99Ms": 1.882833,
+          "totalRequests": 788018,
+          "successRate": 0.9999200589787091,
+          "elapsedSec": 10.004315958
         }
       },
       "typeway": {
@@ -277,45 +277,45 @@
         "method": "POST",
         "runs": [
           {
-            "rps": 28742.07091639394,
-            "p50Ms": 1.882917,
-            "p99Ms": 4.633209,
-            "totalRequests": 287446,
-            "successRate": 0.9997773990469897,
-            "elapsedSec": 10.003106625
+            "rps": 27079.901100460862,
+            "p50Ms": 2.0267910000000002,
+            "p99Ms": 4.964292,
+            "totalRequests": 270828,
+            "successRate": 0.9997637434844883,
+            "elapsedSec": 10.003433875
           },
           {
-            "rps": 28824.414487622387,
-            "p50Ms": 1.8808340000000001,
-            "p99Ms": 4.621375,
-            "totalRequests": 288275,
-            "successRate": 0.9997780390443194,
-            "elapsedSec": 10.003290791
+            "rps": 27075.36934899576,
+            "p50Ms": 2.03625,
+            "p99Ms": 4.948917,
+            "totalRequests": 270780,
+            "successRate": 0.9997637016142134,
+            "elapsedSec": 10.003335375
           },
           {
-            "rps": 28726.412208490263,
-            "p50Ms": 1.893667,
-            "p99Ms": 4.638332999999999,
-            "totalRequests": 287294,
-            "successRate": 0.9997772813006772,
-            "elapsedSec": 10.003268
+            "rps": 25381.110267540233,
+            "p50Ms": 2.203875,
+            "p99Ms": 5.439165999999999,
+            "totalRequests": 253849,
+            "successRate": 0.999751882541983,
+            "elapsedSec": 10.003975292
           }
         ],
         "median": {
-          "rps": 28742.07091639394,
-          "p50Ms": 1.882917,
-          "p99Ms": 4.633209,
-          "totalRequests": 287446,
-          "successRate": 0.9997773990469897,
-          "elapsedSec": 10.003106625
+          "rps": 27075.36934899576,
+          "p50Ms": 2.03625,
+          "p99Ms": 4.948917,
+          "totalRequests": 270780,
+          "successRate": 0.9997637016142134,
+          "elapsedSec": 10.003335375
         }
       },
-      "ratio": 0.3535886348263391,
-      "deltaPercent": -64.64113651736609,
-      "deltaMicrosPerRequest": 22.490076204110952,
+      "ratio": 0.34370902184788404,
+      "deltaPercent": -65.6290978152116,
+      "deltaMicrosPerRequest": 24.239409985240265,
       "runSpread": {
-        "baseline": 0.010300859028317958,
-        "typeway": 0.0034115739348458984
+        "baseline": 0.02433541697082285,
+        "typeway": 0.06693130501439111
       }
     },
     {
@@ -329,37 +329,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 4980.966561005885,
-            "p50Ms": 12.616208,
-            "p99Ms": 24.809458,
-            "totalRequests": 49760,
-            "successRate": 0.9987154784842646,
-            "elapsedSec": 10.002877833
+            "rps": 4693.969043537078,
+            "p50Ms": 13.400875,
+            "p99Ms": 25.883083000000003,
+            "totalRequests": 46890,
+            "successRate": 0.9986369638369468,
+            "elapsedSec": 10.0030485
           },
           {
-            "rps": 5012.3505643442795,
-            "p50Ms": 12.553999999999998,
-            "p99Ms": 24.626583,
-            "totalRequests": 50077,
-            "successRate": 0.9987235994495522,
-            "elapsedSec": 10.00349025
+            "rps": 4604.815926332688,
+            "p50Ms": 13.553875,
+            "p99Ms": 26.269834,
+            "totalRequests": 45998,
+            "successRate": 0.9986105683643784,
+            "elapsedSec": 10.003005709
           },
           {
-            "rps": 4954.505821978804,
-            "p50Ms": 12.685916,
-            "p99Ms": 24.992,
-            "totalRequests": 49508,
-            "successRate": 0.9987089486000161,
-            "elapsedSec": 10.005437834
+            "rps": 4691.021122944675,
+            "p50Ms": 13.343875,
+            "p99Ms": 26.02375,
+            "totalRequests": 46863,
+            "successRate": 0.9986361795980991,
+            "elapsedSec": 10.003578916
           }
         ],
         "median": {
-          "rps": 4980.966561005885,
-          "p50Ms": 12.616208,
-          "p99Ms": 24.809458,
-          "totalRequests": 49760,
-          "successRate": 0.9987154784842646,
-          "elapsedSec": 10.002877833
+          "rps": 4691.021122944675,
+          "p50Ms": 13.343875,
+          "p99Ms": 26.02375,
+          "totalRequests": 46863,
+          "successRate": 0.9986361795980991,
+          "elapsedSec": 10.003578916
         }
       },
       "typeway": {
@@ -369,45 +369,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 3028.064933052841,
-            "p50Ms": 20.828042,
-            "p99Ms": 40.848042,
-            "totalRequests": 30233,
-            "successRate": 0.9978875796283461,
-            "elapsedSec": 10.005399709
+            "rps": 4401.867764854402,
+            "p50Ms": 14.129084,
+            "p99Ms": 28.466958,
+            "totalRequests": 43970,
+            "successRate": 0.9985465776445474,
+            "elapsedSec": 10.003480875
           },
           {
-            "rps": 2966.8857843439,
-            "p50Ms": 21.28,
-            "p99Ms": 41.697167,
-            "totalRequests": 29619,
-            "successRate": 0.9978438837044773,
-            "elapsedSec": 10.004766667
+            "rps": 4380.08824280824,
+            "p50Ms": 14.171209000000001,
+            "p99Ms": 28.078959,
+            "totalRequests": 43751,
+            "successRate": 0.998539313020655,
+            "elapsedSec": 10.003223125
           },
           {
-            "rps": 2998.5163624155334,
-            "p50Ms": 20.996000000000002,
-            "p99Ms": 41.201750000000004,
-            "totalRequests": 29931,
-            "successRate": 0.9978995799159832,
-            "elapsedSec": 10.002946916
+            "rps": 4348.2589027820895,
+            "p50Ms": 14.257624999999999,
+            "p99Ms": 28.677292,
+            "totalRequests": 43436,
+            "successRate": 0.9985287356321839,
+            "elapsedSec": 10.004004125
           }
         ],
         "median": {
-          "rps": 2998.5163624155334,
-          "p50Ms": 20.996000000000002,
-          "p99Ms": 41.201750000000004,
-          "totalRequests": 29931,
-          "successRate": 0.9978995799159832,
-          "elapsedSec": 10.002946916
+          "rps": 4380.08824280824,
+          "p50Ms": 14.171209000000001,
+          "p99Ms": 28.078959,
+          "totalRequests": 43751,
+          "successRate": 0.998539313020655,
+          "elapsedSec": 10.003223125
         }
       },
-      "ratio": 0.6019948790441179,
-      "deltaPercent": -39.80051209558822,
-      "deltaMicrosPerRequest": 132.7340167106037,
+      "ratio": 0.9337174418986085,
+      "deltaPercent": -6.62825581013915,
+      "deltaMicrosPerRequest": 15.132699257879631,
       "runSpread": {
-        "baseline": 0.011675179007534665,
-        "typeway": 0.020620661918224144
+        "baseline": 0.019360842785173374,
+        "typeway": 0.012328810972596938
       }
     },
     {
@@ -421,37 +421,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 4965.5249827967455,
-            "p50Ms": 12.650917,
-            "p99Ms": 24.931749999999997,
-            "totalRequests": 49611,
-            "successRate": 0.9987116255661802,
-            "elapsedSec": 10.003977459
+            "rps": 4509.388321811329,
+            "p50Ms": 13.767167,
+            "p99Ms": 26.666124999999997,
+            "totalRequests": 45045,
+            "successRate": 0.9985812143918065,
+            "elapsedSec": 10.003352291
           },
           {
-            "rps": 4967.80131799837,
-            "p50Ms": 12.623917,
-            "p99Ms": 24.846542,
-            "totalRequests": 49638,
-            "successRate": 0.9987123254597401,
-            "elapsedSec": 10.004828458
+            "rps": 4740.696866679728,
+            "p50Ms": 13.249749999999999,
+            "p99Ms": 25.836499999999997,
+            "totalRequests": 47362,
+            "successRate": 0.9986505292455615,
+            "elapsedSec": 10.004014459
           },
           {
-            "rps": 4975.459784230544,
-            "p50Ms": 12.626125,
-            "p99Ms": 24.826625,
-            "totalRequests": 49707,
-            "successRate": 0.9987341772151899,
-            "elapsedSec": 10.003095625
+            "rps": 4646.870374064813,
+            "p50Ms": 13.5295,
+            "p99Ms": 25.723625,
+            "totalRequests": 46414,
+            "successRate": 0.9986230044322045,
+            "elapsedSec": 10.002000542
           }
         ],
         "median": {
-          "rps": 4967.80131799837,
-          "p50Ms": 12.623917,
-          "p99Ms": 24.846542,
-          "totalRequests": 49638,
-          "successRate": 0.9987123254597401,
-          "elapsedSec": 10.004828458
+          "rps": 4646.870374064813,
+          "p50Ms": 13.5295,
+          "p99Ms": 25.723625,
+          "totalRequests": 46414,
+          "successRate": 0.9986230044322045,
+          "elapsedSec": 10.002000542
         }
       },
       "typeway": {
@@ -461,45 +461,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 5042.150245332653,
-            "p50Ms": 12.382708,
-            "p99Ms": 24.568333000000003,
-            "totalRequests": 50376,
-            "successRate": 0.998731165741475,
-            "elapsedSec": 10.003668583
+            "rps": 4700.175348678713,
+            "p50Ms": 13.118333,
+            "p99Ms": 27.070041,
+            "totalRequests": 46956,
+            "successRate": 0.9986601161232693,
+            "elapsedSec": 10.003669334
           },
           {
-            "rps": 5058.701825096355,
-            "p50Ms": 12.382334,
-            "p99Ms": 24.477959000000002,
-            "totalRequests": 50545,
-            "successRate": 0.9987354027939694,
-            "elapsedSec": 10.004345334
+            "rps": 4740.5661984970675,
+            "p50Ms": 13.145040999999999,
+            "p99Ms": 25.805417000000002,
+            "totalRequests": 47362,
+            "successRate": 0.9986505292455615,
+            "elapsedSec": 10.004290208
           },
           {
-            "rps": 4974.976833691538,
-            "p50Ms": 12.551292,
-            "p99Ms": 24.861375000000002,
-            "totalRequests": 49703,
-            "successRate": 0.9987140072738964,
-            "elapsedSec": 10.003463667
+            "rps": 4787.287886328553,
+            "p50Ms": 12.938917,
+            "p99Ms": 26.293209,
+            "totalRequests": 47827,
+            "successRate": 0.9986844852787639,
+            "elapsedSec": 10.003576375
           }
         ],
         "median": {
-          "rps": 5042.150245332653,
-          "p50Ms": 12.382708,
-          "p99Ms": 24.568333000000003,
-          "totalRequests": 50376,
-          "successRate": 0.998731165741475,
-          "elapsedSec": 10.003668583
+          "rps": 4740.5661984970675,
+          "p50Ms": 13.145040999999999,
+          "p99Ms": 25.805417000000002,
+          "totalRequests": 47362,
+          "successRate": 0.9986505292455615,
+          "elapsedSec": 10.004290208
         }
       },
-      "ratio": 1.0149661636154643,
-      "deltaPercent": 1.4966163615464323,
-      "deltaMicrosPerRequest": -2.9682105624119375,
+      "ratio": 1.0201632102662452,
+      "deltaPercent": 2.0163210266245235,
+      "deltaMicrosPerRequest": -4.253333762671135,
       "runSpread": {
-        "baseline": 0.00200075550283563,
-        "typeway": 0.016829222366989666
+        "baseline": 0.05129488266725447,
+        "typeway": 0.018533891012029773
       }
     },
     {
@@ -513,37 +513,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 23804.69928748161,
-            "p50Ms": 2.627792,
-            "p99Ms": 5.2505,
-            "totalRequests": 238080,
-            "successRate": 0.999731255038968,
-            "elapsedSec": 10.004075125
+            "rps": 25894.420889080557,
+            "p50Ms": 2.370208,
+            "p99Ms": 4.81425,
+            "totalRequests": 258964,
+            "successRate": 0.9997529224639807,
+            "elapsedSec": 10.003235875
           },
           {
-            "rps": 23811.202743890342,
-            "p50Ms": 2.621666,
-            "p99Ms": 5.242166,
-            "totalRequests": 238109,
-            "successRate": 0.9997312877614172,
-            "elapsedSec": 10.002560667
+            "rps": 26591.565546063408,
+            "p50Ms": 2.3067919999999997,
+            "p99Ms": 4.700834,
+            "totalRequests": 265937,
+            "successRate": 0.9997593994007541,
+            "elapsedSec": 10.003209459
           },
           {
-            "rps": 23861.13776334195,
-            "p50Ms": 2.618208,
-            "p99Ms": 5.222333,
-            "totalRequests": 238609,
-            "successRate": 0.9997318506911129,
-            "elapsedSec": 10.002582541
+            "rps": 26484.55322203065,
+            "p50Ms": 2.336625,
+            "p99Ms": 4.703625000000001,
+            "totalRequests": 264862,
+            "successRate": 0.9997584231068298,
+            "elapsedSec": 10.003038291
           }
         ],
         "median": {
-          "rps": 23811.202743890342,
-          "p50Ms": 2.621666,
-          "p99Ms": 5.242166,
-          "totalRequests": 238109,
-          "successRate": 0.9997312877614172,
-          "elapsedSec": 10.002560667
+          "rps": 26484.55322203065,
+          "p50Ms": 2.336625,
+          "p99Ms": 4.703625000000001,
+          "totalRequests": 264862,
+          "successRate": 0.9997584231068298,
+          "elapsedSec": 10.003038291
         }
       },
       "typeway": {
@@ -553,45 +553,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 26057.012746087792,
-            "p50Ms": 2.372292,
-            "p99Ms": 4.7623750000000005,
-            "totalRequests": 260584,
-            "successRate": 0.9997582937843137,
-            "elapsedSec": 10.002950167
+            "rps": 26044.605668189295,
+            "p50Ms": 2.339458,
+            "p99Ms": 4.834542,
+            "totalRequests": 260447,
+            "successRate": 0.999754328991866,
+            "elapsedSec": 10.002493542
           },
           {
-            "rps": 26249.084050804482,
-            "p50Ms": 2.361875,
-            "p99Ms": 4.7351659999999995,
-            "totalRequests": 262523,
-            "successRate": 0.9997600786028197,
-            "elapsedSec": 10.00362525
+            "rps": 26355.003765105943,
+            "p50Ms": 2.337959,
+            "p99Ms": 4.736,
+            "totalRequests": 263546,
+            "successRate": 0.9997648022821766,
+            "elapsedSec": 10.002199292
           },
           {
-            "rps": 26326.360457227664,
-            "p50Ms": 2.355791,
-            "p99Ms": 4.721083,
-            "totalRequests": 263287,
-            "successRate": 0.9997607746345168,
-            "elapsedSec": 10.003281708
+            "rps": 26362.94261765342,
+            "p50Ms": 2.34,
+            "p99Ms": 4.732374999999999,
+            "totalRequests": 263649,
+            "successRate": 0.9997573119262229,
+            "elapsedSec": 10.003170125
           }
         ],
         "median": {
-          "rps": 26249.084050804482,
-          "p50Ms": 2.361875,
-          "p99Ms": 4.7351659999999995,
-          "totalRequests": 262523,
-          "successRate": 0.9997600786028197,
-          "elapsedSec": 10.00362525
+          "rps": 26355.003765105943,
+          "p50Ms": 2.337959,
+          "p99Ms": 4.736,
+          "totalRequests": 263546,
+          "successRate": 0.9997648022821766,
+          "elapsedSec": 10.002199292
         }
       },
-      "ratio": 1.1023837952721507,
-      "deltaPercent": 10.23837952721507,
-      "deltaMicrosPerRequest": -3.9004711583074307,
+      "ratio": 0.9951084900002413,
+      "deltaPercent": -0.48915099997587363,
+      "deltaMicrosPerRequest": 0.18560080823191333,
       "runSpread": {
-        "baseline": 0.0023708964006960084,
-        "typeway": 0.010336860704813966
+        "baseline": 0.02692258150777301,
+        "typeway": 0.012222759427413452
       }
     },
     {
@@ -605,37 +605,37 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 4990.319615995911,
-            "p50Ms": 12.599041999999999,
-            "p99Ms": 24.723499999999998,
-            "totalRequests": 49866,
-            "successRate": 0.9987182054876828,
-            "elapsedSec": 10.005371167
+            "rps": 4563.842901314853,
+            "p50Ms": 13.648417,
+            "p99Ms": 27.172792,
+            "totalRequests": 45592,
+            "successRate": 0.9985982127212195,
+            "elapsedSec": 10.003850042
           },
           {
-            "rps": 4894.123838599181,
-            "p50Ms": 12.855041,
-            "p99Ms": 25.218458,
-            "totalRequests": 48902,
-            "successRate": 0.9986929706326839,
-            "elapsedSec": 10.005059458
+            "rps": 4996.092647788776,
+            "p50Ms": 12.518375,
+            "p99Ms": 24.861624999999997,
+            "totalRequests": 49914,
+            "successRate": 0.998719436552083,
+            "elapsedSec": 10.003417375
           },
           {
-            "rps": 4976.55212126182,
-            "p50Ms": 12.627291000000001,
-            "p99Ms": 24.854333999999998,
-            "totalRequests": 49715,
-            "successRate": 0.9987143172823881,
-            "elapsedSec": 10.002708459
+            "rps": 4877.197228521084,
+            "p50Ms": 12.682875,
+            "p99Ms": 25.984833,
+            "totalRequests": 48725,
+            "successRate": 0.9986882289040563,
+            "elapsedSec": 10.003491291
           }
         ],
         "median": {
-          "rps": 4976.55212126182,
-          "p50Ms": 12.627291000000001,
-          "p99Ms": 24.854333999999998,
-          "totalRequests": 49715,
-          "successRate": 0.9987143172823881,
-          "elapsedSec": 10.002708459
+          "rps": 4877.197228521084,
+          "p50Ms": 12.682875,
+          "p99Ms": 25.984833,
+          "totalRequests": 48725,
+          "successRate": 0.9986882289040563,
+          "elapsedSec": 10.003491291
         }
       },
       "typeway": {
@@ -645,45 +645,45 @@
         "method": "GET",
         "runs": [
           {
-            "rps": 4895.035999033426,
-            "p50Ms": 12.793584000000001,
-            "p99Ms": 25.265249999999998,
-            "totalRequests": 48913,
-            "successRate": 0.9986932641852299,
-            "elapsedSec": 10.00544225
+            "rps": 4934.800078237868,
+            "p50Ms": 12.671208,
+            "p99Ms": 25.2625,
+            "totalRequests": 49305,
+            "successRate": 0.9987036399359922,
+            "elapsedSec": 10.004255333
           },
           {
-            "rps": 4929.331521633744,
-            "p50Ms": 12.690916999999999,
-            "p99Ms": 25.157083,
-            "totalRequests": 49252,
-            "successRate": 0.9987022467353395,
-            "elapsedSec": 10.004602
+            "rps": 4925.090808827232,
+            "p50Ms": 12.710834,
+            "p99Ms": 25.108874999999998,
+            "totalRequests": 49203,
+            "successRate": 0.9987009560151826,
+            "elapsedSec": 10.003267333
           },
           {
-            "rps": 4946.181133569109,
-            "p50Ms": 12.66725,
-            "p99Ms": 25.010958,
-            "totalRequests": 49418,
-            "successRate": 0.9987066003799362,
-            "elapsedSec": 10.004081667
+            "rps": 4803.865967694151,
+            "p50Ms": 12.905209000000001,
+            "p99Ms": 25.924834,
+            "totalRequests": 47987,
+            "successRate": 0.9986888657648283,
+            "elapsedSec": 10.002360666
           }
         ],
         "median": {
-          "rps": 4929.331521633744,
-          "p50Ms": 12.690916999999999,
-          "p99Ms": 25.157083,
-          "totalRequests": 49252,
-          "successRate": 0.9987022467353395,
-          "elapsedSec": 10.004602
+          "rps": 4925.090808827232,
+          "p50Ms": 12.710834,
+          "p99Ms": 25.108874999999998,
+          "totalRequests": 49203,
+          "successRate": 0.9987009560151826,
+          "elapsedSec": 10.003267333
         }
       },
-      "ratio": 0.9905113824838023,
-      "deltaPercent": -0.9488617516197673,
-      "deltaMicrosPerRequest": 1.9249298763035787,
+      "ratio": 1.009819898204254,
+      "deltaPercent": 0.9819898204254107,
+      "deltaMicrosPerRequest": -1.9938511969472565,
       "runSpread": {
-        "baseline": 0.01965536234249914,
-        "typeway": 0.010448367396231981
+        "baseline": 0.09471179350835904,
+        "typeway": 0.027255987453489505
       }
     }
   ]

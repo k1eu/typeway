@@ -27,12 +27,8 @@ jobs:
       - name: Unit tests (@typeway/connect)
         run: bun test packages/
 
-      - name: Integration smoke test (plan 01)
+      - name: Integration smoke test
         run: bun run test:integration
 
-      # Plan 02's kitchen-sink fixture app. It may not exist yet on this ref —
-      # hashFiles() returns "" when nothing matches, so the step is skipped
-      # rather than failing the build.
-      - name: TanStack feature coverage (plan 02 fixture)
-        if: hashFiles('apps/e2e-tanstack/package.json') != ''
-        run: bun run --filter e2e-tanstack test:integration
+      - name: TanStack feature coverage (dev + prod)
+        run: bun run test:e2e-tanstack

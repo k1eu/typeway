@@ -1,0 +1,690 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-02T17:10:20.696Z",
+  "generator": {
+    "name": "oha",
+    "version": "oha 1.15.0",
+    "comparableAcrossGenerators": false
+  },
+  "methodology": {
+    "runsPerArm": 3,
+    "durationSec": 10,
+    "warmupSecPerBoot": 3,
+    "connections": 64,
+    "armOrder": "interleaved per round (baseline, typeway, ...)",
+    "aggregate": "median run by RPS; latency taken from that same run",
+    "oneServerAtATime": true
+  },
+  "machine": {
+    "cpu": "Apple M1 Max",
+    "cores": 10,
+    "arch": "arm64",
+    "platform": "darwin",
+    "release": "25.5.0",
+    "totalMemGB": 32,
+    "loadAvgAtEnd": [
+      4.8369140625,
+      5.4521484375,
+      5.85595703125
+    ]
+  },
+  "versions": {
+    "bun": "1.4.0",
+    "elysia": "2.0.0-exp.61",
+    "@typeway/connect": "0.1.0",
+    "@tanstack/react-start": "1.168.34",
+    "vite": "8.2.0"
+  },
+  "staticAsset": {
+    "path": "/assets/about-Bx9vy6et.js",
+    "bytes": 723
+  },
+  "note": "Post-change run: src/server.ts single SSR entry, .mount()ed prod SSR, boot-time dist/client manifest (baseline tanstack-standalone.ts updated to match). Machine more loaded than the 2026-07-31 run - compare ratios, not absolute RPS.",
+  "results": [
+    {
+      "id": "registered-route-get",
+      "label": "registered route (GET /json)",
+      "question": "Does mounting connect() slow down natively registered Elysia routes?",
+      "claim": "<= ~2% delta (route precedence means the bridge is never entered)",
+      "baseline": {
+        "label": "elysia-plain",
+        "command": "bun run bench/servers/elysia-plain.ts",
+        "path": "/json",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 97720.98758375242,
+            "p50Ms": 0.623666,
+            "p99Ms": 1.30975,
+            "totalRequests": 977396,
+            "successRate": 0.999937593162666,
+            "elapsedSec": 10.002528875
+          },
+          {
+            "rps": 94440.46227820075,
+            "p50Ms": 0.6325839999999999,
+            "p99Ms": 1.355125,
+            "totalRequests": 944570,
+            "successRate": 0.9999343659753216,
+            "elapsedSec": 10.002407625
+          },
+          {
+            "rps": 98477.65059221028,
+            "p50Ms": 0.6244999999999999,
+            "p99Ms": 1.3023749999999998,
+            "totalRequests": 984950,
+            "successRate": 0.99993604145326,
+            "elapsedSec": 10.0024015
+          }
+        ],
+        "median": {
+          "rps": 97720.98758375242,
+          "p50Ms": 0.623666,
+          "p99Ms": 1.30975,
+          "totalRequests": 977396,
+          "successRate": 0.999937593162666,
+          "elapsedSec": 10.002528875
+        }
+      },
+      "typeway": {
+        "label": "elysia-with-connect",
+        "command": "bun run bench/servers/elysia-with-connect.ts",
+        "path": "/json",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 99587.26370994962,
+            "p50Ms": 0.62125,
+            "p99Ms": 1.29875,
+            "totalRequests": 996081,
+            "successRate": 0.9999357523252137,
+            "elapsedSec": 10.002734917
+          },
+          {
+            "rps": 94695.04345995726,
+            "p50Ms": 0.625292,
+            "p99Ms": 1.407916,
+            "totalRequests": 947095,
+            "successRate": 0.999934540947277,
+            "elapsedSec": 10.002181375
+          },
+          {
+            "rps": 96268.73045866255,
+            "p50Ms": 0.626958,
+            "p99Ms": 1.336584,
+            "totalRequests": 963011,
+            "successRate": 0.9999345844659911,
+            "elapsedSec": 10.004016833
+          }
+        ],
+        "median": {
+          "rps": 96268.73045866255,
+          "p50Ms": 0.626958,
+          "p99Ms": 1.336584,
+          "totalRequests": 963011,
+          "successRate": 0.9999345844659911,
+          "elapsedSec": 10.004016833
+        }
+      },
+      "ratio": 0.9851387387602362,
+      "deltaPercent": -1.4861261239763834,
+      "deltaMicrosPerRequest": 0.1543726729225448,
+      "runSpread": {
+        "baseline": 0.042748502248081605,
+        "typeway": 0.051662896718148534
+      }
+    },
+    {
+      "id": "bridge-res-end-get",
+      "label": "bridge res.end (GET /ok)",
+      "question": "What does a request cost when it actually traverses the bridge?",
+      "baseline": {
+        "label": "elysia-handler",
+        "command": "bun run bench/servers/elysia-handler.ts",
+        "path": "/ok",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 98397.38175699425,
+            "p50Ms": 0.6045,
+            "p99Ms": 1.295042,
+            "totalRequests": 984170,
+            "successRate": 0.9999370067219924,
+            "elapsedSec": 10.002623875
+          },
+          {
+            "rps": 105080.1178199375,
+            "p50Ms": 0.58775,
+            "p99Ms": 1.243708,
+            "totalRequests": 1050984,
+            "successRate": 0.9999400597689733,
+            "elapsedSec": 10.002339375
+          },
+          {
+            "rps": 98947.1460175388,
+            "p50Ms": 0.6046670000000001,
+            "p99Ms": 1.2912080000000001,
+            "totalRequests": 989746,
+            "successRate": 0.9999373615893183,
+            "elapsedSec": 10.003401208
+          }
+        ],
+        "median": {
+          "rps": 98947.1460175388,
+          "p50Ms": 0.6046670000000001,
+          "p99Ms": 1.2912080000000001,
+          "totalRequests": 989746,
+          "successRate": 0.9999373615893183,
+          "elapsedSec": 10.003401208
+        }
+      },
+      "typeway": {
+        "label": "bridge-direct",
+        "command": "bun run bench/servers/bridge-direct.ts",
+        "path": "/ok",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 47332.94829622956,
+            "p50Ms": 1.233375,
+            "p99Ms": 2.7065840000000003,
+            "totalRequests": 473443,
+            "successRate": 0.9998817315348079,
+            "elapsedSec": 10.003581375
+          },
+          {
+            "rps": 49194.336168738344,
+            "p50Ms": 1.1930420000000002,
+            "p99Ms": 2.5855,
+            "totalRequests": 492036,
+            "successRate": 0.9998740088356385,
+            "elapsedSec": 10.003143417
+          },
+          {
+            "rps": 47007.18070976989,
+            "p50Ms": 1.2545,
+            "p99Ms": 2.7135000000000002,
+            "totalRequests": 470117,
+            "successRate": 0.9998660087626016,
+            "elapsedSec": 10.002301625
+          }
+        ],
+        "median": {
+          "rps": 47332.94829622956,
+          "p50Ms": 1.233375,
+          "p99Ms": 2.7065840000000003,
+          "totalRequests": 473443,
+          "successRate": 0.9998817315348079,
+          "elapsedSec": 10.003581375
+        }
+      },
+      "ratio": 0.4783659782146682,
+      "deltaPercent": -52.16340217853318,
+      "deltaMicrosPerRequest": 11.020526727401936,
+      "runSpread": {
+        "baseline": 0.0679157914937938,
+        "typeway": 0.046528113916729286
+      }
+    },
+    {
+      "id": "bridge-res-end-post-1kb",
+      "label": "bridge res.end (POST 1KB)",
+      "question": "What does the raw body-streaming path cost?",
+      "baseline": {
+        "label": "elysia-handler",
+        "command": "bun run bench/servers/elysia-handler.ts",
+        "path": "/ok",
+        "method": "POST",
+        "runs": [
+          {
+            "rps": 81451.55590931355,
+            "p50Ms": 0.7360840000000001,
+            "p99Ms": 1.698041,
+            "totalRequests": 814627,
+            "successRate": 0.9999238973399666,
+            "elapsedSec": 10.002129375
+          },
+          {
+            "rps": 77922.2931241311,
+            "p50Ms": 0.75325,
+            "p99Ms": 1.9195,
+            "totalRequests": 779351,
+            "successRate": 0.9999204529562632,
+            "elapsedSec": 10.002439209
+          },
+          {
+            "rps": 80932.58642115748,
+            "p50Ms": 0.7388330000000001,
+            "p99Ms": 1.742417,
+            "totalRequests": 809523,
+            "successRate": 0.9999209473472277,
+            "elapsedSec": 10.003226584
+          }
+        ],
+        "median": {
+          "rps": 80932.58642115748,
+          "p50Ms": 0.7388330000000001,
+          "p99Ms": 1.742417,
+          "totalRequests": 809523,
+          "successRate": 0.9999209473472277,
+          "elapsedSec": 10.003226584
+        }
+      },
+      "typeway": {
+        "label": "bridge-direct",
+        "command": "bun run bench/servers/bridge-direct.ts",
+        "path": "/ok",
+        "method": "POST",
+        "runs": [
+          {
+            "rps": 26993.65629383401,
+            "p50Ms": 2.056042,
+            "p99Ms": 4.9731250000000005,
+            "totalRequests": 269959,
+            "successRate": 0.9997629831532869,
+            "elapsedSec": 10.003202125
+          },
+          {
+            "rps": 26231.77187639067,
+            "p50Ms": 2.116333,
+            "p99Ms": 5.1232500000000005,
+            "totalRequests": 262335,
+            "successRate": 0.999759906706606,
+            "elapsedSec": 10.003060458
+          },
+          {
+            "rps": 26536.69646770517,
+            "p50Ms": 2.105167,
+            "p99Ms": 5.039333,
+            "totalRequests": 265411,
+            "successRate": 0.999758922685752,
+            "elapsedSec": 10.004071167
+          }
+        ],
+        "median": {
+          "rps": 26536.69646770517,
+          "p50Ms": 2.105167,
+          "p99Ms": 5.039333,
+          "totalRequests": 265411,
+          "successRate": 0.999758922685752,
+          "elapsedSec": 10.004071167
+        }
+      },
+      "ratio": 0.3278864254950824,
+      "deltaPercent": -67.21135745049176,
+      "deltaMicrosPerRequest": 25.32770329279198,
+      "runSpread": {
+        "baseline": 0.04529208065733249,
+        "typeway": 0.029044336807802797
+      }
+    },
+    {
+      "id": "tanstack-ssr",
+      "label": "TanStack SSR (GET /)",
+      "question": "What does hosting TanStack Start under Elysia cost vs standalone?",
+      "baseline": {
+        "label": "tanstack-standalone",
+        "command": "bun run bench/servers/tanstack-standalone.ts",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4716.923656983023,
+            "p50Ms": 13.368,
+            "p99Ms": 25.263333,
+            "totalRequests": 47116,
+            "successRate": 0.9986434930055108,
+            "elapsedSec": 10.002281875
+          },
+          {
+            "rps": 4934.958924912155,
+            "p50Ms": 12.734708000000001,
+            "p99Ms": 25.056166,
+            "totalRequests": 49299,
+            "successRate": 0.9987034823653343,
+            "elapsedSec": 10.0027175
+          },
+          {
+            "rps": 4710.269574397382,
+            "p50Ms": 13.376375,
+            "p99Ms": 25.440250000000002,
+            "totalRequests": 47050,
+            "successRate": 0.9986415927325211,
+            "elapsedSec": 10.002399917
+          }
+        ],
+        "median": {
+          "rps": 4716.923656983023,
+          "p50Ms": 13.368,
+          "p99Ms": 25.263333,
+          "totalRequests": 47116,
+          "successRate": 0.9986434930055108,
+          "elapsedSec": 10.002281875
+        }
+      },
+      "typeway": {
+        "label": "server.prod.ts (dist/app)",
+        "command": "bun dist/app",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4478.884319819687,
+            "p50Ms": 13.997375,
+            "p99Ms": 26.96925,
+            "totalRequests": 44735,
+            "successRate": 0.9985713966829617,
+            "elapsedSec": 10.002267708
+          },
+          {
+            "rps": 4429.791764100043,
+            "p50Ms": 14.1685,
+            "p99Ms": 27.23475,
+            "totalRequests": 44250,
+            "successRate": 0.9985557611590017,
+            "elapsedSec": 10.0036305
+          },
+          {
+            "rps": 4448.685034355011,
+            "p50Ms": 14.146,
+            "p99Ms": 26.896584,
+            "totalRequests": 44439,
+            "successRate": 0.9985618947037278,
+            "elapsedSec": 10.003630209
+          }
+        ],
+        "median": {
+          "rps": 4448.685034355011,
+          "p50Ms": 14.146,
+          "p99Ms": 26.896584,
+          "totalRequests": 44439,
+          "successRate": 0.9985618947037278,
+          "elapsedSec": 10.003630209
+        }
+      },
+      "ratio": 0.9431327190909894,
+      "deltaPercent": -5.686728090901061,
+      "deltaMicrosPerRequest": 12.782941581580284,
+      "runSpread": {
+        "baseline": 0.04770201513222728,
+        "typeway": 0.011082361956040584
+      }
+    },
+    {
+      "id": "tanstack-ssr-unbundled",
+      "label": "TanStack SSR (unbundled server.prod.ts)",
+      "question": "Splits the tanstack-ssr delta in two: how much is Elysia hosting, and how much is the app's `bun build --target bun` re-bundling step? Same source as dist/app, just not bundled.",
+      "baseline": {
+        "label": "tanstack-standalone",
+        "command": "bun run bench/servers/tanstack-standalone.ts",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4887.987696850697,
+            "p50Ms": 12.864167,
+            "p99Ms": 25.192,
+            "totalRequests": 48833,
+            "successRate": 0.9986911262449639,
+            "elapsedSec": 10.003503084
+          },
+          {
+            "rps": 4713.3894765075165,
+            "p50Ms": 13.351125,
+            "p99Ms": 25.522042000000003,
+            "totalRequests": 47086,
+            "successRate": 0.9986638104731808,
+            "elapsedSec": 10.00320475
+          },
+          {
+            "rps": 4875.330251136032,
+            "p50Ms": 12.864792,
+            "p99Ms": 25.460416,
+            "totalRequests": 48700,
+            "successRate": 0.9986875563940611,
+            "elapsedSec": 10.002194208
+          }
+        ],
+        "median": {
+          "rps": 4875.330251136032,
+          "p50Ms": 12.864792,
+          "p99Ms": 25.460416,
+          "totalRequests": 48700,
+          "successRate": 0.9986875563940611,
+          "elapsedSec": 10.002194208
+        }
+      },
+      "typeway": {
+        "label": "server.prod.ts (unbundled)",
+        "command": "bun run server.prod.ts",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4745.352173121502,
+            "p50Ms": 13.057457999999999,
+            "p99Ms": 26.406417,
+            "totalRequests": 47404,
+            "successRate": 0.9986517232662004,
+            "elapsedSec": 10.003051042
+          },
+          {
+            "rps": 4810.318970667598,
+            "p50Ms": 12.955084000000001,
+            "p99Ms": 25.139374999999998,
+            "totalRequests": 48059,
+            "successRate": 0.9986700746005028,
+            "elapsedSec": 10.004118291
+          },
+          {
+            "rps": 4804.670061718235,
+            "p50Ms": 13.027917,
+            "p99Ms": 25.1165,
+            "totalRequests": 47994,
+            "successRate": 0.998668275833368,
+            "elapsedSec": 10.00235175
+          }
+        ],
+        "median": {
+          "rps": 4804.670061718235,
+          "p50Ms": 13.027917,
+          "p99Ms": 25.1165,
+          "totalRequests": 47994,
+          "successRate": 0.998668275833368,
+          "elapsedSec": 10.00235175
+        }
+      },
+      "ratio": 0.9855065840101126,
+      "deltaPercent": -1.4493415989887404,
+      "deltaMicrosPerRequest": 3.0165267965776326,
+      "runSpread": {
+        "baseline": 0.037043028422202987,
+        "typeway": 0.01369061666572998
+      }
+    },
+    {
+      "id": "tanstack-static-asset",
+      "label": "static asset (GET /assets/about-Bx9vy6et.js)",
+      "question": "What does our prod static-file path cost vs standalone?",
+      "baseline": {
+        "label": "tanstack-standalone",
+        "command": "bun run bench/servers/tanstack-standalone.ts",
+        "path": "/assets/about-Bx9vy6et.js",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 27758.262998346017,
+            "p50Ms": 2.226792,
+            "p99Ms": 4.4945829999999996,
+            "totalRequests": 277614,
+            "successRate": 0.9997731176870969,
+            "elapsedSec": 10.003399709
+          },
+          {
+            "rps": 29322.25025241174,
+            "p50Ms": 2.1109169999999997,
+            "p99Ms": 4.242625,
+            "totalRequests": 293237,
+            "successRate": 0.9997852028639618,
+            "elapsedSec": 10.002642958
+          },
+          {
+            "rps": 27696.286536467964,
+            "p50Ms": 2.232291,
+            "p99Ms": 4.51,
+            "totalRequests": 276967,
+            "successRate": 0.9997725878063748,
+            "elapsedSec": 10.002423958
+          }
+        ],
+        "median": {
+          "rps": 27758.262998346017,
+          "p50Ms": 2.226792,
+          "p99Ms": 4.4945829999999996,
+          "totalRequests": 277614,
+          "successRate": 0.9997731176870969,
+          "elapsedSec": 10.003399709
+        }
+      },
+      "typeway": {
+        "label": "server.prod.ts (dist/app)",
+        "command": "bun dist/app",
+        "path": "/assets/about-Bx9vy6et.js",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 30153.812540676292,
+            "p50Ms": 2.0413330000000003,
+            "p99Ms": 4.125458999999999,
+            "totalRequests": 301563,
+            "successRate": 0.9997878174036144,
+            "elapsedSec": 10.002947375
+          },
+          {
+            "rps": 28796.873150461524,
+            "p50Ms": 2.150292,
+            "p99Ms": 4.3368340000000005,
+            "totalRequests": 288009,
+            "successRate": 0.9997847752810939,
+            "elapsedSec": 10.003551375
+          },
+          {
+            "rps": 28830.813660930144,
+            "p50Ms": 2.142625,
+            "p99Ms": 4.332,
+            "totalRequests": 288346,
+            "successRate": 0.9997815602148338,
+            "elapsedSec": 10.003498458
+          }
+        ],
+        "median": {
+          "rps": 28830.813660930144,
+          "p50Ms": 2.142625,
+          "p99Ms": 4.332,
+          "totalRequests": 288346,
+          "successRate": 0.9997815602148338,
+          "elapsedSec": 10.003498458
+        }
+      },
+      "ratio": 1.038638968967476,
+      "deltaPercent": 3.8638968967475984,
+      "deltaMicrosPerRequest": -1.3401969650213912,
+      "runSpread": {
+        "baseline": 0.05870692137022973,
+        "typeway": 0.04712106703824613
+      }
+    },
+    {
+      "id": "tanstack-ssr-via-bridge",
+      "label": "TanStack SSR via connect() fallback",
+      "question": "Extra: what would SSR cost if prod routed through the bridge, as dev does? (server.prod.ts does NOT use connect())",
+      "baseline": {
+        "label": "tanstack-standalone",
+        "command": "bun run bench/servers/tanstack-standalone.ts",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4779.226503543031,
+            "p50Ms": 13.147708,
+            "p99Ms": 25.406458999999998,
+            "totalRequests": 47747,
+            "successRate": 0.9986613959130743,
+            "elapsedSec": 10.003920083
+          },
+          {
+            "rps": 4728.039108955049,
+            "p50Ms": 13.317625,
+            "p99Ms": 25.418667,
+            "totalRequests": 47228,
+            "successRate": 0.9986467055738815,
+            "elapsedSec": 10.002455333
+          },
+          {
+            "rps": 4895.714604583739,
+            "p50Ms": 12.799708,
+            "p99Ms": 25.024333,
+            "totalRequests": 48909,
+            "successRate": 0.9986931574541074,
+            "elapsedSec": 10.003238333
+          }
+        ],
+        "median": {
+          "rps": 4779.226503543031,
+          "p50Ms": 13.147708,
+          "p99Ms": 25.406458999999998,
+          "totalRequests": 47747,
+          "successRate": 0.9986613959130743,
+          "elapsedSec": 10.003920083
+        }
+      },
+      "typeway": {
+        "label": "tanstack-via-connect",
+        "command": "bun run bench/servers/tanstack-via-connect.ts",
+        "path": "/",
+        "method": "GET",
+        "runs": [
+          {
+            "rps": 4603.123099350907,
+            "p50Ms": 13.557292,
+            "p99Ms": 26.375833,
+            "totalRequests": 45978,
+            "successRate": 0.9986099648147344,
+            "elapsedSec": 10.0023395
+          },
+          {
+            "rps": 4811.267070170606,
+            "p50Ms": 12.999666,
+            "p99Ms": 25.608542,
+            "totalRequests": 48064,
+            "successRate": 0.9986702127659575,
+            "elapsedSec": 10.003186125
+          },
+          {
+            "rps": 4661.616961887331,
+            "p50Ms": 13.431292,
+            "p99Ms": 25.75175,
+            "totalRequests": 46569,
+            "successRate": 0.9986275813265284,
+            "elapsedSec": 10.003610417
+          }
+        ],
+        "median": {
+          "rps": 4661.616961887331,
+          "p50Ms": 13.431292,
+          "p99Ms": 25.75175,
+          "totalRequests": 46569,
+          "successRate": 0.9986275813265284,
+          "elapsedSec": 10.003610417
+        }
+      },
+      "ratio": 0.9753915112479998,
+      "deltaPercent": -2.460848875200017,
+      "deltaMicrosPerRequest": 5.278959844447846,
+      "runSpread": {
+        "baseline": 0.03546406697675302,
+        "typeway": 0.04521798924930972
+      }
+    }
+  ]
+}

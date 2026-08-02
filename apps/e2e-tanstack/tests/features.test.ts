@@ -210,6 +210,19 @@ for (const mode of modes) {
       expect(served).toEqual(onDisk);
     });
 
+    test("8b. dev and prod run the same server entry module", async () => {
+      // `src/server.ts` answers /__entry itself, before delegating to TanStack.
+      // This must hold in BOTH modes: dev imports that source through Vite's SSR
+      // runner, prod runs its compiled output. It previously did not — dev used
+      // `src/tanstack-server.ts` while the build, finding no `src/server.ts`,
+      // compiled TanStack's packaged default entry instead, so customizations
+      // in the dev entry never reached production. See src/server.ts.
+      const res = await fetch(`${base}/__entry`);
+
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("src/server.ts");
+    });
+
     test("9. SSE from a TanStack file server route streams event by event", async () => {
       const res = await fetch(`${base}/sse`, {
         headers: { accept: "text/event-stream" },

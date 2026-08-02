@@ -11,7 +11,8 @@ bun run --filter e2e-tanstack test:integration   # dev + prod, ~5s incl. build
 
 Every test runs against both servers, because they are different failure
 surfaces: dev is Vite middlewareMode through `connect()` with SSR in the
-`fallback`, prod is the built handler plus `Bun.file` statics (no bridge at all).
+`fallback`, prod is the built handler `.mount()`ed on Elysia behind a boot-time
+manifest of `dist/client` as static routes (no bridge at all).
 
 | Route / fixture | Feature |
 |---|---|
@@ -25,6 +26,7 @@ surfaces: dev is Vite middlewareMode through `connect()` with SSR in the
 | `src/routes/sse.ts` | SSE via a TanStack file server route |
 | `/api/hello`, `/api/sse` | Elysia routes — bridge-bypass controls |
 | `public/pixel.png` | binary static asset |
+| `/__entry` | answered by `src/server.ts` itself — proves dev and prod run the same entry module |
 | `server/dev-bridge-probes.ts` | `/__bridge/*` — Connect middleware that exercises the bridge directly |
 
 ## Gotchas these tests encode

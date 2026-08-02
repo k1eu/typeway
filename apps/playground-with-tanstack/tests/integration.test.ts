@@ -118,10 +118,21 @@ describe("dev server (Vite middlewareMode through connect)", () => {
     expect(await second.text()).toBe("")
   })
 
-  // Plan 01 has no POST endpoint to exercise; request-body forwarding through
-  // the bridge is covered by packages/connect unit tests, and end-to-end
-  // POSTs (server functions / form actions) land in plan 02's fixture app.
-  test.skip("POST body reaches the SSR handler", () => {})
+  test("rendering demo: SSG and SSR pages ship markup, the SPA page does not", async () => {
+    // Prerendering is a build step, so in dev the SSG page is server-rendered
+    // like any other; what must hold in *both* modes is `ssr: false`.
+    for (const [path, marker] of [
+      ["/rendering/ssg", "ssg-content-in-html"],
+      ["/rendering/ssr", "ssr-content-in-html"],
+    ] as const) {
+      const html = await (await fetch(server.url + path)).text()
+      expect(html).toContain(marker)
+    }
+
+    const spa = await (await fetch(server.url + "/rendering/spa")).text()
+    expectSsrDocument(spa)
+    expect(spa).not.toContain("spa-content-in-browser-only")
+  })
 })
 
 describe.skipIf(process.env.SKIP_BUILD === "1")(
@@ -165,6 +176,49 @@ describe.skipIf(process.env.SKIP_BUILD === "1")(
       expect(res.status).toBe(200)
       expect(res.headers.get("content-type")).toContain("javascript")
       expect((await res.text()).length).toBeGreaterThan(0)
+    })
+
+    test("prerendered page is written to dist/client and served as a static route", async () => {
+      const file = Bun.file(
+        appPath("dist", "client", "rendering", "ssg", "index.html"),
+      )
+      expect(await file.exists()).toBe(true)
+      const onDisk = await file.text()
+
+      // Served at the clean URL (and its trailing-slash form), byte-identical
+      // to the prerendered file — i.e. the SSR mount never saw the request.
+      for (const path of ["/rendering/ssg", "/rendering/ssg/"]) {
+        const res = await fetch(server.url + path)
+        expect(res.status).toBe(200)
+        expect(res.headers.get("content-type")).toContain("text/html")
+        expect(await res.text()).toBe(onDisk)
+      }
+    })
+
+    test("SSR page is re-rendered per request, the SSG page is not", async () => {
+      const stamp = async (path: string) => {
+        const html = await (await fetch(server.url + path)).text()
+        return html.match(/\d\d:\d\d:\d\d\.\d+ UTC/)?.[0]
+      }
+
+      const [ssg1, ssr1] = await Promise.all([
+        stamp("/rendering/ssg"),
+        stamp("/rendering/ssr"),
+      ])
+      expect(ssg1).toBeTruthy()
+      expect(ssr1).toBeTruthy()
+
+      await Bun.sleep(20)
+      expect(await stamp("/rendering/ssg")).toBe(ssg1!)
+      expect(await stamp("/rendering/ssr")).not.toBe(ssr1!)
+    })
+
+    test("ssr: false keeps the SPA route's markup out of the response", async () => {
+      const res = await fetch(server.url + "/rendering/spa")
+      expect(res.status).toBe(200)
+      const html = await res.text()
+      expectSsrDocument(html)
+      expect(html).not.toContain("spa-content-in-browser-only")
     })
 
     test("unknown extensionless path falls through to the SSR handler", async () => {

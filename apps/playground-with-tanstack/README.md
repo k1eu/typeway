@@ -17,6 +17,33 @@ To build this application for production:
 bun --bun run build
 ```
 
+## Rendering modes (`/rendering`)
+
+The header's **Rendering** menu holds one page per rendering strategy. Each runs
+the same loader — it stamps the time and records where it ran — so the
+difference between them is visible on a hard reload:
+
+| Page              | Rendered            | Turned on by                                            |
+| ----------------- | ------------------- | ------------------------------------------------------- |
+| `/rendering/ssg`  | once, at build time | `pages: [{ path, prerender }]` in `vite.config.ts`       |
+| `/rendering/ssr`  | per request, server | nothing — this is the default                            |
+| `/rendering/spa`  | in the browser      | `ssr: false` in the route options                        |
+
+Notes worth knowing:
+
+- **SSG only exists in a production build.** `bun run dev` renders every page per
+  request; prerendering runs at the end of `bun run build`, writing
+  `dist/client/rendering/ssg/index.html`.
+- `server.prod.ts` registers that file under its clean URL (`/rendering/ssg`), so
+  the request is answered by Elysia's static route and never reaches the SSR
+  handler.
+- `crawlLinks` is off for the prerendered page — left on (the default), the
+  prerenderer follows every `<a>` in the rendered HTML and statically generates
+  the whole site.
+- The demo routes set `staleTime: Infinity`; with the router's default of `0` the
+  loader revalidates right after hydration and overwrites the server/build
+  timestamp with a browser one.
+
 ## Styling
 
 This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.

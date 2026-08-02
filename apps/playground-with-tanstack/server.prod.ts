@@ -43,6 +43,21 @@ for (const file of files) {
   const path = `/${file}`;
   const source = `${CLIENT_DIR}/${file}`;
   app.all(path, () => new Response(Bun.file(source)));
+
+  /**
+   * Prerendered pages (see `pages` in vite.config.ts) land here as
+   * `<route>/index.html`, but nobody requests them under that name — they are
+   * requested as `/rendering/ssg`. Register the directory form too, otherwise
+   * the request falls through to the SSR mount below and the page is rendered
+   * again per request, which is precisely what prerendering it was meant to
+   * avoid.
+   */
+  if (file.endsWith("index.html")) {
+    const dir = path.slice(0, -"index.html".length); // keeps the trailing slash
+    const clean = dir === "/" ? "/" : dir.slice(0, -1);
+    app.all(clean, () => new Response(Bun.file(source)));
+    if (clean !== "/") app.all(dir, () => new Response(Bun.file(source)));
+  }
 }
 
 /**

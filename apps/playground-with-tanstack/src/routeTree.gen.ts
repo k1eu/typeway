@@ -11,6 +11,11 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as RenderingRouteImport } from './routes/rendering'
+import { Route as RenderingIndexRouteImport } from './routes/rendering/index'
+import { Route as RenderingSpaRouteImport } from './routes/rendering/spa'
+import { Route as RenderingSsgRouteImport } from './routes/rendering/ssg'
+import { Route as RenderingSsrRouteImport } from './routes/rendering/ssr'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +27,92 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RenderingRoute = RenderingRouteImport.update({
+  id: '/rendering',
+  path: '/rendering',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RenderingIndexRoute = RenderingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => RenderingRoute,
+} as any)
+const RenderingSpaRoute = RenderingSpaRouteImport.update({
+  id: '/spa',
+  path: '/spa',
+  getParentRoute: () => RenderingRoute,
+} as any)
+const RenderingSsgRoute = RenderingSsgRouteImport.update({
+  id: '/ssg',
+  path: '/ssg',
+  getParentRoute: () => RenderingRoute,
+} as any)
+const RenderingSsrRoute = RenderingSsrRouteImport.update({
+  id: '/ssr',
+  path: '/ssr',
+  getParentRoute: () => RenderingRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/rendering': typeof RenderingRouteWithChildren
+  '/rendering/spa': typeof RenderingSpaRoute
+  '/rendering/ssg': typeof RenderingSsgRoute
+  '/rendering/ssr': typeof RenderingSsrRoute
+  '/rendering/': typeof RenderingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/rendering/spa': typeof RenderingSpaRoute
+  '/rendering/ssg': typeof RenderingSsgRoute
+  '/rendering/ssr': typeof RenderingSsrRoute
+  '/rendering': typeof RenderingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/rendering': typeof RenderingRouteWithChildren
+  '/rendering/spa': typeof RenderingSpaRoute
+  '/rendering/ssg': typeof RenderingSsgRoute
+  '/rendering/ssr': typeof RenderingSsrRoute
+  '/rendering/': typeof RenderingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/rendering'
+    | '/rendering/spa'
+    | '/rendering/ssg'
+    | '/rendering/ssr'
+    | '/rendering/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about'
-  id: '__root__' | '/' | '/about'
+  to:
+    | '/'
+    | '/about'
+    | '/rendering/spa'
+    | '/rendering/ssg'
+    | '/rendering/ssr'
+    | '/rendering'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/rendering'
+    | '/rendering/spa'
+    | '/rendering/ssg'
+    | '/rendering/ssr'
+    | '/rendering/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  RenderingRoute: typeof RenderingRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +131,66 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/rendering': {
+      id: '/rendering'
+      path: '/rendering'
+      fullPath: '/rendering'
+      preLoaderRoute: typeof RenderingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rendering/': {
+      id: '/rendering/'
+      path: '/'
+      fullPath: '/rendering/'
+      preLoaderRoute: typeof RenderingIndexRouteImport
+      parentRoute: typeof RenderingRoute
+    }
+    '/rendering/spa': {
+      id: '/rendering/spa'
+      path: '/spa'
+      fullPath: '/rendering/spa'
+      preLoaderRoute: typeof RenderingSpaRouteImport
+      parentRoute: typeof RenderingRoute
+    }
+    '/rendering/ssg': {
+      id: '/rendering/ssg'
+      path: '/ssg'
+      fullPath: '/rendering/ssg'
+      preLoaderRoute: typeof RenderingSsgRouteImport
+      parentRoute: typeof RenderingRoute
+    }
+    '/rendering/ssr': {
+      id: '/rendering/ssr'
+      path: '/ssr'
+      fullPath: '/rendering/ssr'
+      preLoaderRoute: typeof RenderingSsrRouteImport
+      parentRoute: typeof RenderingRoute
+    }
   }
 }
+
+interface RenderingRouteChildren {
+  RenderingSpaRoute: typeof RenderingSpaRoute
+  RenderingSsgRoute: typeof RenderingSsgRoute
+  RenderingSsrRoute: typeof RenderingSsrRoute
+  RenderingIndexRoute: typeof RenderingIndexRoute
+}
+
+const RenderingRouteChildren: RenderingRouteChildren = {
+  RenderingSpaRoute: RenderingSpaRoute,
+  RenderingSsgRoute: RenderingSsgRoute,
+  RenderingSsrRoute: RenderingSsrRoute,
+  RenderingIndexRoute: RenderingIndexRoute,
+}
+
+const RenderingRouteWithChildren = RenderingRoute._addFileChildren(
+  RenderingRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  RenderingRoute: RenderingRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

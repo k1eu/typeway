@@ -1,5 +1,6 @@
 import { Elysia } from "elysia";
 import { backend } from "./server/app";
+import { listen } from "./server/listen";
 
 const CLIENT_DIR = "./dist/client";
 
@@ -72,9 +73,9 @@ app.mount((request) => handler.fetch(request));
 
 const port = Number(process.env.PORT ?? 3000);
 
-app.listen(port, () =>
+listen(app, port, ({ port: bound }) =>
   console.log(
-    `Server running on localhost:${port} ` +
+    `Server running on localhost:${bound} ` +
       `(${files.length} static assets, SSR mounted)`,
   ),
 );

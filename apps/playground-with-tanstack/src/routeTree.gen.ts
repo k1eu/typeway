@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as RenderingRouteImport } from './routes/rendering'
+import { Route as NotesIndexRouteImport } from './routes/notes/index'
 import { Route as RenderingIndexRouteImport } from './routes/rendering/index'
 import { Route as RenderingSpaRouteImport } from './routes/rendering/spa'
 import { Route as RenderingSsgRouteImport } from './routes/rendering/ssg'
@@ -30,6 +31,11 @@ const AboutRoute = AboutRouteImport.update({
 const RenderingRoute = RenderingRouteImport.update({
   id: '/rendering',
   path: '/rendering',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesIndexRoute = NotesIndexRouteImport.update({
+  id: '/notes/',
+  path: '/notes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RenderingIndexRoute = RenderingIndexRouteImport.update({
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
+  '/notes/': typeof NotesIndexRoute
   '/rendering/': typeof RenderingIndexRoute
 }
 export interface FileRoutesByTo {
@@ -68,6 +75,7 @@ export interface FileRoutesByTo {
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
+  '/notes': typeof NotesIndexRoute
   '/rendering': typeof RenderingIndexRoute
 }
 export interface FileRoutesById {
@@ -78,6 +86,7 @@ export interface FileRoutesById {
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
+  '/notes/': typeof NotesIndexRoute
   '/rendering/': typeof RenderingIndexRoute
 }
 export interface FileRouteTypes {
@@ -89,6 +98,7 @@ export interface FileRouteTypes {
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
+    | '/notes/'
     | '/rendering/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
+    | '/notes'
     | '/rendering'
   id:
     | '__root__'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
+    | '/notes/'
     | '/rendering/'
   fileRoutesById: FileRoutesById
 }
@@ -113,6 +125,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   RenderingRoute: typeof RenderingRouteWithChildren
+  NotesIndexRoute: typeof NotesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -136,6 +149,13 @@ declare module '@tanstack/react-router' {
       path: '/rendering'
       fullPath: '/rendering'
       preLoaderRoute: typeof RenderingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes/': {
+      id: '/notes/'
+      path: '/notes'
+      fullPath: '/notes/'
+      preLoaderRoute: typeof NotesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rendering/': {
@@ -191,6 +211,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   RenderingRoute: RenderingRouteWithChildren,
+  NotesIndexRoute: NotesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

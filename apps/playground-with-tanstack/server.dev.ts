@@ -3,6 +3,7 @@ import { Elysia } from "elysia";
 import { createServer, isRunnableDevEnvironment } from "vite";
 import { backend } from "./server/app";
 import * as entry from "./server/entry";
+import { listen } from "./server/listen";
 
 const viteDevServer = await createServer({
   server: { middlewareMode: true },
@@ -43,6 +44,6 @@ const app = new Elysia()
 
 const port = Number(process.env.PORT ?? 3000);
 
-app.listen(port, () =>
-  console.log(`Server running on localhost:${port} (development)`),
+listen(app, port, ({ port: bound }) =>
+  console.log(`Server running on localhost:${bound} (development)`),
 );

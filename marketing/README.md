@@ -4,6 +4,25 @@ The Typeway "coming soon" page. One self-contained `index.html` — no build ste
 dependencies, no framework. Fonts come from Google Fonts with local fallbacks, so the
 page renders fine offline too.
 
+## Themes
+
+Four themes ship in the file. Pick one by editing the `data-theme` attribute on `<html>`:
+
+| `data-theme` | Look |
+| --- | --- |
+| `slate` | Monochrome dark. No chroma at all — white accent, highlight made by dimming the surrounding text. The default. |
+| `terminal` | Black with a phosphor-green accent. Leans into the CLI identity. |
+| `paper` | Warm light editorial. Ink text, rust accent, dark code cards for contrast. |
+| `ember` | Warm dark with an orange accent. |
+
+Every colour decision lives in the `[data-theme="…"]` blocks at the top of the stylesheet;
+nothing below them hardcodes a colour. A new theme is one more variable set — no markup
+changes, no duplicated file.
+
+To compare them, add `?themes` to the URL for a floating switcher, or `?theme=paper` to
+load one directly. The switcher only renders with `?themes` present, so the deployed page
+shows nothing but the chosen theme.
+
 ## Preview locally
 
 ```sh

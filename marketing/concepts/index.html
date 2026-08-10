@@ -63,6 +63,20 @@
 
       header p.lede { margin: 18px 0 0; color: var(--muted); max-width: 66ch; font-size: 16.5px; }
 
+      header p.chosen {
+        margin: 20px 0 0;
+        padding: 14px 16px;
+        border: 1px solid rgba(111, 211, 176, 0.32);
+        border-radius: 10px;
+        background: rgba(111, 211, 176, 0.06);
+        color: var(--muted);
+        max-width: 74ch;
+        font-size: 14.5px;
+      }
+
+      header p.chosen b { color: #6fd3b0; font-weight: 600; }
+      header p.chosen a { color: var(--fg); }
+
       .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 22px 0 60px; }
 
       a.concept {
@@ -157,12 +171,17 @@
         substance underneath — the same benchmarks, the same roadmap, the same honesty about what is not
         built. They differ in what the visitor is asked to do with it.
       </p>
+      <p class="chosen">
+        <b>Decided.</b> The live page is <a href="../index.html">Workspace</a>, with the CLI terminal from the
+        product page as a fifth editor tab and the build log as its roadmap section. These four stay here as
+        the alternatives that lost.
+      </p>
     </header>
 
     <div class="wrap grid">
-      <a class="concept" href="../index.html">
+      <a class="concept" href="product.html">
         <div class="swatch sw-product">$ typeway new storefront</div>
-        <h2>Product page <span class="file">index.html</span></h2>
+        <h2>Product page <span class="file">product.html</span></h2>
         <p>
           The conventional shape, done well: hero, animated CLI terminal, proof stats, stack cards, a
           roadmap grid with honest status pills. Four themes built in, swappable from one attribute.
@@ -201,7 +220,7 @@
 
       <a class="concept" href="workspace.html">
         <div class="swatch sw-workspace">README.md · AGENTS.md · llms.txt</div>
-        <h2>Workspace <span class="file">workspace.html</span></h2>
+        <h2>Workspace <span class="file">workspace.html — chosen</span></h2>
         <p>
           A generated Typeway app open in an editor. The file rail is the conventions, and the tabs are the
           same project read four ways — README for people, AGENTS.md and llms.txt for agents, the entry file

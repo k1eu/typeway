@@ -1,0 +1,902 @@
+<!doctype html>
+<!--
+  Concept: WORKSPACE
+  The pitch is "you already know where everything is", so the page shows a
+  Typeway app open in an editor instead of describing one. The same project is
+  readable four ways — README.md for people, AGENTS.md and llms.txt for the
+  things writing code next to them, and the entry file itself. The marketing
+  copy lives inside the README tab, where it would actually live.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typeway — every app has the same shape</title>
+    <meta
+      name="description"
+      content="Typeway is a batteries-included TypeScript framework over Bun, Elysia, Vite and TypeBox. One project layout, documented for humans and agents alike. Coming soon."
+    />
+    <meta name="theme-color" content="#0d1015" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d1015'/%3E%3Cpath d='M8 11h16M16 11v13' stroke='%23dfe6f0' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0d1015;
+        --chrome: #12161d;
+        --pane: #0f131a;
+        --rail: #10141b;
+        --line: rgba(255, 255, 255, 0.085);
+        --line-2: rgba(255, 255, 255, 0.15);
+        --fg: #e4e9f1;
+        --muted: #98a1b0;
+        --dim: #6a7383;
+        --accent: #6fd3b0;
+        --folder: #7ea6d8;
+        --md: #d8c98a;
+        --ts: #7fb8e6;
+        --txt: #9aa3b2;
+        --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; }
+
+      .wrap { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+
+      /* ---------- top bar ---------- */
+
+      .topbar { border-bottom: 1px solid var(--line); }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        height: 58px;
+      }
+
+      .logo {
+        width: 25px;
+        height: 25px;
+        border-radius: 7px;
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .topbar b { font-weight: 600; letter-spacing: -0.01em; }
+
+      .soon {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        border: 1px solid rgba(111, 211, 176, 0.35);
+        border-radius: 999px;
+        padding: 3px 10px;
+      }
+
+      .topbar .right { margin-left: auto; display: flex; gap: 18px; font-size: 13.5px; color: var(--muted); }
+      .topbar .right a { text-decoration: none; }
+      .topbar .right a:hover { color: var(--fg); }
+
+      /* ---------- intro ---------- */
+
+      .intro { padding: 38px 0 24px; }
+
+      .intro h1 {
+        margin: 0;
+        font-size: clamp(26px, 3.3vw, 34px);
+        line-height: 1.13;
+        letter-spacing: -0.03em;
+        font-weight: 600;
+        max-width: 21ch;
+      }
+
+      .intro p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 15.5px;
+        max-width: 78ch;
+      }
+
+      .intro .hint {
+        margin-top: 14px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+      }
+
+      .intro .hint kbd {
+        font-family: var(--mono);
+        font-size: 11px;
+        border: 1px solid var(--line-2);
+        border-bottom-width: 2px;
+        border-radius: 5px;
+        padding: 1px 6px;
+        color: var(--muted);
+      }
+
+      /* ---------- editor shell ---------- */
+
+      .editor {
+        margin: 26px 0 0;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--pane);
+        box-shadow: 0 50px 100px -60px #000;
+      }
+
+      .titlebar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 14px;
+        background: var(--chrome);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tdot { width: 11px; height: 11px; border-radius: 50%; }
+      .tdot.r { background: #ff5f57; }
+      .tdot.y { background: #febc2e; }
+      .tdot.g { background: #28c840; }
+
+      .titlebar .name {
+        margin-left: 10px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+      }
+
+      .titlebar .branch {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--dim);
+      }
+
+      .body {
+        display: grid;
+        grid-template-columns: 232px minmax(0, 1fr);
+        min-height: 560px;
+      }
+
+      /* ---------- file rail ---------- */
+
+      .rail {
+        background: var(--rail);
+        border-right: 1px solid var(--line);
+        padding: 14px 0 20px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        overflow-y: auto;
+        max-height: 640px;
+      }
+
+      .rail h2 {
+        margin: 0 0 10px;
+        padding: 0 14px;
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--dim);
+        font-weight: 500;
+      }
+
+      .rail ul { list-style: none; margin: 0; padding: 0; }
+
+      .rail li > .row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 14px;
+        color: var(--muted);
+        border: 0;
+        background: none;
+        width: 100%;
+        text-align: left;
+        font: inherit;
+        cursor: default;
+        white-space: nowrap;
+      }
+
+      .rail button.row { cursor: pointer; }
+      .rail button.row:hover { background: rgba(255, 255, 255, 0.045); color: var(--fg); }
+
+      .rail button.row[aria-current="true"] {
+        background: rgba(255, 255, 255, 0.075);
+        color: var(--fg);
+        box-shadow: inset 2px 0 0 var(--accent);
+      }
+
+      .rail .ind { display: inline-block; }
+      .rail .caret { color: var(--dim); width: 9px; display: inline-block; }
+      .rail .ico { width: 13px; text-align: center; }
+      .rail .ico.dir { color: var(--folder); }
+      .rail .ico.md { color: var(--md); }
+      .rail .ico.ts { color: var(--ts); }
+      .rail .ico.txt { color: var(--txt); }
+      .rail .note { color: var(--dim); font-size: 11px; margin-left: auto; padding-left: 10px; }
+
+      /* ---------- tabs + panes ---------- */
+
+      .main { display: flex; flex-direction: column; min-width: 0; }
+
+      .tabs {
+        display: flex;
+        background: var(--chrome);
+        border-bottom: 1px solid var(--line);
+        overflow-x: auto;
+      }
+
+      .tabs button {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        padding: 11px 16px;
+        background: transparent;
+        border: 0;
+        border-right: 1px solid var(--line);
+        color: var(--dim);
+        cursor: pointer;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .tabs button:hover { color: var(--muted); }
+
+      .tabs button[aria-selected="true"] {
+        background: var(--pane);
+        color: var(--fg);
+        box-shadow: inset 0 2px 0 var(--accent);
+      }
+
+      .pane { display: none; padding: 30px 34px 40px; overflow-y: auto; max-height: 592px; }
+      .pane.on { display: block; }
+
+      /* markdown-ish rendering for the README pane */
+      .md-doc h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+        letter-spacing: -0.028em;
+        font-weight: 700;
+      }
+
+      .md-doc .badges {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        margin: 14px 0 22px;
+      }
+
+      .md-doc .badge {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        border: 1px solid var(--line-2);
+        border-radius: 5px;
+        padding: 3px 8px;
+        color: var(--muted);
+      }
+
+      .md-doc .badge.on { color: var(--accent); border-color: rgba(111, 211, 176, 0.4); }
+
+      .md-doc h2 {
+        margin: 34px 0 12px;
+        font-size: 17px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .md-doc p { margin: 0 0 14px; color: var(--muted); max-width: 74ch; }
+      .md-doc p strong, .md-doc li strong { color: var(--fg); font-weight: 600; }
+
+      .md-doc blockquote {
+        margin: 0 0 18px;
+        padding: 2px 0 2px 16px;
+        border-left: 3px solid var(--line-2);
+        color: var(--muted);
+        font-style: italic;
+      }
+
+      .md-doc ul { margin: 0 0 16px; padding-left: 20px; color: var(--muted); max-width: 74ch; }
+      .md-doc li { margin-bottom: 7px; }
+      .md-doc li::marker { color: var(--dim); }
+
+      .md-doc code {
+        font-family: var(--mono);
+        font-size: 0.87em;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        white-space: nowrap;
+      }
+
+      .md-doc pre {
+        margin: 0 0 18px;
+        padding: 14px 16px;
+        background: #0a0d12;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.75;
+        overflow-x: auto;
+        color: #c3cad8;
+      }
+
+      .md-doc pre code { background: none; border: 0; padding: 0; white-space: pre; font-size: inherit; }
+
+      table.md {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0 0 20px;
+        font-size: 13.5px;
+      }
+
+      table.md th, table.md td {
+        text-align: left;
+        padding: 9px 12px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+
+      table.md th { color: var(--dim); font-weight: 500; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+      table.md td:first-child { color: var(--fg); white-space: nowrap; }
+
+      .state { font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
+      .state.ok { color: var(--accent); }
+      .state.wip { color: #e0b06a; }
+      .state.plan { color: var(--dim); }
+
+      /* raw file panes */
+      .raw { display: flex; font-family: var(--mono); font-size: 12.6px; line-height: 1.85; }
+
+      .gutter {
+        flex: none;
+        padding-right: 18px;
+        margin-right: 18px;
+        border-right: 1px solid var(--line);
+        color: #3f4754;
+        text-align: right;
+        user-select: none;
+        white-space: pre;
+      }
+
+      .raw pre {
+        margin: 0;
+        white-space: pre;
+        overflow-x: auto;
+        flex: 1;
+        color: #c3cad8;
+      }
+
+      .h { color: var(--fg); font-weight: 700; }
+      .cm { color: #6a7383; }
+      .pa { color: var(--accent); }
+      .k { color: #b39ae8; }
+      .s { color: #8fd6a3; }
+      .f { color: var(--ts); }
+      .n { color: #e0b06a; }
+
+      /* ---------- status bar ---------- */
+
+      .statusbar {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 9px 14px;
+        background: var(--chrome);
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--dim);
+        flex-wrap: wrap;
+      }
+
+      .statusbar .ok { color: var(--accent); }
+      .statusbar .right { margin-left: auto; }
+
+      /* ---------- cta ---------- */
+
+      .cta {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 30px;
+        align-items: center;
+        margin: 34px 0 0;
+        padding: 26px 28px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--pane);
+      }
+
+      .cta h2 { margin: 0 0 6px; font-size: 20px; font-weight: 600; letter-spacing: -0.015em; }
+      .cta p { margin: 0; color: var(--muted); font-size: 14.5px; max-width: 56ch; }
+
+      form.signup { display: flex; gap: 8px; flex-wrap: wrap; }
+
+      form.signup input {
+        min-width: 230px;
+        background: var(--bg);
+        border: 1px solid var(--line-2);
+        border-radius: 8px;
+        padding: 11px 14px;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14.5px;
+        outline: none;
+      }
+
+      form.signup input::placeholder { color: var(--dim); }
+      form.signup input:focus { border-color: var(--accent); }
+
+      form.signup button {
+        border: 0;
+        background: var(--accent);
+        color: #06120e;
+        border-radius: 8px;
+        padding: 11px 20px;
+        font-family: var(--sans);
+        font-size: 14.5px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      form.signup button:hover { filter: brightness(1.07); }
+
+      .note { margin: 10px 0 0; font-size: 13px; color: var(--dim); min-height: 18px; }
+      .note a { color: var(--accent); }
+
+      footer {
+        margin-top: 40px;
+        padding: 26px 0 56px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--dim);
+      }
+
+      footer .right { margin-left: auto; display: flex; gap: 18px; }
+      footer a { text-decoration: none; }
+      footer a:hover { color: var(--fg); }
+
+      @media (max-width: 900px) {
+        .body { grid-template-columns: 1fr; }
+        .rail { border-right: 0; border-bottom: 1px solid var(--line); max-height: 210px; }
+        .pane { max-height: none; padding: 22px 18px 30px; }
+        .gutter { display: none; }
+        .raw pre { white-space: pre-wrap; word-break: break-word; }
+        .cta { grid-template-columns: 1fr; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="topbar">
+      <div class="wrap topbar-inner">
+        <span class="logo">T</span>
+        <b>typeway</b>
+        <span class="soon">v0 — coming soon</span>
+        <span class="right">
+          <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub ↗</a>
+        </span>
+      </div>
+    </div>
+
+    <main class="wrap">
+      <section class="intro">
+        <h1>Every Typeway app is the same app until you write something.</h1>
+        <p>
+          That is the entire pitch, so here it is rather than a description of it: a generated project, open,
+          with nothing filled in yet. One layout, one place per concern — and the same project documented
+          three ways, because a person, an agent and a compiler want different things from it.
+        </p>
+        <p class="hint">Click a file in the rail, or the tabs. <kbd>1</kbd>–<kbd>4</kbd> switch too.</p>
+      </section>
+
+      <div class="editor">
+        <div class="titlebar">
+          <span class="tdot r"></span><span class="tdot y"></span><span class="tdot g"></span>
+          <span class="name">storefront — created with <strong>typeway new</strong></span>
+          <span class="branch">main · bun 1.4</span>
+        </div>
+
+        <div class="body">
+          <nav class="rail" aria-label="Project files">
+            <h2>Explorer</h2>
+            <ul>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>app<span class="note">domain</span></span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>context.ts</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="caret">▾</span><span class="ico dir">▣</span>models</span></li>
+              <li><span class="row" style="padding-left: 50px"><span class="ico ts">◆</span>product.ts</span></li>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>config<span class="note">typed env</span></span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>database.ts</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>env.ts</span></li>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>db</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>schema.ts</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>migrations</span></li>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>server<span class="note">http</span></span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>app.ts</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>routes</span></li>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>src<span class="note">frontend</span></span></li>
+              <li><button class="row" style="padding-left: 32px" data-open="entry"><span class="ico ts">◆</span>server.ts</button></li>
+              <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>routes</span></li>
+              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>tests</span></li>
+              <li><button class="row" data-open="readme"><span class="ico md">✱</span>README.md</button></li>
+              <li><button class="row" data-open="agents"><span class="ico md">✱</span>AGENTS.md<span class="note">agents</span></button></li>
+              <li><button class="row" data-open="llms"><span class="ico txt">≡</span>llms.txt<span class="note">agents</span></button></li>
+            </ul>
+          </nav>
+
+          <div class="main">
+            <div class="tabs" role="tablist">
+              <button role="tab" data-tab="readme" aria-selected="true"><span style="color: var(--md)">✱</span> README.md</button>
+              <button role="tab" data-tab="agents" aria-selected="false"><span style="color: var(--md)">✱</span> AGENTS.md</button>
+              <button role="tab" data-tab="llms" aria-selected="false"><span style="color: var(--txt)">≡</span> llms.txt</button>
+              <button role="tab" data-tab="entry" aria-selected="false"><span style="color: var(--ts)">◆</span> src/server.ts</button>
+            </div>
+
+            <!-- ===================== README ===================== -->
+            <section class="pane on md-doc" data-pane="readme">
+              <h1>Typeway</h1>
+              <p>
+                A batteries-included TypeScript framework in the spirit of Ruby on Rails — built as glue
+                between best-in-class libraries, unified under one set of conventions, one docs format and one
+                CLI.
+              </p>
+
+              <div class="badges">
+                <span class="badge on">status: v0, coming soon</span>
+                <span class="badge">bun 1.4</span>
+                <span class="badge">elysia 2.0</span>
+                <span class="badge">vite 8</span>
+                <span class="badge">typebox</span>
+                <span class="badge">mit</span>
+              </div>
+
+              <blockquote>
+                Typeway doesn't reinvent the ecosystem. It blesses proven tools, integrates them thinly, and
+                makes everything ejectable. The product is the conventions, the docs and the generators — not
+                wrappers.
+              </blockquote>
+
+              <h2>Why</h2>
+              <p>
+                Every Rails app looks the same, so every Rails developer is productive on day one. TypeScript
+                never got that. Typeway brings it — with one addition Rails never needed:
+                <strong>agents are first-class users</strong>. Conventions stay deterministic and greppable,
+                docs ship in agent-readable formats, and every generator installs the knowledge to use what it
+                just wrote.
+              </p>
+
+              <h2>Install</h2>
+              <pre><code><span class="cm"># not published yet — this is what v0 will look like</span>
+bun create typeway@latest storefront
+cd storefront && bun run dev</code></pre>
+
+              <h2>What already runs</h2>
+              <ul>
+                <li>
+                  <strong>@typeway/connect</strong> — Connect/Express middleware under Elysia: raw streamed
+                  bodies, streaming responses, <code>Set-Cookie</code> fidelity, registered routes bypassing
+                  the bridge entirely. Zero runtime dependencies.
+                </li>
+                <li>
+                  <strong>One process in dev</strong> — Vite in middleware mode with SSR in the fallback, HMR
+                  intact; production mounts the built handler directly on Elysia.
+                </li>
+                <li><strong>SSG, SSR and SPA</strong> in one app, each a one-line decision.</li>
+                <li>
+                  <strong>Proof, not assertion</strong> — a fixture app exercises streaming SSR, server
+                  functions, redirects, cookies, multipart, SSE and binary assets against dev
+                  <em>and</em> production on every commit.
+                </li>
+              </ul>
+
+              <pre><code><span class="pa">$</span> bun run bench
+registered route, bridge mounted   <span class="pa">0.985x</span>   +0.2 µs/req
+SSR through connect() fallback     <span class="pa">1.010x</span>   −2.0 µs/req
+static asset, production path      <span class="pa">0.995x</span>   +0.2 µs/req</code></pre>
+
+              <h2>Roadmap</h2>
+              <table class="md">
+                <tr><th>Area</th><th>State</th><th>Notes</th></tr>
+                <tr><td>Connect bridge</td><td><span class="state ok">shipped</span></td><td>Zero deps, streaming both directions</td></tr>
+                <tr><td>Full-stack dev server</td><td><span class="state ok">shipped</span></td><td>Vite + SSR + typed API, one process</td></tr>
+                <tr><td>Rendering modes</td><td><span class="state ok">shipped</span></td><td>SSG, SSR, SPA side by side</td></tr>
+                <tr><td>Models</td><td><span class="state wip">building</span></td><td>Drizzle, migrations, seeds, factories</td></tr>
+                <tr><td>Request context</td><td><span class="state wip">building</span></td><td>One ALS scope for routes, SSR, server fns</td></tr>
+                <tr><td>CLI</td><td><span class="state wip">building</span></td><td>new, generate, add, db, console</td></tr>
+                <tr><td>Auth</td><td><span class="state plan">planned</span></td><td>better-auth, wired and documented</td></tr>
+                <tr><td>Jobs, mailers, realtime</td><td><span class="state plan">planned</span></td><td>Postgres queue, react-email, ws channels</td></tr>
+                <tr><td>Storage, caching</td><td><span class="state plan">planned</span></td><td>Bun S3, database-backed cache</td></tr>
+                <tr><td>Security, observability</td><td><span class="state plan">planned</span></td><td>Safe defaults, OTel as convention</td></tr>
+              </table>
+
+              <h2>Status</h2>
+              <p>
+                Early, and honest about it. The risky part — hosting a modern frontend inside a typed API
+                server — is built, dogfooded and benchmarked. The rest is being assembled in the open.
+                <strong>Leave your email below and we'll write once, when v0 is usable.</strong>
+              </p>
+            </section>
+
+            <!-- ===================== AGENTS.md ===================== -->
+            <section class="pane" data-pane="agents">
+              <div class="raw">
+                <div class="gutter" aria-hidden="true"></div>
+                <pre><span class="h"># AGENTS.md</span>
+
+Every Typeway app ships this file. It is written for the tools that
+write code here, and it is generated — not maintained by hand.
+
+<span class="h">## Layout</span>
+
+<span class="pa">app/</span>           domain logic. models, context, use cases.
+<span class="pa">config/</span>        typed configuration. env is validated at boot.
+<span class="pa">db/</span>            schema and migrations. one table per file.
+<span class="pa">server/</span>        http. elysia routes, middleware, the app instance.
+<span class="pa">src/</span>           frontend. src/server.ts is the SSR entry — the
+               name is load-bearing, do not rename it.
+<span class="pa">tests/</span>         integration tests. unit tests live beside sources.
+
+<span class="h">## Rules</span>
+
+- Models are <span class="pa">app/models/&lt;singular&gt;.ts</span> and export queries, never a
+  bare table. The table lives in <span class="pa">db/schema/</span>.
+- Database access goes through <span class="pa">getDb()</span>, which resolves the
+  request scope. Never import the connection directly.
+- Validation is TypeBox everywhere: request schemas, config, models.
+  Do not add a second validation library.
+- Routes are registered on the Elysia app; anything unmatched is the
+  frontend's. Do not add a catch-all route.
+
+<span class="h">## Commands</span>
+
+  bun run dev          api + ssr + hmr, one process
+  bun run build        client, ssr and server bundles
+  bun test             unit and integration
+  typeway generate     scaffolds code and the docs for it
+
+<span class="h">## When you add a capability</span>
+
+Run <span class="pa">typeway add &lt;name&gt;</span> rather than wiring it by hand. It writes the
+integration, the conventions section in this file, and a skill — so the
+next agent starts where you finished.
+</pre>
+              </div>
+            </section>
+
+            <!-- ===================== llms.txt ===================== -->
+            <section class="pane" data-pane="llms">
+              <div class="raw">
+                <div class="gutter" aria-hidden="true"></div>
+                <pre><span class="h"># Typeway</span>
+
+&gt; A batteries-included TypeScript framework over Bun, Elysia, Vite and
+&gt; TypeBox. Conventions, docs and generators — not wrappers. Every
+&gt; integration is ejectable to the library underneath.
+
+<span class="h">## Docs</span>
+
+- [Conventions](/docs/conventions.md): project layout and naming, the
+  contract every generator obeys
+- [Routing](/docs/routing.md): Elysia routes, the frontend fallback,
+  and why there is no catch-all
+- [Models](/docs/models.md): Drizzle tables, request scope, factories
+- [Rendering](/docs/rendering.md): SSG, SSR and SPA per route
+- [Deploying](/docs/deploy.md): one binary via bun --compile
+
+<span class="h">## Packages</span>
+
+- [@typeway/connect](/packages/connect): Connect middleware under
+  Elysia. Zero runtime dependencies. Streaming both directions.
+
+<span class="h">## Optional</span>
+
+- [Benchmarks](/bench/README.md): paired A/B measurements of what the
+  glue costs. Quote the ratios, never the absolute throughput.
+- [Build log](/log): what shipped and when.
+
+<span class="cm">; status: v0 in development. This file is generated by `typeway new`
+; and updated by every `typeway add`.</span>
+</pre>
+              </div>
+            </section>
+
+            <!-- ===================== src/server.ts ===================== -->
+            <section class="pane" data-pane="entry">
+              <div class="raw">
+                <div class="gutter" aria-hidden="true"></div>
+                <pre><span class="cm">// The one SSR entry. Dev and production run this exact module.</span>
+<span class="k">import</span> { connect } <span class="k">from</span> <span class="s">"@typeway/connect"</span>;
+<span class="k">import</span> { app } <span class="k">from</span> <span class="s">"../server/app"</span>;
+<span class="k">import</span> { createServer } <span class="k">from</span> <span class="s">"vite"</span>;
+
+<span class="k">const</span> dev = process.env.<span class="n">NODE_ENV</span> !== <span class="s">"production"</span>;
+
+<span class="k">if</span> (dev) {
+  <span class="k">const</span> vite = <span class="k">await</span> <span class="f">createServer</span>({
+    server: { middlewareMode: <span class="n">true</span> },
+  });
+
+  <span class="cm">// Registered routes never reach the bridge — Elysia's router</span>
+  <span class="cm">// gives them precedence over the wildcard connect() mounts.</span>
+  app.<span class="f">use</span>(
+    <span class="f">connect</span>(vite.middlewares, {
+      fallback: <span class="k">async</span> (request) <span class="k">=></span> {
+        <span class="k">const</span> { <span class="k">default</span>: ssr } = <span class="k">await</span> vite.environments.ssr.runner
+          .<span class="f">import</span>(<span class="s">"./src/server.ts"</span>);
+        <span class="k">return</span> ssr.<span class="f">fetch</span>(request);
+      },
+    }),
+  );
+} <span class="k">else</span> {
+  <span class="cm">// The build emits a fetch-native handler, so production mounts it</span>
+  <span class="cm">// directly (~0.4 µs) instead of paying for a bridge round-trip.</span>
+  app.<span class="f">mount</span>(<span class="k">await</span> <span class="f">loadBuiltHandler</span>());
+}
+
+app.<span class="f">listen</span>(<span class="n">3000</span>);
+</pre>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <div class="statusbar">
+          <span class="ok">● v0 — not released</span>
+          <span>main</span>
+          <span>bun 1.4 · elysia 2.0 · vite 8</span>
+          <span class="right">4 files open · 0 problems</span>
+        </div>
+      </div>
+
+      <section class="cta">
+        <div>
+          <h2>Want this repo for real?</h2>
+          <p>
+            One email when <code>bun create typeway</code> actually works. No drip campaign — the build log
+            lives in the repository either way.
+          </p>
+          <p class="note" data-note></p>
+        </div>
+        <form class="signup" data-signup novalidate>
+          <input type="email" name="email" placeholder="you@company.com" aria-label="Email address" required />
+          <button type="submit">Notify me</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <span>© <span id="year">2026</span> Typeway — built in the open.</span>
+      <span class="right">
+        <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>
+        <a href="https://elysiajs.com" target="_blank" rel="noopener">Elysia</a>
+      </span>
+    </footer>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var NOTIFY_ENDPOINT = ""; // see marketing/README.md
+        var REPO = "https://github.com/k1eu/typeway";
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        /* ---- line-number gutters ---- */
+        document.querySelectorAll(".raw").forEach(function (raw) {
+          var lines = raw.querySelector("pre").textContent.replace(/\n$/, "").split("\n").length;
+          var numbers = [];
+          for (var i = 1; i <= lines; i++) numbers.push(i);
+          raw.querySelector(".gutter").textContent = numbers.join("\n");
+        });
+
+        /* ---- tabs ---- */
+        var tabs = Array.prototype.slice.call(document.querySelectorAll(".tabs button"));
+        var panes = Array.prototype.slice.call(document.querySelectorAll(".pane"));
+        var railButtons = Array.prototype.slice.call(document.querySelectorAll(".rail button[data-open]"));
+
+        function open(name) {
+          tabs.forEach(function (tab) { tab.setAttribute("aria-selected", String(tab.dataset.tab === name)); });
+          panes.forEach(function (pane) { pane.classList.toggle("on", pane.dataset.pane === name); });
+          railButtons.forEach(function (button) {
+            button.setAttribute("aria-current", String(button.dataset.open === name));
+          });
+        }
+
+        tabs.forEach(function (tab) {
+          tab.addEventListener("click", function () { open(tab.dataset.tab); });
+        });
+
+        railButtons.forEach(function (button) {
+          button.addEventListener("click", function () { open(button.dataset.open); });
+        });
+
+        document.addEventListener("keydown", function (event) {
+          if (event.target.tagName === "INPUT" || event.metaKey || event.ctrlKey || event.altKey) return;
+          var index = ["1", "2", "3", "4"].indexOf(event.key);
+          if (index !== -1 && tabs[index]) {
+            tabs[index].click();
+            tabs[index].focus();
+          }
+        });
+
+        open("readme");
+
+        /* ---- signup ---- */
+        var form = document.querySelector("[data-signup]");
+        var note = document.querySelector("[data-note]");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var email = (form.querySelector("input").value || "").trim();
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            note.textContent = "That doesn't look like an email address.";
+            return;
+          }
+          if (!NOTIFY_ENDPOINT) {
+            note.innerHTML =
+              'The list isn\'t open yet — <a href="' + REPO + '" target="_blank" rel="noopener">watch the repo</a> instead.';
+            return;
+          }
+          fetch(NOTIFY_ENDPOINT, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email: email }),
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error("bad status");
+              form.style.display = "none";
+              note.textContent = "You're on the list.";
+            })
+            .catch(function () {
+              note.textContent = "Something went wrong — try the repo instead.";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

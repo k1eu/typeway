@@ -1,0 +1,652 @@
+<!doctype html>
+<!--
+  Concept: MANIFESTO
+  One idea per screen. No cards, no feature grid, no chrome. The page argues a
+  position in type and then asks for an email. Print-poster art direction: bone
+  paper, ink, one red mark, hairline rules, numbers set as display type.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typeway — everything you need, nothing you'll have to undo.</title>
+    <meta
+      name="description"
+      content="A batteries-included TypeScript framework built as thin glue over Bun, Elysia, Vite and TypeBox. Conventions are the product. Everything is ejectable. Coming soon."
+    />
+    <meta name="theme-color" content="#efece5" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23efece5'/%3E%3Cpath d='M7 10h18M16 10v14' stroke='%23111' stroke-width='3'/%3E%3C/svg%3E"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --paper: #efece5;
+        --ink: #14130f;
+        --ink-soft: #4a4842;
+        --ink-faint: #8d8a80;
+        --rule: rgba(20, 19, 15, 0.16);
+        --mark: #c8402a;
+        --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--sans);
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+
+      /* faint paper texture, drawn not loaded */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        background-image: radial-gradient(rgba(20, 19, 15, 0.055) 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.55;
+      }
+
+      a { color: inherit; }
+
+      .wrap {
+        position: relative;
+        z-index: 1;
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 40px;
+      }
+
+      /* ---------- masthead ---------- */
+
+      .masthead {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 20;
+        background: var(--paper);
+        border-bottom: 1px solid var(--rule);
+      }
+
+      .masthead-inner {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        height: 54px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .masthead .sep { color: var(--ink-faint); }
+
+      .masthead .right {
+        margin-left: auto;
+        display: flex;
+        gap: 22px;
+        align-items: center;
+      }
+
+      .masthead a { text-decoration: none; }
+      .masthead a:hover { color: var(--mark); }
+
+      .progress {
+        position: fixed;
+        top: 53px;
+        left: 0;
+        height: 1px;
+        background: var(--mark);
+        width: 0;
+        z-index: 21;
+      }
+
+      /* ---------- hero ---------- */
+
+      .hero {
+        min-height: 100svh;
+        padding: 150px 0 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .kicker {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .kicker .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--mark);
+        animation: pulse 2.6s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.25; }
+      }
+
+      .display {
+        font-size: clamp(52px, 10.5vw, 156px);
+        line-height: 0.93;
+        letter-spacing: -0.045em;
+        font-weight: 700;
+        margin: 34px 0 0;
+        max-width: 15ch;
+      }
+
+      .display em {
+        font-style: normal;
+        color: var(--mark);
+      }
+
+      .hero .standfirst {
+        margin: 40px 0 0;
+        font-size: clamp(17px, 1.7vw, 21px);
+        line-height: 1.55;
+        max-width: 46ch;
+        color: var(--ink-soft);
+      }
+
+      .scroll-cue {
+        margin-top: 64px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .scroll-cue span {
+        display: block;
+        width: 44px;
+        height: 1px;
+        background: var(--ink-faint);
+        animation: slide 2.4s ease-in-out infinite;
+        transform-origin: left;
+      }
+
+      @keyframes slide {
+        0%, 100% { transform: scaleX(0.4); }
+        50% { transform: scaleX(1); }
+      }
+
+      /* ---------- statements ---------- */
+
+      .statement {
+        border-top: 1px solid var(--rule);
+        padding: 96px 0 104px;
+        display: grid;
+        grid-template-columns: 128px 1fr;
+        gap: 0 40px;
+      }
+
+      .statement .num {
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.16em;
+        color: var(--ink-faint);
+        position: sticky;
+        top: 96px;
+        align-self: start;
+      }
+
+      .statement h2 {
+        margin: 0;
+        font-size: clamp(34px, 5.6vw, 76px);
+        line-height: 1.02;
+        letter-spacing: -0.035em;
+        font-weight: 700;
+        max-width: 18ch;
+      }
+
+      .statement .body {
+        margin: 34px 0 0;
+        font-size: clamp(16px, 1.45vw, 19px);
+        line-height: 1.62;
+        color: var(--ink-soft);
+        max-width: 54ch;
+      }
+
+      .statement .body + .body { margin-top: 18px; }
+
+      .statement .body strong { color: var(--ink); font-weight: 600; }
+
+      .statement .body code {
+        font-family: var(--mono);
+        font-size: 0.88em;
+        background: rgba(20, 19, 15, 0.06);
+        padding: 1px 5px;
+        border-radius: 4px;
+        white-space: nowrap;
+      }
+
+      /* proof numbers, set as display type rather than stat cards */
+      .figures {
+        margin: 56px 0 0;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        border-top: 1px solid var(--rule);
+      }
+
+      .figure {
+        padding: 28px 28px 24px 0;
+        border-right: 1px solid var(--rule);
+      }
+
+      .figure:last-child { border-right: 0; }
+      .figure:not(:first-child) { padding-left: 28px; }
+
+      .figure b {
+        display: block;
+        font-size: clamp(34px, 4.4vw, 58px);
+        line-height: 1;
+        letter-spacing: -0.04em;
+        font-weight: 700;
+        font-feature-settings: "tnum";
+      }
+
+      .figure span {
+        display: block;
+        margin-top: 12px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        line-height: 1.7;
+      }
+
+      /* pull quote used once, to break the rhythm */
+      .pull {
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+        padding: 84px 0;
+        text-align: center;
+      }
+
+      .pull p {
+        margin: 0 auto;
+        font-size: clamp(24px, 3.4vw, 44px);
+        line-height: 1.18;
+        letter-spacing: -0.03em;
+        font-weight: 500;
+        max-width: 22ch;
+      }
+
+      .pull .attrib {
+        margin-top: 26px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+      }
+
+      /* ---------- close ---------- */
+
+      .close {
+        padding: 110px 0 40px;
+        border-top: 1px solid var(--rule);
+      }
+
+      .close h2 {
+        margin: 0;
+        font-size: clamp(40px, 7vw, 96px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
+        font-weight: 700;
+      }
+
+      .close p {
+        margin: 26px 0 0;
+        font-size: 18px;
+        color: var(--ink-soft);
+        max-width: 44ch;
+      }
+
+      form.signup {
+        margin: 44px 0 0;
+        display: flex;
+        align-items: flex-end;
+        gap: 0;
+        max-width: 520px;
+        border-bottom: 2px solid var(--ink);
+      }
+
+      form.signup input {
+        flex: 1;
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        font-family: var(--sans);
+        font-size: 19px;
+        color: var(--ink);
+        padding: 10px 0;
+        outline: none;
+      }
+
+      form.signup input::placeholder { color: var(--ink-faint); }
+
+      form.signup button {
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--mono);
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding: 12px 0 12px 20px;
+        color: var(--ink);
+        transition: color 0.15s ease;
+      }
+
+      form.signup button:hover { color: var(--mark); }
+
+      .note {
+        margin: 14px 0 0;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        color: var(--ink-faint);
+        min-height: 18px;
+      }
+
+      .note a { color: var(--mark); }
+
+      footer {
+        padding: 70px 0 46px;
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+      }
+
+      footer .right { margin-left: auto; display: flex; gap: 22px; }
+      footer a { text-decoration: none; }
+      footer a:hover { color: var(--mark); }
+
+      /* ---------- reveal ---------- */
+
+      .js .up { opacity: 0; transform: translateY(22px); }
+
+      .js .up.in {
+        opacity: 1;
+        transform: none;
+        transition: opacity 0.85s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+
+      @media (max-width: 880px) {
+        .wrap { padding: 0 22px; }
+        .statement { grid-template-columns: 1fr; padding: 68px 0 72px; }
+        .statement .num { position: static; margin-bottom: 20px; }
+        .figures { grid-template-columns: 1fr; }
+        .figure { border-right: 0; border-bottom: 1px solid var(--rule); padding: 22px 0; }
+        .figure:not(:first-child) { padding-left: 0; }
+        .figure:last-child { border-bottom: 0; }
+        .masthead .right .hide-sm { display: none; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+        html { scroll-behavior: auto; }
+        .js .up { opacity: 1; transform: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <div class="masthead">
+      <div class="wrap masthead-inner">
+        <strong>Typeway</strong>
+        <span class="sep">/</span>
+        <span>TypeScript framework</span>
+        <span class="right">
+          <span class="hide-sm">v0 — coming soon</span>
+          <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub ↗</a>
+        </span>
+      </div>
+    </div>
+    <div class="progress" id="progress"></div>
+
+    <main>
+      <section class="hero wrap">
+        <p class="kicker up"><span class="dot"></span> A manifesto, and then a waiting list</p>
+        <h1 class="display up">Everything you need. <em>Nothing</em> you'll have to undo.</h1>
+        <p class="standfirst up">
+          Typeway is a batteries-included TypeScript framework in the spirit of Rails — assembled from
+          libraries that already won, held together by conventions instead of wrappers.
+        </p>
+        <div class="scroll-cue up"><span></span> Read the argument</div>
+      </section>
+
+      <section class="statement wrap">
+        <div class="num up">01 / 05</div>
+        <div>
+          <h2 class="up">We didn't write a runtime.</h2>
+          <p class="body up">
+            Bun runs it. Elysia serves it. Vite builds it. TypeBox proves it. Four projects that would each
+            win on their own merit, and not one of them needs us to reinvent it.
+          </p>
+          <p class="body up">
+            What nobody has written is the part where they <strong>agree</strong> — one project layout, one
+            validation story, one dev command, one way to deploy. That part is Typeway, and it is deliberately
+            the thinnest thing that could work.
+          </p>
+        </div>
+      </section>
+
+      <section class="statement wrap">
+        <div class="num up">02 / 05</div>
+        <div>
+          <h2 class="up">Conventions are the product.</h2>
+          <p class="body up">
+            Rails' real gift was never the code. It was that every Rails app looked the same, so every Rails
+            developer was useful on their first morning. TypeScript never got that, and the cost is paid once
+            per repository, forever.
+          </p>
+          <p class="body up">
+            Typeway ships conventions, docs and generators. The integrations underneath are small enough to
+            read in an afternoon — that is the point, not an apology.
+          </p>
+        </div>
+      </section>
+
+      <section class="statement wrap">
+        <div class="num up">03 / 05</div>
+        <div>
+          <h2 class="up">Everything stays ejectable.</h2>
+          <p class="body up">
+            A framework you cannot leave is a bet on the framework's authors being right forever. Typeway
+            wraps as little as it can get away with: outgrow an integration and you drop down to the library
+            underneath — a library you already know, because we picked the one you would have picked.
+          </p>
+          <p class="body up">
+            <code>@typeway/connect</code> has zero runtime dependencies. That number is a design constraint,
+            not a coincidence.
+          </p>
+        </div>
+      </section>
+
+      <section class="statement wrap">
+        <div class="num up">04 / 05</div>
+        <div>
+          <h2 class="up">Agents are reading this too.</h2>
+          <p class="body up">
+            A good share of the code landing in your repository next year will be written by something that
+            has never read your README and never will. Conventions that are deterministic and greppable
+            stopped being a matter of taste — they are the interface now.
+          </p>
+          <p class="body up">
+            So the docs ship as skills, <code>AGENTS.md</code> and <code>llms.txt</code>, and every generator
+            installs the knowledge to use what it just wrote, right next to the code it wrote.
+          </p>
+        </div>
+      </section>
+
+      <section class="statement wrap">
+        <div class="num up">05 / 05</div>
+        <div>
+          <h2 class="up">The hard part already runs.</h2>
+          <p class="body up">
+            Hosting a modern frontend inside a typed API server — one process, HMR, streaming SSR, neither
+            side aware of the other — was the piece that could have failed. It didn't. It is built, dogfooded
+            and measured against clean Elysia and standalone TanStack, back to back on one machine.
+          </p>
+
+          <div class="figures up">
+            <div class="figure">
+              <b>0.985×</b>
+              <span>Native Elysia routes<br />with the bridge mounted</span>
+            </div>
+            <div class="figure">
+              <b>1.010×</b>
+              <span>SSR through the glue<br />vs standalone TanStack</span>
+            </div>
+            <div class="figure">
+              <b>0</b>
+              <span>Runtime dependencies<br />in the bridge</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="pull wrap">
+        <p>Every claim on this page is a measured ratio or a test that runs on every commit.</p>
+        <div class="attrib">No launch numbers. No roadmap fiction.</div>
+      </section>
+
+      <section class="close wrap">
+        <h2 class="up">Be there for v0.</h2>
+        <p class="up">
+          One email when it is genuinely usable. No drip campaign, no countdown. Until then the work happens
+          in the open, commit by commit.
+        </p>
+
+        <form class="signup up" data-signup novalidate>
+          <input type="email" name="email" placeholder="you@company.com" aria-label="Email address" required />
+          <button type="submit">Notify me →</button>
+        </form>
+        <p class="note" data-note>We'll write once.</p>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <span>© <span id="year">2026</span> Typeway</span>
+      <span class="right">
+        <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>
+        <a href="https://elysiajs.com" target="_blank" rel="noopener">Elysia</a>
+      </span>
+    </footer>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var NOTIFY_ENDPOINT = ""; // see marketing/README.md
+        var REPO = "https://github.com/k1eu/typeway";
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        var ups = document.querySelectorAll(".up");
+
+        if (!("IntersectionObserver" in window) || reduce) {
+          ups.forEach(function (el) { el.classList.add("in"); });
+        } else {
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("in");
+                io.unobserve(entry.target);
+              });
+            },
+            { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+          );
+          ups.forEach(function (el) { io.observe(el); });
+        }
+
+        var bar = document.getElementById("progress");
+        var onScroll = function () {
+          var max = document.documentElement.scrollHeight - window.innerHeight;
+          bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + "%";
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+
+        var form = document.querySelector("[data-signup]");
+        var note = document.querySelector("[data-note]");
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var email = (form.querySelector("input").value || "").trim();
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            note.textContent = "That doesn't look like an email address.";
+            return;
+          }
+          if (!NOTIFY_ENDPOINT) {
+            note.innerHTML =
+              'The list isn\'t open yet — <a href="' + REPO + '" target="_blank" rel="noopener">watch the repo</a> instead.';
+            return;
+          }
+          fetch(NOTIFY_ENDPOINT, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email: email }),
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error("bad status");
+              form.style.display = "none";
+              note.textContent = "You're on the list.";
+            })
+            .catch(function () {
+              note.textContent = "Something went wrong — try the repo instead.";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

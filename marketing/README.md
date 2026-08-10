@@ -4,6 +4,23 @@ The Typeway "coming soon" page. One self-contained `index.html` — no build ste
 dependencies, no framework. Fonts come from Google Fonts with local fallbacks, so the
 page renders fine offline too.
 
+## Concepts
+
+`concepts/` holds three alternative takes on the same launch — different arguments and
+different information architecture, not restyles. Open `concepts/index.html` to compare
+them side by side.
+
+| File | Concept |
+| --- | --- |
+| `index.html` | **Product page.** Hero, animated CLI terminal, proof stats, stack cards, roadmap grid. Four themes built in. |
+| `concepts/manifesto.html` | **Manifesto.** Bone paper and ink, five numbered statements at poster scale, benchmark figures as display type. |
+| `concepts/buildlog.html` | **Build log.** No hero — the page is the project's log, newest first, with real dates and commits, filterable by state. |
+| `concepts/workspace.html` | **Workspace.** A generated Typeway app open in an editor; tabs show the same project as README.md, AGENTS.md, llms.txt and the entry file. |
+
+Each file is standalone. To ship one, copy it over `index.html`; nothing else needs to
+move. They all share the same email-capture behaviour described below, so
+`NOTIFY_ENDPOINT` has to be set in whichever file you promote.
+
 ## Themes
 
 Four themes ship in the file. Pick one by editing the `data-theme` attribute on `<html>`:

@@ -1,0 +1,222 @@
+<!doctype html>
+<!-- Internal picker: four takes on the same launch, for choosing between them. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typeway — landing page concepts</title>
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#0a0a0c" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0a0a0c;
+        --panel: #101014;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-2: rgba(255, 255, 255, 0.18);
+        --fg: #ececf1;
+        --muted: #9a9aa6;
+        --dim: #6a6a77;
+        --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+        --sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wrap { max-width: 1000px; margin: 0 auto; padding: 0 24px; }
+
+      header { padding: 70px 0 34px; }
+
+      header p.eyebrow {
+        margin: 0 0 14px;
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--dim);
+      }
+
+      header h1 {
+        margin: 0;
+        font-size: clamp(30px, 4.4vw, 44px);
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+        font-weight: 600;
+        max-width: 22ch;
+      }
+
+      header p.lede { margin: 18px 0 0; color: var(--muted); max-width: 66ch; font-size: 16.5px; }
+
+      .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 22px 0 60px; }
+
+      a.concept {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--panel);
+        padding: 26px 26px 24px;
+        transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+      }
+
+      a.concept:hover {
+        border-color: var(--line-2);
+        transform: translateY(-2px);
+        background: #14141a;
+      }
+
+      .swatch {
+        height: 74px;
+        border-radius: 9px;
+        border: 1px solid var(--line);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        padding: 0 16px;
+        font-family: var(--mono);
+        font-size: 12px;
+        overflow: hidden;
+      }
+
+      /* each swatch previews the concept's own art direction */
+      .sw-product { background: #08090c; color: #f2f4f8; }
+      .sw-manifesto { background: #efece5; color: #14130f; letter-spacing: -0.04em; font-family: var(--sans); font-size: 26px; font-weight: 700; }
+      .sw-buildlog { background: #0b0b0d; color: #67cf9b; }
+      .sw-workspace { background: #0f131a; color: #6fd3b0; }
+
+      a.concept h2 {
+        margin: 0 0 4px;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+
+      a.concept h2 .file {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--dim);
+        font-weight: 400;
+      }
+
+      a.concept p { margin: 10px 0 0; color: var(--muted); font-size: 14.5px; }
+
+      a.concept .verdict {
+        margin: 16px 0 0;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--dim);
+        line-height: 1.7;
+      }
+
+      a.concept .verdict b { color: var(--muted); font-weight: 500; }
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 24px 0 60px;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+      }
+
+      footer code { color: var(--muted); }
+
+      @media (max-width: 760px) {
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="wrap">
+      <p class="eyebrow">Internal — pick one</p>
+      <h1>Four different pages for the same launch.</h1>
+      <p class="lede">
+        Not four palettes: four arguments. Each is a standalone, self-contained HTML file with the same
+        substance underneath — the same benchmarks, the same roadmap, the same honesty about what is not
+        built. They differ in what the visitor is asked to do with it.
+      </p>
+    </header>
+
+    <div class="wrap grid">
+      <a class="concept" href="../index.html">
+        <div class="swatch sw-product">$ typeway new storefront</div>
+        <h2>Product page <span class="file">index.html</span></h2>
+        <p>
+          The conventional shape, done well: hero, animated CLI terminal, proof stats, stack cards, a
+          roadmap grid with honest status pills. Four themes built in, swappable from one attribute.
+        </p>
+        <div class="verdict">
+          <b>Reads as:</b> a real product, nearly ready<br />
+          <b>Risk:</b> looks like every other framework launch
+        </div>
+      </a>
+
+      <a class="concept" href="manifesto.html">
+        <div class="swatch sw-manifesto">Nothing you'll undo.</div>
+        <h2>Manifesto <span class="file">manifesto.html</span></h2>
+        <p>
+          Bone paper, ink, one red mark. No cards and no feature grid — five numbered statements at poster
+          scale, the benchmark figures set as display type, then the email field.
+        </p>
+        <div class="verdict">
+          <b>Reads as:</b> a point of view worth waiting for<br />
+          <b>Risk:</b> long on conviction, short on detail
+        </div>
+      </a>
+
+      <a class="concept" href="buildlog.html">
+        <div class="swatch sw-buildlog">10 Aug · shipped · request scope</div>
+        <h2>Build log <span class="file">buildlog.html</span></h2>
+        <p>
+          No hero at all. The page is the project's log, newest first, with real dates and commits, filterable
+          by shipped / fixed / building / planned. The future is just the bottom of the list.
+        </p>
+        <div class="verdict">
+          <b>Reads as:</b> momentum you can verify<br />
+          <b>Risk:</b> asks the reader to already care
+        </div>
+      </a>
+
+      <a class="concept" href="workspace.html">
+        <div class="swatch sw-workspace">README.md · AGENTS.md · llms.txt</div>
+        <h2>Workspace <span class="file">workspace.html</span></h2>
+        <p>
+          A generated Typeway app open in an editor. The file rail is the conventions, and the tabs are the
+          same project read four ways — README for people, AGENTS.md and llms.txt for agents, the entry file
+          for the compiler.
+        </p>
+        <div class="verdict">
+          <b>Reads as:</b> the thesis demonstrated, not claimed<br />
+          <b>Risk:</b> a gimmick if the copy inside is weak
+        </div>
+      </a>
+    </div>
+
+    <footer class="wrap">
+      Pick one and promote it: <code>cp marketing/concepts/&lt;name&gt;.html marketing/index.html</code>. Every
+      file is self-contained — no build step, no shared assets.
+    </footer>
+  </body>
+</html>

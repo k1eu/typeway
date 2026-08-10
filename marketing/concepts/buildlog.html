@@ -1,0 +1,770 @@
+<!doctype html>
+<!--
+  Concept: BUILD LOG
+  There is no hero and there are no feature cards. The page is the project's
+  log, newest first, with real dates from the repository. It sells momentum
+  rather than promises: you can see how fast this is moving and decide whether
+  to wait. Entries are filterable, and the future is just the bottom of the list.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Typeway — build log</title>
+    <meta
+      name="description"
+      content="Typeway is a batteries-included TypeScript framework over Bun, Elysia, Vite and TypeBox. This is the build log: what shipped, what's being built, what's planned."
+    />
+    <meta name="theme-color" content="#0b0b0d" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b0b0d'/%3E%3Cpath d='M8 11h16M16 11v13' stroke='%23e9e9ec' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #0b0b0d;
+        --panel: #101013;
+        --line: rgba(255, 255, 255, 0.09);
+        --line-2: rgba(255, 255, 255, 0.16);
+        --fg: #ebebef;
+        --muted: #9b9ba6;
+        --dim: #6a6a76;
+        --ok: #67cf9b;
+        --build: #e0b06a;
+        --fix: #7fb8e6;
+        --plan: #8b8b98;
+        --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+        --sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 15px;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a { color: inherit; }
+
+      .wrap { max-width: 840px; margin: 0 auto; padding: 0 24px; }
+
+      /* ---------- header ---------- */
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: rgba(11, 11, 13, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        height: 58px;
+      }
+
+      .logo {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        border: 1px solid var(--line-2);
+        display: grid;
+        place-items: center;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .head b { font-weight: 600; letter-spacing: -0.01em; }
+
+      .head .tag {
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--dim);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 9px;
+      }
+
+      .head .right { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 13.5px; color: var(--muted); }
+      .head .right a { text-decoration: none; }
+      .head .right a:hover { color: var(--fg); }
+
+      /* ---------- intro ---------- */
+
+      .intro { padding: 64px 0 40px; border-bottom: 1px solid var(--line); }
+
+      .intro h1 {
+        margin: 0;
+        font-size: clamp(28px, 4.2vw, 40px);
+        line-height: 1.15;
+        letter-spacing: -0.028em;
+        font-weight: 600;
+        max-width: 20ch;
+      }
+
+      .intro p {
+        margin: 20px 0 0;
+        color: var(--muted);
+        font-size: 16.5px;
+        max-width: 62ch;
+      }
+
+      .intro p strong { color: var(--fg); font-weight: 500; }
+
+      .meta {
+        margin-top: 28px;
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+      }
+
+      .meta b { color: var(--fg); font-weight: 500; }
+
+      form.signup {
+        margin-top: 30px;
+        display: flex;
+        gap: 8px;
+        max-width: 440px;
+        flex-wrap: wrap;
+      }
+
+      form.signup input {
+        flex: 1 1 220px;
+        min-width: 0;
+        background: var(--panel);
+        border: 1px solid var(--line-2);
+        border-radius: 8px;
+        padding: 10px 13px;
+        color: var(--fg);
+        font-family: var(--sans);
+        font-size: 14.5px;
+        outline: none;
+      }
+
+      form.signup input::placeholder { color: var(--dim); }
+      form.signup input:focus { border-color: var(--fg); }
+
+      form.signup button {
+        border: 1px solid transparent;
+        background: var(--fg);
+        color: var(--bg);
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-family: var(--sans);
+        font-size: 14.5px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      form.signup button:hover { background: #fff; }
+
+      .note { margin: 10px 0 0; font-size: 13px; color: var(--dim); min-height: 18px; }
+      .note a { color: var(--fg); }
+
+      /* ---------- filters ---------- */
+
+      .filters {
+        position: sticky;
+        top: 58px;
+        z-index: 15;
+        background: rgba(11, 11, 13, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 0;
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+
+      .filters button {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+
+      .filters button:hover { color: var(--fg); border-color: var(--line-2); }
+
+      .filters button[aria-pressed="true"] {
+        background: var(--fg);
+        border-color: var(--fg);
+        color: var(--bg);
+      }
+
+      .filters .count { margin-left: auto; align-self: center; font-family: var(--mono); font-size: 11.5px; color: var(--dim); }
+
+      /* ---------- log ---------- */
+
+      .log { padding: 8px 0 40px; }
+
+      .year {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--dim);
+        padding: 34px 0 10px;
+      }
+
+      .entry {
+        position: relative;
+        display: grid;
+        grid-template-columns: 104px 1fr;
+        gap: 0 24px;
+        padding: 22px 0 24px;
+        border-top: 1px solid var(--line);
+      }
+
+      .entry[hidden] { display: none; }
+
+      .entry .when {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+        padding-top: 2px;
+        position: relative;
+      }
+
+      /* timeline rail */
+      .entry::before {
+        content: "";
+        position: absolute;
+        left: 128px;
+        top: 0;
+        bottom: 0;
+        width: 1px;
+        background: var(--line);
+      }
+
+      .entry::after {
+        content: "";
+        position: absolute;
+        left: 125px;
+        top: 27px;
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--dim);
+        border: 2px solid var(--bg);
+        box-sizing: content-box;
+      }
+
+      .entry[data-kind="shipped"]::after { background: var(--ok); }
+      .entry[data-kind="fixed"]::after { background: var(--fix); }
+      .entry[data-kind="building"]::after { background: var(--build); }
+
+      .entry .content { padding-left: 22px; }
+
+      .entry h3 {
+        margin: 0;
+        font-size: 16.5px;
+        font-weight: 600;
+        letter-spacing: -0.012em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .kind {
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 2.5px 7px;
+        border-radius: 4px;
+        border: 1px solid currentColor;
+      }
+
+      .kind.shipped { color: var(--ok); }
+      .kind.fixed { color: var(--fix); }
+      .kind.building { color: var(--build); }
+      .kind.planned { color: var(--plan); }
+
+      .entry p {
+        margin: 9px 0 0;
+        color: var(--muted);
+        font-size: 14.5px;
+        line-height: 1.62;
+        max-width: 64ch;
+      }
+
+      .entry p code,
+      .intro code {
+        font-family: var(--mono);
+        font-size: 0.88em;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        white-space: nowrap;
+      }
+
+      .entry .detail {
+        margin-top: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        font-family: var(--mono);
+        font-size: 12.2px;
+        overflow: hidden;
+      }
+
+      .entry .detail pre {
+        margin: 0;
+        padding: 13px 15px;
+        overflow-x: auto;
+        line-height: 1.75;
+        color: #c5cbd8;
+      }
+
+      table.results {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: var(--mono);
+        font-size: 12.2px;
+      }
+
+      table.results th,
+      table.results td {
+        text-align: left;
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--line);
+        white-space: nowrap;
+      }
+
+      table.results th {
+        color: var(--dim);
+        font-weight: 400;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      table.results tr:last-child td { border-bottom: 0; }
+      table.results td.n { color: var(--ok); }
+
+      .commit {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        color: var(--dim);
+        margin-top: 12px;
+      }
+
+      .commit a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--line-2); }
+      .commit a:hover { color: var(--fg); }
+
+      /* ---------- future block ---------- */
+
+      .future-head {
+        border-top: 1px solid var(--line);
+        padding: 40px 0 4px;
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .future-head h2 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+
+      .future-head span { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+
+      /* ---------- footer ---------- */
+
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 34px 0 60px;
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        font-size: 13px;
+        color: var(--dim);
+      }
+
+      footer .right { margin-left: auto; display: flex; gap: 18px; }
+      footer a { text-decoration: none; }
+      footer a:hover { color: var(--fg); }
+
+      @media (max-width: 700px) {
+        .entry { grid-template-columns: 1fr; gap: 0; }
+        .entry::before, .entry::after { display: none; }
+        .entry .content { padding-left: 0; }
+        .entry .when { margin-bottom: 8px; }
+        .filters { top: 0; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        * { animation: none !important; transition: none !important; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="wrap head">
+        <span class="logo">T</span>
+        <b>typeway</b>
+        <span class="tag">build log</span>
+        <span class="right">
+          <a href="#subscribe">Get notified</a>
+          <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub ↗</a>
+        </span>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro" id="subscribe">
+        <h1>A TypeScript framework with Rails' conventions. Not finished — but not vapour either.</h1>
+        <p>
+          Typeway is thin glue over <strong>Bun, Elysia, Vite and TypeBox</strong>, unified by one set of
+          conventions, one docs format and one CLI. There is no launch date. There is this log, which is the
+          honest version of a roadmap: what shipped, when, and what it cost.
+        </p>
+
+        <div class="meta">
+          <span>Started <b>27 Jun 2026</b></span>
+          <span>Last shipped <b>10 Aug 2026</b></span>
+          <span>Status <b>v0, in development</b></span>
+          <span>License <b>MIT</b></span>
+        </div>
+
+        <form class="signup" data-signup novalidate>
+          <input type="email" name="email" placeholder="you@company.com" aria-label="Email address" required />
+          <button type="submit">Email me at v0</button>
+        </form>
+        <p class="note" data-note>One email, when it's usable. The log stays public either way.</p>
+      </section>
+
+      <div class="filters" id="filters">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="shipped" aria-pressed="false">Shipped</button>
+        <button type="button" data-filter="fixed" aria-pressed="false">Fixed</button>
+        <button type="button" data-filter="building" aria-pressed="false">Building</button>
+        <button type="button" data-filter="planned" aria-pressed="false">Planned</button>
+        <span class="count" id="count"></span>
+      </div>
+
+      <section class="log" id="log">
+        <div class="year">2026</div>
+
+        <article class="entry" data-kind="building">
+          <div class="when">Now</div>
+          <div class="content">
+            <h3><span class="kind building">Building</span> The CLI</h3>
+            <p>
+              <code>typeway new</code>, <code>generate</code>, <code>add</code>, <code>db</code> and
+              <code>console</code>. Generators write the code and the docs for that code in the same pass —
+              an <code>AGENTS.md</code> section and a skill land next to every file they scaffold.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="building">
+          <div class="when">Now</div>
+          <div class="content">
+            <h3><span class="kind building">Building</span> Models on Drizzle</h3>
+            <p>
+              Conventions for structure, relations, migrations, seeds and factories, so a model is a file in a
+              known place rather than a decision. The request-scope work below is the foundation for it.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">10 Aug</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> One request scope for the whole stack</h3>
+            <p>
+              An <code>AsyncLocalStorage</code> context established by a fetch wrapper around
+              <code>listen()</code>, so Elysia routes, TanStack SSR and server functions all resolve the same
+              <code>getDb()</code> and share one <code>transaction()</code> per HTTP request. Drizzle over
+              Bun's SQLite, with a notes API and page dogfooding it.
+            </p>
+            <div class="commit">98a61f8 · <a href="https://github.com/k1eu/typeway/pull/7" target="_blank" rel="noopener">#7</a> · unit tests for the scope, integration tests for API + SSR</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">3 Aug</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> Production stops going through the bridge</h3>
+            <p>
+              The built SSR handler is fetch-native, so production mounts it directly on Elysia
+              (<code>.mount()</code>, ~0.4 µs) instead of paying for a Connect round-trip, and the client
+              build is registered as static routes at boot. The bridge is now what it should always have
+              been: a dev-mode component for Vite.
+            </p>
+            <div class="commit">b081c55</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">2 Aug</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> SSG, SSR and SPA — one page each</h3>
+            <p>
+              Three rendering strategies in one app, each turned on by a single line, each rendering the same
+              loader so the difference is visible on a hard reload. The prerendered page is served in
+              production by a static route at its clean URL and never reaches the SSR handler.
+            </p>
+            <div class="commit">c5b2829</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="fixed">
+          <div class="when">31 Jul</div>
+          <div class="content">
+            <h3><span class="kind fixed">Fixed</span> Request bodies drain lazily</h3>
+            <p>
+              Building the bridge's request used to read the web stream up front, which locked it and broke
+              every POST that fell through to SSR with <em>Body already used</em> — server functions, form
+              actions, uploads. Now the wrapper is lazy.
+            </p>
+            <div class="detail">
+              <pre>cost of laziness      +1–2 µs/req   (inside run-to-run spread)
+Readable.from(gen)    ~2.4x slower  rejected
+manual pull loop      ~2.4x slower  rejected</pre>
+            </div>
+            <div class="commit">351a63e</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">31 Jul</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> Paired A/B benchmarks</h3>
+            <p>
+              Not "Typeway does N req/s" — every arm is measured back to back against its own baseline on one
+              machine, interleaved round by round, median by RPS. The question was what the glue costs.
+            </p>
+            <div class="detail">
+              <table class="results">
+                <tr><th>scenario</th><th>ratio</th><th>Δ µs/req</th></tr>
+                <tr><td>registered route, bridge mounted</td><td class="n">0.985×</td><td>+0.2</td></tr>
+                <tr><td>SSR via connect() fallback</td><td class="n">1.010×</td><td>−2.0</td></tr>
+                <tr><td>static asset, prod path</td><td class="n">0.995×</td><td>+0.2</td></tr>
+                <tr><td>bare bridge round-trip (GET)</td><td>0.485×</td><td>+10.6</td></tr>
+              </table>
+            </div>
+            <p>
+              The last row is the honest one: a bridge hop costs ~10 µs, which is most of a request that does
+              nothing and none of a request that does something.
+            </p>
+            <div class="commit">2226b7b</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">31 Jul</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> Kitchen-sink fixture app</h3>
+            <p>
+              One route per TanStack feature that crosses HTTP — streaming SSR, server functions, redirects,
+              <code>notFound()</code>, cookies, multipart, SSE, binary assets — tested against both the dev
+              server and a production build, because they are different failure surfaces.
+            </p>
+            <div class="commit">dee676a · includes the discovery that TanStack disables streaming for bots, so the tests must send a browser UA or pass for the wrong reason</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">31 Jul</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> Integration suite, CI, and a compatibility matrix</h3>
+            <p>
+              The smoke checks became a real suite that boots the actual dev and production servers. A
+              scheduled job re-runs it against the latest Bun, Elysia, Vite and TanStack, so upstream drift
+              shows up as a red build instead of as a surprise.
+            </p>
+            <div class="commit">eef0dd1</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">31 Jul</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> @typeway/connect — Vite under Elysia</h3>
+            <p>
+              The first real piece: run Connect/Express middleware inside an Elysia app, mounted as a wildcard
+              route so registered routes never touch it. Raw streamed request bodies, streaming responses,
+              multiple <code>Set-Cookie</code> values preserved, null bodies for 204/304. Zero runtime
+              dependencies, and that is a constraint we intend to keep.
+            </p>
+            <div class="commit">4c74808 → f5956cf</div>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="shipped">
+          <div class="when">27 Jun</div>
+          <div class="content">
+            <h3><span class="kind shipped">Shipped</span> init</h3>
+            <p>One commit: a README and an opinion.</p>
+            <div class="commit">dac9f57</div>
+          </div>
+        </article>
+
+        <div class="future-head">
+          <h2>Not started yet</h2>
+          <span>designed, in the umbrella, waiting their turn</span>
+        </div>
+
+        <article class="entry" data-kind="planned">
+          <div class="when">Next</div>
+          <div class="content">
+            <h3><span class="kind planned">Planned</span> Auth, jobs, mailers</h3>
+            <p>
+              <code>typeway add auth</code> over better-auth. A Postgres-backed job queue, because most apps
+              never needed Redis. react-email templates with adapters and dev previews.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="planned">
+          <div class="when">Next</div>
+          <div class="content">
+            <h3><span class="kind planned">Planned</span> Realtime, storage, caching</h3>
+            <p>
+              Elysia websockets with channel conventions. A thin layer over Bun's native S3 client. A
+              database-backed cache with Redis as an opt-in, not a prerequisite.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="planned">
+          <div class="when">Next</div>
+          <div class="content">
+            <h3><span class="kind planned">Planned</span> Testing, security defaults, observability</h3>
+            <p>
+              Factories and request specs through Eden, type-checked against your routes. CORS, secure headers
+              and rate limiting on from the first request. Structured logging and OpenTelemetry as a
+              convention rather than a weekend project.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry" data-kind="planned">
+          <div class="when">Next</div>
+          <div class="content">
+            <h3><span class="kind planned">Planned</span> One-binary deploys</h3>
+            <p><code>bun --compile</code>, copy it to a box, run it.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <span>© <span id="year">2026</span> Typeway — built in the open.</span>
+      <span class="right">
+        <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>
+        <a href="https://elysiajs.com" target="_blank" rel="noopener">Elysia</a>
+      </span>
+    </footer>
+
+    <script>
+      (function () {
+        "use strict";
+
+        var NOTIFY_ENDPOINT = ""; // see marketing/README.md
+        var REPO = "https://github.com/k1eu/typeway";
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        /* ---- filters ---- */
+        var entries = Array.prototype.slice.call(document.querySelectorAll(".entry"));
+        var buttons = Array.prototype.slice.call(document.querySelectorAll("#filters button"));
+        var count = document.getElementById("count");
+
+        function apply(filter) {
+          var shown = 0;
+          entries.forEach(function (entry) {
+            var match = filter === "all" || entry.dataset.kind === filter;
+            entry.hidden = !match;
+            if (match) shown++;
+          });
+          document.querySelectorAll(".year, .future-head").forEach(function (el) {
+            el.style.display = filter === "all" ? "" : "none";
+          });
+          count.textContent = shown + (shown === 1 ? " entry" : " entries");
+          buttons.forEach(function (button) {
+            button.setAttribute("aria-pressed", String(button.dataset.filter === filter));
+          });
+        }
+
+        buttons.forEach(function (button) {
+          button.addEventListener("click", function () { apply(button.dataset.filter); });
+        });
+
+        apply("all");
+
+        /* ---- signup ---- */
+        var form = document.querySelector("[data-signup]");
+        var note = document.querySelector("[data-note]");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var email = (form.querySelector("input").value || "").trim();
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            note.textContent = "That doesn't look like an email address.";
+            return;
+          }
+          if (!NOTIFY_ENDPOINT) {
+            note.innerHTML =
+              'The list isn\'t open yet — <a href="' + REPO + '" target="_blank" rel="noopener">watch the repo</a> and the log will find you.';
+            return;
+          }
+          fetch(NOTIFY_ENDPOINT, {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ email: email }),
+          })
+            .then(function (res) {
+              if (!res.ok) throw new Error("bad status");
+              form.style.display = "none";
+              note.textContent = "You're on the list.";
+            })
+            .catch(function () {
+              note.textContent = "Something went wrong — try the repo instead.";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

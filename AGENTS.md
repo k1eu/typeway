@@ -37,3 +37,10 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 canar
 - Responses from `connect()`'s `fallback` (i.e. all TanStack SSR) never travel through `BridgeResponse`/`BridgeRequest` — the bridge only hands the fallback the `Request`. Tests meant to cover bridge streaming or raw-body behavior must go through actual Connect middleware, not through SSR.
 - Tests live next to source (`src/*.test.ts`), `bun:test`. When changing bridge behavior, `packages/connect/src/index.test.ts` is the behavioral contract.
 - Don't add runtime dependencies to `packages/connect` without strong justification.
+
+## Cursor Cloud specific instructions
+
+- Runtime is Bun canary (targets 1.4), installed to `~/.bun/bin` and symlinked to `/usr/local/bin/bun` so it resolves in non-interactive shells. The startup update script only runs `bun install`; if `bun` is ever missing, reinstall with `curl -fsSL https://bun.sh/install | bash -s -- canary`. Node is not used to run anything here.
+- Standard lint/test/build/run commands live in the `## Commands` section above — reuse those. There is no separate lint/typecheck step in this repo (CI runs only unit + integration + e2e).
+- All three apps (`apps/playground`, `apps/playground-with-tanstack`, `apps/e2e-tanstack`) default to port 3000, so only one dev server can run on the default port at a time. Set `PORT` (and `HMR_PORT` for the tanstack apps) to run several concurrently. Manual sanity check: `curl localhost:3000/api/hello` returns `{"message":"Hello world"}` and `GET /` is TanStack SSR.
+- Known pre-existing failure (not caused by env setup): `bun run test:integration` has one failing case — `tests/integration.test.ts` "conditional request replays the ETag and gets a bodyless 304" expects `content-length: 0` but the current Vite dev middleware returns `null`. This is upstream dependency drift (apps pin `@tanstack/*`/router to `latest`); unit tests and `test:e2e-tanstack` pass fully.

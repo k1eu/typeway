@@ -917,9 +917,8 @@ static asset, production path      <span class="pa">0.995x</span>   +0.2 µs/req
                 <tr><th>Area</th><th>State</th><th>Notes</th></tr>
                 <tr><td>Connect bridge</td><td><span class="state ok">shipped</span></td><td>Zero deps, streaming both directions</td></tr>
                 <tr><td>Full-stack dev server</td><td><span class="state ok">shipped</span></td><td>Vite + SSR + typed API, one process</td></tr>
-                <tr><td>Rendering modes</td><td><span class="state ok">shipped</span></td><td>SSG, SSR, SPA side by side</td></tr>
-                <tr><td>Models</td><td><span class="state wip">building</span></td><td>Drizzle, migrations, seeds, factories</td></tr>
-                <tr><td>Request context</td><td><span class="state wip">building</span></td><td>One ALS scope for routes, SSR, server fns</td></tr>
+                <tr><td>Shared request context</td><td><span class="state ok">shipped</span></td><td>Backend and frontend server share one scope</td></tr>
+                <tr><td>Models and domain</td><td><span class="state wip">building</span></td><td>Migrations, seeds, factories — on your ORM</td></tr>
                 <tr><td>CLI</td><td><span class="state wip">building</span></td><td>new, generate, add, db, console</td></tr>
                 <tr><td>Auth</td><td><span class="state plan">planned</span></td><td>better-auth, wired and documented</td></tr>
                 <tr><td>Jobs, mailers, realtime</td><td><span class="state plan">planned</span></td><td>Postgres queue, react-email, ws channels</td></tr>
@@ -1094,7 +1093,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
         <div class="filters" id="filters">
           <button type="button" data-filter="all" aria-pressed="true">All</button>
           <button type="button" data-filter="shipped" aria-pressed="false">Shipped</button>
-          <button type="button" data-filter="fixed" aria-pressed="false">Fixed</button>
           <button type="button" data-filter="building" aria-pressed="false">Building</button>
           <button type="button" data-filter="planned" aria-pressed="false">Planned</button>
           <span class="count" id="count"></span>
@@ -1119,10 +1117,12 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
           <article class="entry" data-kind="building">
             <div class="when">Now</div>
             <div class="content">
-              <h3><span class="kind building">Building</span> Models on Drizzle</h3>
+              <h3><span class="kind building">Building</span> Models and domain</h3>
               <p>
-                Conventions for structure, relations, migrations, seeds and factories, so a model is a file in
-                a known place rather than a decision. The request scope below is the foundation for it.
+                A domain layer with conventions for structure, relations, migrations, seeds and factories, so
+                a model is a file in a known place rather than a decision. Built on whichever ORM you like —
+                Drizzle is the default because it is the thinnest, but the conventions are the part Typeway
+                ships, so the ORM underneath stays yours to swap.
               </p>
             </div>
           </article>
@@ -1130,12 +1130,12 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
           <article class="entry" data-kind="shipped">
             <div class="when">10 Aug</div>
             <div class="content">
-              <h3><span class="kind shipped">Shipped</span> One request scope for the whole stack</h3>
+              <h3><span class="kind shipped">Shipped</span> The backend and the frontend's server can share things</h3>
               <p>
-                An <code>AsyncLocalStorage</code> context established by a fetch wrapper around
-                <code>listen()</code>, so Elysia routes, SSR and server functions all resolve the same
-                <code>getDb()</code> and share one <code>transaction()</code> per HTTP request. Drizzle over
-                Bun's SQLite, with a notes API and page dogfooding it.
+                <code>AsyncLocalStorage</code> gives every incoming request its own scope, so your API routes
+                and the server-rendering half of your frontend reach the same database handle, the same open
+                transaction and the same current user — without threading any of it through every function
+                call. One request, one context, both sides of the app.
               </p>
               <div class="commit">98a61f8 · <a href="https://github.com/k1eu/typeway/pull/7" target="_blank" rel="noopener">#7</a> · unit tests for the scope, integration tests for API + SSR</div>
             </div>
@@ -1156,37 +1156,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
           </article>
 
           <article class="entry" data-kind="shipped">
-            <div class="when">2 Aug</div>
-            <div class="content">
-              <h3><span class="kind shipped">Shipped</span> SSG, SSR and SPA — one page each</h3>
-              <p>
-                Three rendering strategies in one app, each turned on by a single line, each running the same
-                loader so the difference is visible on a hard reload. The prerendered page is served in
-                production by a static route at its clean URL and never reaches the SSR handler.
-              </p>
-              <div class="commit">c5b2829</div>
-            </div>
-          </article>
-
-          <article class="entry" data-kind="fixed">
-            <div class="when">31 Jul</div>
-            <div class="content">
-              <h3><span class="kind fixed">Fixed</span> Request bodies drain lazily</h3>
-              <p>
-                Building the bridge's request used to read the web stream up front, which locked it and broke
-                every POST that fell through to SSR with <em>Body already used</em> — server functions, form
-                actions, uploads. Now the wrapper is lazy.
-              </p>
-              <div class="detail">
-                <pre>cost of laziness      +1–2 µs/req   (inside run-to-run spread)
-Readable.from(gen)    ~2.4x slower  rejected
-manual pull loop      ~2.4x slower  rejected</pre>
-              </div>
-              <div class="commit">351a63e</div>
-            </div>
-          </article>
-
-          <article class="entry" data-kind="shipped">
             <div class="when">31 Jul</div>
             <div class="content">
               <h3><span class="kind shipped">Shipped</span> Paired A/B benchmarks</h3>
@@ -1200,12 +1169,14 @@ manual pull loop      ~2.4x slower  rejected</pre>
                   <tr><td>registered route, bridge mounted</td><td class="n">0.985×</td><td>+0.2</td></tr>
                   <tr><td>SSR via connect() fallback</td><td class="n">1.010×</td><td>−2.0</td></tr>
                   <tr><td>static asset, prod path</td><td class="n">0.995×</td><td>+0.2</td></tr>
-                  <tr><td>bare bridge round-trip (GET)</td><td>0.485×</td><td>+10.6</td></tr>
+                  <tr><td>bare bridge round-trip (GET) — dev only</td><td>0.485×</td><td>+10.6</td></tr>
                 </table>
               </div>
               <p>
-                The last row is the honest one: a bridge hop costs ~10 µs, which is most of a request that
-                does nothing and none of a request that does something.
+                The last row is the honest one, and it only ever happens in development: a bridge hop costs
+                ~10 µs, which is most of a request that does nothing and none of a request that does
+                something. Production never touches the bridge — the built handler is mounted straight onto
+                Elysia.
               </p>
               <div class="commit">2226b7b</div>
             </div>
@@ -1220,7 +1191,7 @@ manual pull loop      ~2.4x slower  rejected</pre>
                 <code>notFound()</code>, cookies, multipart, SSE, binary assets — tested against both the dev
                 server and a production build, because they are different failure surfaces.
               </p>
-              <div class="commit">dee676a · includes the discovery that TanStack disables streaming for bots, so the tests must send a browser UA or pass for the wrong reason</div>
+              <div class="commit">dee676a</div>
             </div>
           </article>
 

@@ -1,8 +1,14 @@
+import { mkdirSync } from "node:fs"
+import { dirname } from "node:path"
 import { Database } from "bun:sqlite"
 import { drizzle } from "drizzle-orm/bun-sqlite"
 import { sql } from "drizzle-orm"
 import * as schema from "../db/schema"
 import { env } from "./env"
+
+if (env.DATABASE_URL !== ":memory:") {
+  mkdirSync(dirname(env.DATABASE_URL), { recursive: true })
+}
 
 const sqlite = new Database(env.DATABASE_URL)
 

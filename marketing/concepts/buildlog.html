@@ -365,12 +365,13 @@
         white-space: nowrap;
       }
 
+      /* deliberately not uppercased: text-transform turns "µs" into "ΜS",
+         which reads as milliseconds and is off by a thousand */
       table.results th {
         color: var(--dim);
         font-weight: 400;
         font-size: 11px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        letter-spacing: 0.06em;
       }
 
       table.results tr:last-child td { border-bottom: 0; }

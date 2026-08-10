@@ -6,13 +6,12 @@
   Deploy by pointing any static host at this directory.
 
   Structure:
-    1. A generated Typeway app open in an editor. The file rail is the
-       conventions; the tabs are the same project read five ways — README.md
-       for people, AGENTS.md and llms.txt for the things writing code beside
-       them, src/server.ts for the compiler, and a live terminal for the CLI.
-    2. Roadmap, written as a build log: real dates, newest first, filterable,
-       with everything unstarted at the bottom.
-    3. The ask.
+    1. Plain-language hero: brand, one headline, outcomes, CTA; stack secondary.
+    2. Editor demo as proof — same project read five ways (README, AGENTS.md,
+       llms.txt, src/server.ts, live terminal).
+    3. Short philosophy, "Everything you need", and a generator→page walkthrough.
+    4. Roadmap as a build log: real dates, newest first, filterable.
+    5. The ask.
 
   Colours live in the :root block below; nothing else hardcodes one.
   Set NOTIFY_ENDPOINT in the script at the end to turn the email form on.
@@ -21,18 +20,18 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Typeway — the batteries-included TypeScript framework. Coming soon.</title>
+    <title>Typeway — one predictable shape for every TypeScript app</title>
     <meta
       name="description"
-      content="Typeway is a Rails-spirited TypeScript framework: one set of conventions, one CLI, one docs format — glued thinly over Bun, Elysia, Vite and TypeBox. Everything ejectable. AI agents are first-class users."
+      content="Typeway gives every full-stack TypeScript app the same predictable shape under one CLI and one set of conventions. Easy for agents to write. Easy for humans to review. Coming soon."
     />
     <meta name="theme-color" content="#0d1015" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Typeway — coming soon" />
+    <meta property="og:title" content="Typeway — one predictable shape for every TypeScript app" />
     <meta
       property="og:description"
-      content="Rails-grade conventions for TypeScript. Bun + Elysia + Vite + TypeBox, glued thinly and always ejectable."
+      content="Faster starts. Fewer architectural decisions. Predictable code for humans and agents. Coming soon."
     />
     <meta name="twitter:card" content="summary_large_image" />
 
@@ -131,26 +130,130 @@
       .topbar .right a { text-decoration: none; }
       .topbar .right a:hover { color: var(--fg); }
 
-      /* ================= intro ================= */
+      /* ================= hero ================= */
 
-      .intro { padding: 40px 0 24px; }
-
-      .intro h1 {
-        margin: 0;
-        font-size: clamp(26px, 3.3vw, 35px);
-        line-height: 1.14;
-        letter-spacing: -0.03em;
-        font-weight: 600;
-        max-width: 24ch;
+      .hero {
+        padding: 56px 0 28px;
+        position: relative;
       }
 
-      .intro p { margin: 14px 0 0; color: var(--muted); font-size: 15.5px; max-width: 78ch; }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: -40px -80px auto;
+        height: 420px;
+        background:
+          radial-gradient(ellipse 70% 55% at 15% 0%, rgba(111, 211, 176, 0.12), transparent 70%),
+          radial-gradient(ellipse 50% 40% at 85% 20%, rgba(126, 166, 216, 0.08), transparent 65%);
+        pointer-events: none;
+        z-index: 0;
+      }
 
-      .intro p strong { color: var(--fg); font-weight: 500; }
+      .hero > * { position: relative; z-index: 1; }
 
-      .intro .hint { margin-top: 14px; font-family: var(--mono); font-size: 12px; color: var(--dim); }
+      .hero .brand {
+        margin: 0 0 18px;
+        font-family: var(--mono);
+        font-size: clamp(28px, 4vw, 40px);
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: var(--fg);
+        line-height: 1;
+      }
 
-      .intro .hint kbd {
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(30px, 4.6vw, 48px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+        font-weight: 600;
+        max-width: 16ch;
+      }
+
+      .hero .lede {
+        margin: 20px 0 0;
+        color: var(--muted);
+        font-size: clamp(16px, 1.5vw, 18px);
+        line-height: 1.55;
+        max-width: 52ch;
+      }
+
+      .hero .lede strong { color: var(--fg); font-weight: 500; }
+
+      .hero-actions {
+        margin-top: 28px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .hero-actions .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--accent);
+        color: #06120e;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 14.5px;
+        font-weight: 600;
+      }
+
+      .hero-actions .btn:hover { filter: brightness(1.07); }
+
+      .hero-actions .ghost {
+        display: inline-flex;
+        align-items: center;
+        color: var(--muted);
+        text-decoration: none;
+        padding: 12px 14px;
+        font-size: 14.5px;
+      }
+
+      .hero-actions .ghost:hover { color: var(--fg); }
+
+      .hero .stack {
+        margin: 22px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+        letter-spacing: 0.02em;
+        max-width: 62ch;
+      }
+
+      .hero .stack b { color: var(--muted); font-weight: 500; }
+
+      /* ================= section heads ================= */
+
+      .section-head { margin: 0 0 22px; max-width: 58ch; }
+
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(24px, 3.2vw, 32px);
+        letter-spacing: -0.028em;
+        font-weight: 600;
+        line-height: 1.15;
+      }
+
+      .section-head p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        font-size: 15.5px;
+        line-height: 1.55;
+      }
+
+      .proof { padding: 18px 0 0; }
+
+      .proof .hint {
+        margin: 14px 0 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+      }
+
+      .proof .hint kbd {
         font-family: var(--mono);
         font-size: 11px;
         border: 1px solid var(--line-2);
@@ -158,6 +261,152 @@
         border-radius: 5px;
         padding: 1px 6px;
         color: var(--muted);
+      }
+
+      /* ================= philosophy ================= */
+
+      .philosophy {
+        margin: 88px 0 0;
+        padding: 48px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .philosophy h2 {
+        margin: 0;
+        font-size: clamp(26px, 3.6vw, 38px);
+        letter-spacing: -0.03em;
+        font-weight: 600;
+        line-height: 1.12;
+        max-width: 18ch;
+      }
+
+      .philosophy p {
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: 16.5px;
+        line-height: 1.55;
+        max-width: 58ch;
+      }
+
+      .philosophy p strong { color: var(--fg); font-weight: 500; }
+
+      /* ================= everything you need ================= */
+
+      .needs { margin: 88px 0 0; }
+
+      .need-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        border-top: 1px solid var(--line);
+      }
+
+      .need-list li {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) auto;
+        gap: 18px 28px;
+        align-items: baseline;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .need-list h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+
+      .need-list p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14.5px;
+        line-height: 1.55;
+        max-width: 62ch;
+      }
+
+      .need-list .state {
+        font-family: var(--mono);
+        font-size: 11.5px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      /* ================= walkthrough ================= */
+
+      .walkthrough { margin: 88px 0 0; }
+
+      .steps {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .steps li {
+        display: grid;
+        grid-template-columns: 56px minmax(0, 1fr);
+        gap: 0 22px;
+        padding: 28px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .steps .num {
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--dim);
+        letter-spacing: 0.08em;
+        padding-top: 4px;
+      }
+
+      .steps h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+      }
+
+      .steps p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14.5px;
+        line-height: 1.55;
+        max-width: 64ch;
+      }
+
+      .steps pre {
+        margin: 16px 0 0;
+        padding: 14px 16px;
+        background: #0a0d12;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.75;
+        overflow-x: auto;
+        color: #c3cad8;
+      }
+
+      .steps code {
+        font-family: var(--mono);
+        font-size: 0.87em;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 1px 5px;
+        white-space: nowrap;
+      }
+
+      .steps pre code {
+        background: none;
+        border: 0;
+        padding: 0;
+        white-space: pre;
+        font-size: inherit;
       }
 
       /* ================= editor ================= */
@@ -348,7 +597,7 @@
       .md-doc li { margin-bottom: 7px; }
       .md-doc li::marker { color: var(--dim); }
 
-      .md-doc code, .intro code, .roadmap code {
+      .md-doc code, .roadmap code, .needs code, .walkthrough code, .philosophy code {
         font-family: var(--mono);
         font-size: 0.87em;
         background: rgba(255, 255, 255, 0.06);
@@ -765,12 +1014,16 @@
         .entry .content { padding-left: 0; }
         .entry .when { margin-bottom: 8px; }
         .topbar .right .hide-sm { display: none; }
+        .need-list li { grid-template-columns: 1fr; gap: 8px; }
+        .steps li { grid-template-columns: 40px minmax(0, 1fr); gap: 0 14px; }
+        .hero::before { inset: -20px -24px auto; }
       }
 
       @media (max-width: 620px) {
         .soon { display: none; }
         .topbar .right { gap: 16px; }
-        .intro { padding-top: 30px; }
+        .hero { padding-top: 36px; }
+        .hero h1 { max-width: none; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -787,7 +1040,8 @@
         <b>typeway</b>
         <span class="soon">v0 — coming soon</span>
         <span class="right">
-          <a href="#roadmap" class="hide-sm">Roadmap</a>
+          <a href="#needs" class="hide-sm">Capabilities</a>
+          <a href="#roadmap" class="hide-sm">Build log</a>
           <a href="#notify">Get notified</a>
           <a href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub ↗</a>
         </span>
@@ -795,16 +1049,33 @@
     </div>
 
     <main class="wrap">
-      <section class="intro">
-        <h1>Every Typeway app is the same app until you write something.</h1>
-        <p>
-          A batteries-included TypeScript framework in the spirit of Rails, built as
-          <strong>thin glue between libraries that already won</strong> — Bun, Elysia, Vite, TypeBox — under
-          one set of conventions, one docs format and one CLI. Here is a generated project rather than a
-          description of one: same layout every time, and the same repository documented for a person, an
-          agent and a compiler.
+      <section class="hero">
+        <p class="brand">Typeway</p>
+        <h1>One predictable shape for every TypeScript app.</h1>
+        <p class="lede">
+          Faster starts. Fewer architectural decisions. Predictable code for humans and agents —
+          under one CLI and one set of conventions.
+          <strong>Agents know what to write. Humans know where to find it.</strong>
+          Everything underneath remains yours.
         </p>
-        <p class="hint">Click a file or a tab — <kbd>1</kbd>–<kbd>5</kbd> work too. The terminal is live.</p>
+        <div class="hero-actions">
+          <a class="btn" href="#notify">Get notified</a>
+          <a class="ghost" href="https://github.com/k1eu/typeway" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+        <p class="stack">
+          <b>Proven libraries, one coherent framework</b> — Bun · Elysia · Vite · TypeBox
+        </p>
+      </section>
+
+      <section class="proof" aria-label="Generated project demo">
+        <div class="section-head">
+          <h2>The shape, demonstrated.</h2>
+          <p>
+            A generated project rather than a description of one — same layout every time, documented for a
+            person, an agent, and a compiler.
+          </p>
+          <p class="hint">Click a file or a tab — <kbd>1</kbd>–<kbd>5</kbd> work too. The terminal is live.</p>
+        </div>
       </section>
 
       <div class="editor">
@@ -854,9 +1125,8 @@
             <section class="pane on md-doc" data-pane="readme">
               <h1>Typeway</h1>
               <p>
-                A batteries-included TypeScript framework in the spirit of Ruby on Rails — built as glue
-                between best-in-class libraries, unified under one set of conventions, one docs format and one
-                CLI.
+                One predictable shape for every TypeScript app — under one CLI, one docs format, and one set
+                of conventions. Easy for agents to write. Easy for humans to review.
               </p>
 
               <div class="badges">
@@ -869,18 +1139,15 @@
               </div>
 
               <blockquote>
-                Typeway doesn't reinvent the ecosystem. It blesses proven tools, integrates them thinly, and
-                makes everything ejectable. The product is the conventions, the docs and the generators — not
-                wrappers.
+                Proven libraries, one coherent framework. The product is the conventions, the docs and the
+                generators — everything underneath stays yours.
               </blockquote>
 
               <h2>Why</h2>
               <p>
-                Every Rails app looks the same, so every Rails developer is productive on day one. TypeScript
-                never got that. Typeway brings it — with one addition Rails never needed:
-                <strong>agents are first-class users</strong>. Conventions stay deterministic and greppable,
-                docs ship in agent-readable formats, and every generator installs the knowledge to use what it
-                just wrote.
+                Faster starts. Fewer architectural decisions. Predictable code for humans and agents.
+                Generators write the code <strong>and teach the next agent how to maintain it</strong> —
+                conventions stay deterministic and greppable, and docs land where coding agents already look.
               </p>
 
               <h2>Install</h2>
@@ -984,9 +1251,9 @@ next agent starts where you finished.
                 <div class="gutter" aria-hidden="true"></div>
                 <pre><span class="h"># Typeway</span>
 
-&gt; A batteries-included TypeScript framework over Bun, Elysia, Vite and
-&gt; TypeBox. Conventions, docs and generators — not wrappers. Every
-&gt; integration is ejectable to the library underneath.
+&gt; One predictable shape for every TypeScript app. Proven libraries,
+&gt; one coherent framework. Conventions, docs and generators — every
+&gt; integration stays ejectable to the library underneath.
 
 <span class="h">## Docs</span>
 
@@ -1073,10 +1340,151 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
         </div>
       </div>
 
+      <!-- ===================== philosophy ===================== -->
+      <section class="philosophy">
+        <h2>Easy for agents to write. Easy for humans to review.</h2>
+        <p>
+          A good share of the code landing in your repository will be written by something that has never
+          read your README. So conventions stay <strong>deterministic and greppable</strong>, docs ship as
+          <code>AGENTS.md</code> and <code>llms.txt</code>, and every generator installs the knowledge to use
+          what it just wrote — right next to the code.
+        </p>
+      </section>
+
+      <!-- ===================== everything you need ===================== -->
+      <section class="needs" id="needs">
+        <div class="section-head">
+          <h2>Everything you need.</h2>
+          <p>
+            A full-stack framework with strong conventions for the parts every app eventually needs — labeled
+            honestly for what ships today versus what lands with v0.
+          </p>
+        </div>
+
+        <ul class="need-list">
+          <li>
+            <h3>Models and validation</h3>
+            <p>
+              Domain models in a known place, TypeBox schemas everywhere, migrations and factories as
+              convention — on the ORM you choose.
+            </p>
+            <span class="state wip">Building</span>
+          </li>
+          <li>
+            <h3>API and routing</h3>
+            <p>
+              Typed Elysia routes for the backend; anything unmatched is the frontend. No catch-all route to
+              invent, and registered routes never touch the Vite bridge.
+            </p>
+            <span class="state ok">Shipped</span>
+          </li>
+          <li>
+            <h3>SSR, SSG, and SPA</h3>
+            <p>
+              One app, three rendering strategies — each a one-line decision, each tested in development and
+              production.
+            </p>
+            <span class="state ok">Shipped</span>
+          </li>
+          <li>
+            <h3>Auth, jobs, mail, storage</h3>
+            <p>
+              <code>typeway add</code> for better-auth, a Postgres-backed job queue, react-email, websocket
+              channels, and Bun's native S3 client — wired and documented the same way every time.
+            </p>
+            <span class="state plan">Planned</span>
+          </li>
+          <li>
+            <h3>Testing and deployment</h3>
+            <p>
+              Factories and request specs through Eden, safe defaults from the first request, and one-binary
+              deploys with <code>bun --compile</code>.
+            </p>
+            <span class="state plan">Planned</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ===================== end-to-end walkthrough ===================== -->
+      <section class="walkthrough" id="example">
+        <div class="section-head">
+          <h2>From generator to page.</h2>
+          <p>
+            Rails shows model → controller → view → route. Typeway shows generator → model → API → page —
+            and the agent instructions that land with them.
+          </p>
+        </div>
+
+        <ol class="steps">
+          <li>
+            <span class="num">01</span>
+            <div>
+              <h3>Generate the model</h3>
+              <p>One command scaffolds the table, the domain model, and the docs for both.</p>
+              <pre><code><span class="pa">$</span> typeway generate model article
+<span class="ok">✓</span> db/schema/article.ts
+<span class="ok">✓</span> app/models/article.ts
+<span class="ok">✓</span> AGENTS.md  <span class="cm"># documented where the next agent will look</span></code></pre>
+            </div>
+          </li>
+          <li>
+            <span class="num">02</span>
+            <div>
+              <h3>Model the domain</h3>
+              <p>Queries live with the model. The table stays in <code>db/schema/</code>. Validation is TypeBox.</p>
+              <pre><code><span class="k">export</span> <span class="k">const</span> Article = {
+  recent: () =&gt; getDb().query.articles.findMany({
+    orderBy: (t, { desc }) =&gt; desc(t.createdAt),
+    limit: 25,
+  }),
+  create: (input: Static&lt;<span class="k">typeof</span> ArticleInput&gt;) =&gt;
+    getDb().insert(articles).values(input).returning(),
+};</code></pre>
+            </div>
+          </li>
+          <li>
+            <span class="num">03</span>
+            <div>
+              <h3>Expose an API route</h3>
+              <p>Elysia handlers stay thin. Params and bodies are typed once and shared with the client.</p>
+              <pre><code>app.get(<span class="s">"/api/articles"</span>, () =&gt; Article.recent())
+  .post(<span class="s">"/api/articles"</span>, ({ body }) =&gt; Article.create(body), {
+    body: ArticleInput,
+  });</code></pre>
+            </div>
+          </li>
+          <li>
+            <span class="num">04</span>
+            <div>
+              <h3>Render the page</h3>
+              <p>Same request scope reaches the database from SSR — no second data layer to invent.</p>
+              <pre><code><span class="k">export const</span> Route = createFileRoute(<span class="s">"/articles"</span>)({
+  loader: () =&gt; Article.recent(),
+  component: ArticlesPage,
+});</code></pre>
+            </div>
+          </li>
+          <li>
+            <span class="num">05</span>
+            <div>
+              <h3>Leave instructions for the next agent</h3>
+              <p>
+                Generators write the knowledge to maintain what they just wrote — so the next edit starts
+                where this one finished.
+              </p>
+              <pre><code><span class="cm"># from AGENTS.md — generated, not hand-maintained</span>
+- Models are <span class="pa">app/models/&lt;singular&gt;.ts</span> and export queries, never a bare table.
+- Database access goes through <span class="pa">getDb()</span>, which resolves the request scope.
+- Validation is TypeBox everywhere. Do not add a second validation library.</code></pre>
+            </div>
+          </li>
+        </ol>
+      </section>
+
       <!-- ===================== roadmap / build log ===================== -->
       <section class="roadmap" id="roadmap">
         <div class="head">
-          <h2>Roadmap</h2>
+          <h2>Build log</h2>
           <p>
             Written as a log rather than a promise: what shipped, on what day, and what it cost. Everything
             not started yet is at the bottom, where it belongs.
@@ -1286,7 +1694,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
           <h2>Be there for v0.</h2>
           <p>
             One email when <code>bun create typeway</code> actually works — no drip campaign, no countdown.
-            The log above keeps moving either way.
+            The build log keeps moving either way.
           </p>
           <p class="note" data-note></p>
         </div>

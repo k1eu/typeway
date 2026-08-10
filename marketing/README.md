@@ -6,15 +6,20 @@ page renders fine offline too.
 
 ## What's on the page
 
-1. **A generated Typeway app, open in an editor.** The file rail is the conventions; the
-   tabs are the same project read five ways — `README.md` for people, `AGENTS.md` and
-   `llms.txt` for the things writing code beside them, `src/server.ts` for the compiler,
-   and a live terminal that types out `typeway new`, `generate model` and `dev`. The
-   terminal starts on first open and has a replay button. Tabs respond to <kbd>1</kbd>–<kbd>5</kbd>.
-2. **Roadmap, written as a build log.** Real dates and commit hashes, newest first,
-   filterable by shipped / fixed / building / planned, with everything unstarted at the
-   bottom.
-3. **The ask** — one email field.
+1. **A plain-language hero.** Brand-first headline ("One predictable shape for every
+   TypeScript app"), outcomes over stack names, then a quiet line for Bun / Elysia /
+   Vite / TypeBox.
+2. **A generated Typeway app, open in an editor — as proof, not the pitch.** The file
+   rail is the conventions; the tabs are the same project read five ways — `README.md`
+   for people, `AGENTS.md` and `llms.txt` for the things writing code beside them,
+   `src/server.ts` for the compiler, and a live terminal that types out `typeway new`,
+   `generate model` and `dev`. Tabs respond to <kbd>1</kbd>–<kbd>5</kbd>.
+3. **Philosophy, capabilities, and a walkthrough.** "Easy for agents to write. Easy for
+   humans to review.", an Everything-you-need list with honest shipped/building/planned
+   labels, and a generator → model → API → page → `AGENTS.md` example.
+4. **Roadmap, written as a build log.** Real dates and commit hashes, newest first,
+   filterable, with everything unstarted at the bottom.
+5. **The ask** — one email field.
 
 ## Concepts
 

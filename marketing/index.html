@@ -238,7 +238,21 @@
         box-shadow: inset 2px 0 0 var(--accent);
       }
 
-      .rail .caret { color: var(--dim); width: 9px; display: inline-block; }
+      /* drawn, not typed: no monospace family in the stack carries a
+         down-pointing triangle, so a glyph here renders as tofu */
+      .rail .caret {
+        width: 9px;
+        display: inline-flex;
+        justify-content: center;
+      }
+
+      .rail .caret::before {
+        content: "";
+        border-left: 3.5px solid transparent;
+        border-right: 3.5px solid transparent;
+        border-top: 4px solid var(--dim);
+        margin-top: 1px;
+      }
       .rail .ico { width: 13px; text-align: center; }
       .rail .ico.dir { color: var(--folder); }
       .rail .ico.md { color: var(--md); }
@@ -459,7 +473,9 @@
       .c { color: var(--fix); }
       .m { color: var(--dim); }
 
-      .caret {
+      /* not ".caret": the file rail has carets of its own, and a bare class
+         here leaks the blinking block into them */
+      .cursor {
         display: inline-block;
         width: 8px;
         height: 15px;
@@ -732,7 +748,14 @@
 
       @media (max-width: 900px) {
         .shell { grid-template-columns: 1fr; }
-        .rail { border-right: 0; border-bottom: 1px solid var(--line); max-height: 200px; }
+        /* tabs first on narrow screens; the file rail becomes a footnote */
+        .main { order: 1; }
+        .rail {
+          order: 2;
+          border-right: 0;
+          border-top: 1px solid var(--line);
+          max-height: 220px;
+        }
         .pane { max-height: none; padding: 22px 18px 30px; }
         .gutter { display: none; }
         .raw pre { white-space: pre-wrap; word-break: break-word; }
@@ -742,6 +765,12 @@
         .entry .content { padding-left: 0; }
         .entry .when { margin-bottom: 8px; }
         .topbar .right .hide-sm { display: none; }
+      }
+
+      @media (max-width: 620px) {
+        .soon { display: none; }
+        .topbar .right { gap: 16px; }
+        .intro { padding-top: 30px; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -775,9 +804,7 @@
           description of one: same layout every time, and the same repository documented for a person, an
           agent and a compiler.
         </p>
-        <p class="hint">
-          Click a file in the rail, or a tab. <kbd>1</kbd>–<kbd>5</kbd> switch too, and the terminal is live.
-        </p>
+        <p class="hint">Click a file or a tab — <kbd>1</kbd>–<kbd>5</kbd> work too. The terminal is live.</p>
       </section>
 
       <div class="editor">
@@ -791,23 +818,23 @@
           <nav class="rail" aria-label="Project files">
             <h2>Explorer</h2>
             <ul>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>app<span class="note">domain</span></span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>app<span class="note">domain</span></span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>context.ts</span></li>
-              <li><span class="row" style="padding-left: 32px"><span class="caret">▾</span><span class="ico dir">▣</span>models</span></li>
+              <li><span class="row" style="padding-left: 32px"><span class="caret"></span><span class="ico dir">▣</span>models</span></li>
               <li><span class="row" style="padding-left: 50px"><span class="ico ts">◆</span>product.ts</span></li>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>config<span class="note">typed env</span></span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>config<span class="note">typed env</span></span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>database.ts</span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>env.ts</span></li>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>db</span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>db</span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>schema.ts</span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>migrations</span></li>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>server<span class="note">http</span></span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>server<span class="note">http</span></span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico ts">◆</span>app.ts</span></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>routes</span></li>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>src<span class="note">frontend</span></span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>src<span class="note">frontend</span></span></li>
               <li><button class="row" style="padding-left: 32px" data-open="entry"><span class="ico ts">◆</span>server.ts</button></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>routes</span></li>
-              <li><span class="row"><span class="caret">▾</span><span class="ico dir">▣</span>tests</span></li>
+              <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>tests</span></li>
               <li><button class="row" data-open="readme"><span class="ico md">✱</span>README.md</button></li>
               <li><button class="row" data-open="agents"><span class="ico md">✱</span>AGENTS.md<span class="note">agents</span></button></li>
               <li><button class="row" data-open="llms"><span class="ico txt">≡</span>llms.txt<span class="note">agents</span></button></li>
@@ -1032,7 +1059,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               <div class="term-head">
                 <span>zsh — ~/code</span>
                 <span class="tag">CLI preview</span>
-                <button type="button" id="replay">▸ replay</button>
+                <button type="button" id="replay">replay ↻</button>
               </div>
               <pre class="term" id="term" aria-label="Terminal preview of the Typeway CLI"></pre>
             </section>
@@ -1410,7 +1437,7 @@ manual pull loop      ~2.4x slower  rejected</pre>
           function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
 
           function paint(pending) {
-            term.innerHTML = done + (pending || "") + '<span class="caret"></span>';
+            term.innerHTML = done + (pending || "") + '<span class="cursor"></span>';
           }
 
           function step() {
@@ -1451,7 +1478,7 @@ manual pull loop      ~2.4x slower  rejected</pre>
             })();
           }
 
-          term.innerHTML = '<span class="caret"></span>';
+          term.innerHTML = '<span class="cursor"></span>';
           later(step, 350);
         }
 

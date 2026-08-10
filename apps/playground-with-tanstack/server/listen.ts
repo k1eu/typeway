@@ -1,0 +1,19 @@
+import type { Elysia } from "elysia"
+import { withFetchContext } from "./fetch-context"
+
+/** Bun.serve entry with ALS — replaces bare `app.listen()` in boot files. */
+export function listen(
+  app: Pick<Elysia, "fetch">,
+  port: number,
+  onListen?: (info: { port: number }) => void,
+) {
+  const server = Bun.serve({
+    port,
+    fetch(request) {
+      return withFetchContext(request, () => app.fetch(request))
+    },
+  })
+
+  onListen?.({ port: server.port ?? port })
+  return server
+}

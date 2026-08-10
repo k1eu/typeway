@@ -90,6 +90,39 @@ describe("dev server (Vite middlewareMode through connect)", () => {
     expect(await res.json()).toEqual({ message: "Hello ci" })
   })
 
+  test("GET /api/notes reads SQLite through ALS (seed + create)", async () => {
+    const seeded = await fetch(server.url + "/api/notes")
+    expect(seeded.status).toBe(200)
+    const before = (await seeded.json()) as { id: number; body: string }[]
+    expect(before.length).toBeGreaterThanOrEqual(2)
+
+    const created = await fetch(server.url + "/api/notes", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ body: "integration note" }),
+    })
+    expect(created.status).toBe(200)
+    const note = (await created.json()) as { id: number; body: string }
+    expect(note.body).toBe("integration note")
+
+    const after = await (await fetch(server.url + "/api/notes")).json()
+    expect(after).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ body: "integration note" }),
+      ]),
+    )
+  })
+
+  test("GET /notes SSR loads notes via TanStack server fn + shared DB", async () => {
+    const res = await fetch(server.url + "/notes")
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expectSsrDocument(html)
+    expect(html).toContain("Shared notes")
+    expect(html).toContain("AsyncLocalStorage")
+    expect(html).toContain("Hello from SQLite")
+  })
+
   test("unknown route reaches TanStack SSR, not a bare bridge 404", async () => {
     const res = await fetch(server.url + "/some-missing-page")
     // TanStack answers with its own not-found document (currently 404).
@@ -167,6 +200,14 @@ describe.skipIf(process.env.SKIP_BUILD === "1")(
       const res = await fetch(server.url + "/api/hello?name=prod")
       expect(res.status).toBe(200)
       expect(await res.json()).toEqual({ message: "Hello prod" })
+    })
+
+    test("GET /api/notes is handled by Elysia with SQLite", async () => {
+      const res = await fetch(server.url + "/api/notes")
+      expect(res.status).toBe(200)
+      const notes = (await res.json()) as { body: string }[]
+      expect(notes.length).toBeGreaterThanOrEqual(2)
+      expect(notes[0]?.body).toBeTruthy()
     })
 
     test("hashed client asset is served from dist/client", async () => {

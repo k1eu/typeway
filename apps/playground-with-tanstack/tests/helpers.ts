@@ -91,7 +91,12 @@ async function spawnServer({
 
   const proc = Bun.spawn(cmd, {
     cwd: APP_DIR,
-    env: { ...process.env, ...env, PORT: String(port) },
+    env: {
+      ...process.env,
+      ...env,
+      PORT: String(port),
+      DATABASE_URL: env.DATABASE_URL ?? ":memory:",
+    },
     stdout: "pipe",
     stderr: "pipe",
   })

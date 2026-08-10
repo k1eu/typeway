@@ -7,8 +7,7 @@
 
   Structure:
     1. Plain-language hero: brand, one headline, outcomes, CTA; stack secondary.
-    2. Editor demo as proof — same project read five ways (README, AGENTS.md,
-       llms.txt, src/server.ts, live terminal).
+    2. Editor demo as proof — live terminal, AGENTS.md, and src/server.ts.
     3. Short philosophy, "Everything you need", and a generator→page walkthrough.
     4. Roadmap as a build log: real dates, newest first, filterable.
     5. The ask.
@@ -150,16 +149,6 @@
       }
 
       .hero > * { position: relative; z-index: 1; }
-
-      .hero .brand {
-        margin: 0 0 18px;
-        font-family: var(--mono);
-        font-size: clamp(28px, 4vw, 40px);
-        font-weight: 700;
-        letter-spacing: -0.04em;
-        color: var(--fg);
-        line-height: 1;
-      }
 
       .hero h1 {
         margin: 0;
@@ -304,7 +293,7 @@
 
       .need-list li {
         display: grid;
-        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr) auto;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.6fr);
         gap: 18px 28px;
         align-items: baseline;
         padding: 22px 0;
@@ -324,14 +313,6 @@
         font-size: 14.5px;
         line-height: 1.55;
         max-width: 62ch;
-      }
-
-      .need-list .state {
-        font-family: var(--mono);
-        font-size: 11.5px;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        white-space: nowrap;
       }
 
       /* ================= walkthrough ================= */
@@ -1050,12 +1031,11 @@
 
     <main class="wrap">
       <section class="hero">
-        <p class="brand">Typeway</p>
         <h1>One predictable shape for every TypeScript app.</h1>
         <p class="lede">
-          Faster starts. Fewer architectural decisions. Predictable code for humans and agents —
+          Fullstack from day one. Fewer architectural decisions. Predictable code for humans and agents —
           under one CLI and one set of conventions.
-          <strong>Agents know what to write. Humans know where to find it.</strong>
+          <strong>Agents know what to write. Humans know how to review.</strong>
           Everything underneath remains yours.
         </p>
         <div class="hero-actions">
@@ -1074,7 +1054,7 @@
             A generated project rather than a description of one — same layout every time, documented for a
             person, an agent, and a compiler.
           </p>
-          <p class="hint">Click a file or a tab — <kbd>1</kbd>–<kbd>5</kbd> work too. The terminal is live.</p>
+          <p class="hint">Click a file or a tab — <kbd>1</kbd>–<kbd>3</kbd> work too. The terminal is live.</p>
         </div>
       </section>
 
@@ -1106,97 +1086,27 @@
               <li><button class="row" style="padding-left: 32px" data-open="entry"><span class="ico ts">◆</span>server.ts</button></li>
               <li><span class="row" style="padding-left: 32px"><span class="ico dir">▣</span>routes</span></li>
               <li><span class="row"><span class="caret"></span><span class="ico dir">▣</span>tests</span></li>
-              <li><button class="row" data-open="readme"><span class="ico md">✱</span>README.md</button></li>
+              <li><span class="row"><span class="ico md">✱</span>README.md</span></li>
               <li><button class="row" data-open="agents"><span class="ico md">✱</span>AGENTS.md<span class="note">agents</span></button></li>
-              <li><button class="row" data-open="llms"><span class="ico txt">≡</span>llms.txt<span class="note">agents</span></button></li>
+              <li><span class="row"><span class="ico txt">≡</span>llms.txt<span class="note">agents</span></span></li>
             </ul>
           </nav>
 
           <div class="main">
             <div class="tabs" role="tablist">
-              <button role="tab" data-tab="readme" aria-selected="true"><span style="color: var(--md)">✱</span> README.md</button>
+              <button role="tab" data-tab="terminal" aria-selected="true"><span class="live"></span> terminal</button>
               <button role="tab" data-tab="agents" aria-selected="false"><span style="color: var(--md)">✱</span> AGENTS.md</button>
-              <button role="tab" data-tab="llms" aria-selected="false"><span style="color: var(--txt)">≡</span> llms.txt</button>
               <button role="tab" data-tab="entry" aria-selected="false"><span style="color: var(--ts)">◆</span> src/server.ts</button>
-              <button role="tab" data-tab="terminal" aria-selected="false"><span class="live"></span> terminal</button>
             </div>
 
-            <!-- ===================== README.md ===================== -->
-            <section class="pane on md-doc" data-pane="readme">
-              <h1>Typeway</h1>
-              <p>
-                One predictable shape for every TypeScript app — under one CLI, one docs format, and one set
-                of conventions. Easy for agents to write. Easy for humans to review.
-              </p>
-
-              <div class="badges">
-                <span class="badge on">status: v0, coming soon</span>
-                <span class="badge">bun 1.4</span>
-                <span class="badge">elysia 2.0</span>
-                <span class="badge">vite 8</span>
-                <span class="badge">typebox</span>
-                <span class="badge">mit</span>
+            <!-- ===================== terminal ===================== -->
+            <section class="pane terminal on" data-pane="terminal">
+              <div class="term-head">
+                <span>zsh — ~/code</span>
+                <span class="tag">CLI preview</span>
+                <button type="button" id="replay">replay ↻</button>
               </div>
-
-              <blockquote>
-                Proven libraries, one coherent framework. The product is the conventions, the docs and the
-                generators — everything underneath stays yours.
-              </blockquote>
-
-              <h2>Why</h2>
-              <p>
-                Faster starts. Fewer architectural decisions. Predictable code for humans and agents.
-                Generators write the code <strong>and teach the next agent how to maintain it</strong> —
-                conventions stay deterministic and greppable, and docs land where coding agents already look.
-              </p>
-
-              <h2>Install</h2>
-              <pre><code><span class="cm"># not published yet — this is what v0 will look like</span>
-bun create typeway@latest storefront
-cd storefront &amp;&amp; bun run dev</code></pre>
-
-              <h2>What already runs</h2>
-              <ul>
-                <li>
-                  <strong>@typeway/connect</strong> — Connect/Express middleware under Elysia: raw streamed
-                  bodies, streaming responses, <code>Set-Cookie</code> fidelity, registered routes bypassing
-                  the bridge entirely. Zero runtime dependencies.
-                </li>
-                <li>
-                  <strong>One process in dev</strong> — Vite in middleware mode with SSR in the fallback, HMR
-                  intact; production mounts the built handler directly on Elysia.
-                </li>
-                <li><strong>SSG, SSR and SPA</strong> in one app, each a one-line decision.</li>
-                <li>
-                  <strong>Proof, not assertion</strong> — a fixture app exercises streaming SSR, server
-                  functions, redirects, cookies, multipart, SSE and binary assets against dev
-                  <em>and</em> production on every commit.
-                </li>
-              </ul>
-
-              <pre><code><span class="pa">$</span> bun run bench
-registered route, bridge mounted   <span class="pa">0.985x</span>   +0.2 µs/req
-SSR through connect() fallback     <span class="pa">1.010x</span>   −2.0 µs/req
-static asset, production path      <span class="pa">0.995x</span>   +0.2 µs/req</code></pre>
-
-              <h2>Roadmap</h2>
-              <table class="md">
-                <tr><th>Area</th><th>State</th><th>Notes</th></tr>
-                <tr><td>Connect bridge</td><td><span class="state ok">shipped</span></td><td>Zero deps, streaming both directions</td></tr>
-                <tr><td>Full-stack dev server</td><td><span class="state ok">shipped</span></td><td>Vite + SSR + typed API, one process</td></tr>
-                <tr><td>Shared request context</td><td><span class="state ok">shipped</span></td><td>Backend and frontend server share one scope</td></tr>
-                <tr><td>Models and domain</td><td><span class="state wip">building</span></td><td>Migrations, seeds, factories — on your ORM</td></tr>
-                <tr><td>CLI</td><td><span class="state wip">building</span></td><td>new, generate, add, db, console</td></tr>
-                <tr><td>Auth</td><td><span class="state plan">planned</span></td><td>better-auth, wired and documented</td></tr>
-                <tr><td>Jobs, mailers, realtime</td><td><span class="state plan">planned</span></td><td>Postgres queue, react-email, ws channels</td></tr>
-                <tr><td>Storage, caching</td><td><span class="state plan">planned</span></td><td>Bun S3, database-backed cache</td></tr>
-                <tr><td>Security, observability</td><td><span class="state plan">planned</span></td><td>Safe defaults, OTel as convention</td></tr>
-              </table>
-
-              <p>
-                The dated version of that table is <a href="#roadmap">further down this page</a> — what
-                shipped, when, and what it cost.
-              </p>
+              <pre class="term" id="term" aria-label="Terminal preview of the Typeway CLI"></pre>
             </section>
 
             <!-- ===================== AGENTS.md ===================== -->
@@ -1245,43 +1155,6 @@ next agent starts where you finished.
               </div>
             </section>
 
-            <!-- ===================== llms.txt ===================== -->
-            <section class="pane" data-pane="llms">
-              <div class="raw">
-                <div class="gutter" aria-hidden="true"></div>
-                <pre><span class="h"># Typeway</span>
-
-&gt; One predictable shape for every TypeScript app. Proven libraries,
-&gt; one coherent framework. Conventions, docs and generators — every
-&gt; integration stays ejectable to the library underneath.
-
-<span class="h">## Docs</span>
-
-- [Conventions](/docs/conventions.md): project layout and naming, the
-  contract every generator obeys
-- [Routing](/docs/routing.md): Elysia routes, the frontend fallback,
-  and why there is no catch-all
-- [Models](/docs/models.md): Drizzle tables, request scope, factories
-- [Rendering](/docs/rendering.md): SSG, SSR and SPA per route
-- [Deploying](/docs/deploy.md): one binary via bun --compile
-
-<span class="h">## Packages</span>
-
-- [@typeway/connect](/packages/connect): Connect middleware under
-  Elysia. Zero runtime dependencies. Streaming both directions.
-
-<span class="h">## Optional</span>
-
-- [Benchmarks](/bench/README.md): paired A/B measurements of what the
-  glue costs. Quote the ratios, never the absolute throughput.
-- [Build log](/log): what shipped and when.
-
-<span class="cm">; status: v0 in development. This file is generated by `typeway new`
-; and updated by every `typeway add`.</span>
-</pre>
-              </div>
-            </section>
-
             <!-- ===================== src/server.ts ===================== -->
             <section class="pane" data-pane="entry">
               <div class="raw">
@@ -1319,16 +1192,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
 </pre>
               </div>
             </section>
-
-            <!-- ===================== terminal ===================== -->
-            <section class="pane terminal" data-pane="terminal">
-              <div class="term-head">
-                <span>zsh — ~/code</span>
-                <span class="tag">CLI preview</span>
-                <button type="button" id="replay">replay ↻</button>
-              </div>
-              <pre class="term" id="term" aria-label="Terminal preview of the Typeway CLI"></pre>
-            </section>
           </div>
         </div>
 
@@ -1336,7 +1199,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
           <span class="ok">● v0 — not released</span>
           <span>main</span>
           <span>bun 1.4 · elysia 2.0 · vite 8</span>
-          <span class="right">5 tabs open · 0 problems</span>
+          <span class="right">3 tabs open · 0 problems</span>
         </div>
       </div>
 
@@ -1344,10 +1207,10 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
       <section class="philosophy">
         <h2>Easy for agents to write. Easy for humans to review.</h2>
         <p>
-          A good share of the code landing in your repository will be written by something that has never
-          read your README. So conventions stay <strong>deterministic and greppable</strong>, docs ship as
-          <code>AGENTS.md</code> and <code>llms.txt</code>, and every generator installs the knowledge to use
-          what it just wrote — right next to the code.
+          Typeway gives every change a familiar shape. Agents follow
+          <strong>deterministic, greppable conventions</strong>, while generated guidance keeps intent next
+          to implementation — so reviewers can focus on behavior instead of reconstructing how the project
+          is organized.
         </p>
       </section>
 
@@ -1356,8 +1219,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
         <div class="section-head">
           <h2>Everything you need.</h2>
           <p>
-            A full-stack framework with strong conventions for the parts every app eventually needs — labeled
-            honestly for what ships today versus what lands with v0.
+            A full-stack framework with strong conventions for every part of your application.
           </p>
         </div>
 
@@ -1368,7 +1230,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               Domain models in a known place, TypeBox schemas everywhere, migrations and factories as
               convention — on the ORM you choose.
             </p>
-            <span class="state wip">Building</span>
           </li>
           <li>
             <h3>API and routing</h3>
@@ -1376,7 +1237,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               Typed Elysia routes for the backend; anything unmatched is the frontend. No catch-all route to
               invent, and registered routes never touch the Vite bridge.
             </p>
-            <span class="state ok">Shipped</span>
           </li>
           <li>
             <h3>SSR, SSG, and SPA</h3>
@@ -1384,7 +1244,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               One app, three rendering strategies — each a one-line decision, each tested in development and
               production.
             </p>
-            <span class="state ok">Shipped</span>
           </li>
           <li>
             <h3>Auth, jobs, mail, storage</h3>
@@ -1392,7 +1251,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               <code>typeway add</code> for better-auth, a Postgres-backed job queue, react-email, websocket
               channels, and Bun's native S3 client — wired and documented the same way every time.
             </p>
-            <span class="state plan">Planned</span>
           </li>
           <li>
             <h3>Testing and deployment</h3>
@@ -1400,7 +1258,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
               Factories and request specs through Eden, safe defaults from the first request, and one-binary
               deploys with <code>bun --compile</code>.
             </p>
-            <span class="state plan">Planned</span>
           </li>
         </ul>
       </section>
@@ -1409,10 +1266,6 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
       <section class="walkthrough" id="example">
         <div class="section-head">
           <h2>From generator to page.</h2>
-          <p>
-            Rails shows model → controller → view → route. Typeway shows generator → model → API → page —
-            and the agent instructions that land with them.
-          </p>
         </div>
 
         <ol class="steps">
@@ -1761,7 +1614,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
 
         document.addEventListener("keydown", function (event) {
           if (event.target.tagName === "INPUT" || event.metaKey || event.ctrlKey || event.altKey) return;
-          var index = ["1", "2", "3", "4", "5"].indexOf(event.key);
+          var index = ["1", "2", "3"].indexOf(event.key);
           if (index !== -1 && tabs[index]) {
             tabs[index].click();
             tabs[index].focus();
@@ -1865,7 +1718,7 @@ app.<span class="f">listen</span>(<span class="n">3000</span>);
 
         if (reduceMotion) renderStatic();
 
-        open("readme");
+        open("terminal");
 
         /* ================= roadmap filters ================= */
         var entries = Array.prototype.slice.call(document.querySelectorAll(".entry"));

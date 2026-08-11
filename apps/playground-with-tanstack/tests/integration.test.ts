@@ -144,7 +144,9 @@ describe("dev server (Vite middlewareMode through connect)", () => {
       headers: { "If-None-Match": etag! },
     })
     expect(second.status).toBe(304)
-    expect(second.headers.get("content-length")).toBe("0")
+    // Vite may omit Content-Length on 304s (null body); if present it must be 0.
+    const contentLength = second.headers.get("content-length")
+    expect(contentLength === null || contentLength === "0").toBe(true)
     // NB: don't assert `second.body === null` — the bridge does send a
     // null-body Response, but Bun's client-side fetch materializes an empty
     // closed ReadableStream for it either way.

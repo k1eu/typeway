@@ -10,7 +10,8 @@ if (env.DATABASE_URL !== ":memory:") {
   mkdirSync(dirname(env.DATABASE_URL), { recursive: true })
 }
 
-const sqlite = new Database(env.DATABASE_URL)
+/** Shared Bun SQLite handle — Drizzle (notes) and Better Auth (users/sessions). */
+export const sqlite = new Database(env.DATABASE_URL)
 
 export const db = drizzle(sqlite, { schema })
 export type Db = typeof db

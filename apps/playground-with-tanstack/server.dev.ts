@@ -2,6 +2,7 @@ import { connect } from "@typeway/connect";
 import { Elysia } from "elysia";
 import { createServer, isRunnableDevEnvironment } from "vite";
 import { backend } from "./server/app";
+import { authPlugin } from "./server/auth-plugin";
 import * as entry from "./server/entry";
 import { listen } from "./server/listen";
 
@@ -23,6 +24,7 @@ if (!isRunnableDevEnvironment(ssrEnv)) {
 }
 
 const app = new Elysia()
+  .use(authPlugin)
   .use(backend)
   .use(
     connect(viteDevServer.middlewares, {

@@ -1,10 +1,11 @@
 import { Elysia } from "elysia";
 import { backend } from "./server/app";
+import { authPlugin } from "./server/auth-plugin";
 import { listen } from "./server/listen";
 
 const CLIENT_DIR = "./dist/client";
 
-const app = new Elysia().use(backend);
+const app = new Elysia().use(authPlugin).use(backend);
 
 // Production: load the pre-built TanStack Start handler. The specifier must
 // stay literal — see ./server/entry.ts for why.

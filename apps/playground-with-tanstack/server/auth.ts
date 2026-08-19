@@ -1,14 +1,19 @@
 import { betterAuth } from "better-auth"
-import { getMigrations } from "better-auth/db/migration"
-import { sqlite } from "../config/database"
+import { drizzleAdapter } from "better-auth/adapters/drizzle"
+import { db } from "../config/database"
+import * as schema from "../db/schema"
 import { env } from "../config/env"
 
 /**
- * Better Auth on the same Bun SQLite DB as the notes demo.
- * Tables are created via Better Auth's built-in migrator (Kysely + bun:sqlite).
+ * Better Auth on the playground Drizzle instance.
+ * Tables live in `db/auth.schema.ts` (from `bun run auth:generate`) and
+ * are applied by the Drizzle migrator in `config/database.ts`.
  */
 export const auth = betterAuth({
-  database: sqlite,
+  database: drizzleAdapter(db, {
+    provider: "sqlite",
+    schema,
+  }),
   secret: env.BETTER_AUTH_SECRET,
   baseURL: env.BETTER_AUTH_URL,
   trustedOrigins: [...env.BETTER_AUTH_TRUSTED_ORIGINS],
@@ -16,8 +21,5 @@ export const auth = betterAuth({
     enabled: true,
   },
 })
-
-const { runMigrations } = await getMigrations(auth.options)
-await runMigrations()
 
 export type Session = typeof auth.$Infer.Session

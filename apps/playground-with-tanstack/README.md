@@ -12,7 +12,14 @@ bun --bun run dev
 ## Better Auth (`/login`, `/signup`, `/account`)
 
 Email/password auth via [Better Auth](https://www.better-auth.com), mounted on
-Elysia at `/api/auth/*` (same Bun SQLite file as the notes demo):
+Elysia at `/api/auth/*`. Better Auth uses the Drizzle adapter against the same
+SQLite file as notes; its tables come from `db/auth.schema.ts` (Better Auth
+CLI) and are applied by Drizzle migrations in `drizzle/`.
+
+```bash
+bun run auth:generate   # Better Auth CLI → db/auth.schema.ts
+bun run db:generate     # drizzle-kit → drizzle/*.sql
+```
 
 | Path | Purpose |
 | --- | --- |

@@ -6,6 +6,10 @@
  * test throws before its afterAll runs.
  */
 
+import { mkdtempSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+
 const APP_DIR = new URL("..", import.meta.url).pathname
 
 /** Every process this module spawned, so we can reap leftovers on exit. */
@@ -88,6 +92,11 @@ async function spawnServer({
   const port = await freePort()
   const url = `http://127.0.0.1:${port}`
   const logs: string[] = []
+  // File-backed SQLite so Elysia's Bun process and Vite's SSR module graph
+  // share users/sessions (and notes) — `:memory:` is per-connection.
+  const databaseUrl =
+    env?.DATABASE_URL ??
+    join(mkdtempSync(join(tmpdir(), "tw-playground-")), "test.sqlite")
 
   const proc = Bun.spawn(cmd, {
     cwd: APP_DIR,
@@ -95,7 +104,11 @@ async function spawnServer({
       ...process.env,
       ...env,
       PORT: String(port),
-      DATABASE_URL: env.DATABASE_URL ?? ":memory:",
+      DATABASE_URL: databaseUrl,
+      BETTER_AUTH_URL: env?.BETTER_AUTH_URL ?? url,
+      BETTER_AUTH_SECRET:
+        env?.BETTER_AUTH_SECRET ??
+        "playground-better-auth-secret-key-do-not-use-in-prod",
     },
     stdout: "pipe",
     stderr: "pipe",

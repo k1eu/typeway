@@ -1,3 +1,10 @@
+/**
+ * App tables plus Better Auth tables.
+ * Auth tables are generated — `bun run auth:generate` — then folded in here
+ * so Drizzle migrations (`bun run db:generate`) cover the whole schema.
+ */
+export * from "./auth.schema"
+
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core"
 
 export const notes = sqliteTable("notes", {

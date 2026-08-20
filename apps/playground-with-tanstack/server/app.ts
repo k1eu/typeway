@@ -1,4 +1,5 @@
 import { Elysia, t } from "elysia";
+import { auth } from "./auth";
 import { notesApi } from "./routes/notes";
 
 export const backend = new Elysia({ prefix: "/api" })
@@ -11,4 +12,13 @@ export const backend = new Elysia({ prefix: "/api" })
     },
     ({ query }) => ({ message: `Hello ${query.name ?? "world"}` }),
   )
-  .use(notesApi);
+  .use(notesApi)
+  /**
+   * Session probe for the Better Auth demo — requires a valid session cookie.
+   * Sign in via `/login`, then `GET /api/me`.
+   */
+  .get("/me", async ({ request, status }) => {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session) return status(401);
+    return { user: session.user };
+  });

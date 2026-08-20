@@ -30,6 +30,27 @@ function expectSsrDocument(html: string) {
   expect(html).toMatch(/<script[^>]*type="module"/)
 }
 
+function cookieHeader(res: Response): string {
+  return res.headers
+    .getSetCookie()
+    .map((c) => c.split(";")[0])
+    .join("; ")
+}
+
+async function signUp(
+  baseUrl: string,
+  user: { name: string; email: string; password: string },
+) {
+  return fetch(baseUrl + "/api/auth/sign-up/email", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      origin: baseUrl,
+    },
+    body: JSON.stringify(user),
+  })
+}
+
 describe("dev server (Vite middlewareMode through connect)", () => {
   let server: ServerHandle
 
@@ -168,6 +189,66 @@ describe("dev server (Vite middlewareMode through connect)", () => {
     expectSsrDocument(spa)
     expect(spa).not.toContain("spa-content-in-browser-only")
   })
+
+  test("Better Auth: sign-up, session cookie, /api/me, and guarded /account", async () => {
+    const user = {
+      name: "Dev User",
+      email: `dev-${Date.now()}@example.com`,
+      password: "password123",
+    }
+
+    const created = await signUp(server.url, user)
+    expect(created.status).toBe(200)
+    const body = (await created.json()) as { user: { email: string } }
+    expect(body.user.email).toBe(user.email)
+    const cookie = cookieHeader(created)
+    expect(cookie).toContain("better-auth.session_token=")
+
+    const session = await fetch(server.url + "/api/auth/get-session", {
+      headers: { cookie, origin: server.url },
+    })
+    expect(session.status).toBe(200)
+    const sessionBody = (await session.json()) as {
+      user: { email: string; name: string }
+    }
+    expect(sessionBody.user.email).toBe(user.email)
+
+    const me = await fetch(server.url + "/api/me", {
+      headers: { cookie, origin: server.url },
+    })
+    expect(me.status).toBe(200)
+    expect(await me.json()).toEqual({
+      user: expect.objectContaining({ email: user.email, name: user.name }),
+    })
+
+    const loginPage = await fetch(server.url + "/login?redirect=%2Faccount")
+    expect(loginPage.status).toBe(200)
+    const loginHtml = await loginPage.text()
+    expectSsrDocument(loginHtml)
+    expect(loginHtml).toContain("Sign in")
+
+    const signupPage = await fetch(server.url + "/signup?redirect=%2Faccount")
+    expect(signupPage.status).toBe(200)
+    expect(await signupPage.text()).toContain("Create account")
+
+    const account = await fetch(server.url + "/account", {
+      headers: { cookie },
+      redirect: "manual",
+    })
+    expect(account.status).toBe(200)
+    const accountHtml = await account.text()
+    expectSsrDocument(accountHtml)
+    expect(accountHtml).toContain(user.email)
+    expect(accountHtml).toContain(user.name)
+
+    const blocked = await fetch(server.url + "/account", {
+      redirect: "manual",
+    })
+    // Unauthenticated visitors are redirected to /login by beforeLoad.
+    expect([302, 303, 307, 308]).toContain(blocked.status)
+    const location = blocked.headers.get("location") ?? ""
+    expect(location).toContain("/login")
+  })
 })
 
 describe.skipIf(process.env.SKIP_BUILD === "1")(
@@ -202,6 +283,32 @@ describe.skipIf(process.env.SKIP_BUILD === "1")(
       const res = await fetch(server.url + "/api/hello?name=prod")
       expect(res.status).toBe(200)
       expect(await res.json()).toEqual({ message: "Hello prod" })
+    })
+
+    test("Better Auth sign-up and session work in production", async () => {
+      const user = {
+        name: "Prod User",
+        email: `prod-${Date.now()}@example.com`,
+        password: "password123",
+      }
+      const created = await signUp(server.url, user)
+      expect(created.status).toBe(200)
+      const cookie = cookieHeader(created)
+      expect(cookie).toContain("better-auth.session_token=")
+
+      const me = await fetch(server.url + "/api/me", {
+        headers: { cookie, origin: server.url },
+      })
+      expect(me.status).toBe(200)
+      expect(await me.json()).toEqual({
+        user: expect.objectContaining({ email: user.email }),
+      })
+
+      const loginHtml = await (
+        await fetch(server.url + "/login?redirect=%2Faccount")
+      ).text()
+      expectSsrDocument(loginHtml)
+      expect(loginHtml).toContain("Sign in")
     })
 
     test("GET /api/notes is handled by Elysia with SQLite", async () => {

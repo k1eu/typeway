@@ -9,6 +9,28 @@ bun install
 bun --bun run dev
 ```
 
+## Better Auth (`/login`, `/signup`, `/account`)
+
+Email/password auth via [Better Auth](https://www.better-auth.com), mounted on
+Elysia at `/api/auth/*`. Better Auth uses the Drizzle adapter against the same
+SQLite file as notes; its tables come from `db/auth.schema.ts` (Better Auth
+CLI) and are applied by Drizzle migrations in `drizzle/`.
+
+```bash
+bun run auth:generate   # Better Auth CLI → db/auth.schema.ts
+bun run db:generate     # drizzle-kit → drizzle/*.sql
+```
+
+| Path | Purpose |
+| --- | --- |
+| `/signup` | Create an account |
+| `/login` | Sign in |
+| `/account` | Session-guarded profile (redirects to `/login` when signed out) |
+| `GET /api/me` | JSON session probe (401 without a cookie) |
+
+Override `BETTER_AUTH_SECRET` / `BETTER_AUTH_URL` in the environment when the
+app is not on `http://localhost:$PORT`.
+
 # Building For Production
 
 To build this application for production:

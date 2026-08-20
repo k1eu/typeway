@@ -14,7 +14,9 @@
     "build:server": "bun build --target bun --outfile dist/app server.prod.ts",
     "start": "NODE_ENV=production bun dist/app",
     "preview": "vite preview",
-    "test:integration": "bun test tests/"
+    "test:integration": "bun test tests/",
+    "auth:generate": "bun --bun x auth generate --config server/auth.ts --output db/auth.schema.ts --yes",
+    "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
@@ -23,6 +25,7 @@
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-start": "latest",
     "@typeway/connect": "workspace:*",
+    "better-auth": "^1.7.1",
     "drizzle-orm": "^0.45.2",
     "elysia": "^2.0.0-beta.1",
     "react": "^19.2.0",
@@ -37,6 +40,8 @@
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
     "@vitejs/plugin-react": "^6.0.1",
+    "auth": "1.7.1",
+    "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.2",
     "vite": "^8.0.0"
   },

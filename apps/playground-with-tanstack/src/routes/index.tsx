@@ -18,24 +18,26 @@ function App() {
         </p>
         <div className="flex flex-wrap gap-3">
           <a
-            href="/about"
+            href="/signup"
             className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-[var(--lagoon-deep)] no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
           >
-            About This Starter
+            Try Better Auth
           </a>
           <a
-            href="https://tanstack.com/router"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/about"
             className="rounded-full border border-[rgba(23,58,64,0.2)] bg-white/50 px-5 py-2.5 text-sm font-semibold text-[var(--sea-ink)] no-underline transition hover:-translate-y-0.5 hover:border-[rgba(23,58,64,0.35)]"
           >
-            Router Guide
+            About This Starter
           </a>
         </div>
       </section>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
+          [
+            'Better Auth',
+            'Email/password login pages mounted under Elysia at /api/auth.',
+          ],
           [
             'Type-Safe Routing',
             'Routes and links stay in sync across every page.',
@@ -47,10 +49,6 @@ function App() {
           [
             'Streaming by Default',
             'Ship progressively rendered responses for faster experiences.',
-          ],
-          [
-            'Tailwind Native',
-            'Design quickly with utility-first styling and reusable tokens.',
           ],
         ].map(([title, desc], index) => (
           <article

@@ -1,0 +1,21 @@
+{
+  "name": "@typeway/vite",
+  "version": "0.1.0",
+  "description": "Host Vite + TanStack Start under Elysia — dev middleware, prod statics + mount",
+  "type": "module",
+  "module": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@typeway/connect": "workspace:*"
+  },
+  "peerDependencies": {
+    "elysia": "^2.0.0-beta.1",
+    "vite": "^8.0.0"
+  },
+  "devDependencies": {
+    "elysia": "^2.0.0-beta.1",
+    "vite": "^8.0.0"
+  }
+}

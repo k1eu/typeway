@@ -1,9 +1,9 @@
 /**
- * TanStack Start feature coverage through @typeway/connect.
+ * TanStack Start feature coverage through @typeway/vite.
  *
  * Every capability that traverses HTTP is exercised against BOTH servers:
- *   dev  — Vite middlewareMode through `connect()`, SSR in the `fallback`
- *   prod — built handler + `Bun.file` statics (the bridge is not involved)
+ *   dev  — `viteDev()` (Vite middlewareMode through connect, SSR in fallback)
+ *   prod — `viteProd()` (built handler + `Bun.file` statics; no bridge)
  * They are different failure surfaces, so both matter.
  *
  * Tests 6 and 7 (server functions, multipart) were red in dev until the bridge

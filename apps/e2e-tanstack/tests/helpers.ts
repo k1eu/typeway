@@ -87,7 +87,7 @@ function makeStop(proc: Bun.Subprocess): () => Promise<void> {
   };
 }
 
-/** Vite dev server in middlewareMode, hosted under Elysia via `connect()`. */
+/** Vite dev server in middlewareMode, hosted under Elysia via `viteDev()`. */
 export async function startDevServer(): Promise<ServerHandle> {
   const port = freePort();
   // Vite's HMR websocket defaults to a fixed port (24678); randomize it so

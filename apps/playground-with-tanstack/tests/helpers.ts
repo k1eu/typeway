@@ -160,7 +160,7 @@ async function spawnServer({
 }
 
 /**
- * Boot `server.dev.ts` (Vite middlewareMode through `connect()`).
+ * Boot `server.dev.ts` (`viteDev()` — Vite middlewareMode through connect).
  * First boot re-optimizes deps, hence the generous default timeout.
  */
 export function startDevServer(readyTimeoutMs = 90_000): Promise<ServerHandle> {

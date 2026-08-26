@@ -2,6 +2,8 @@
 
 Run Connect/Express-style middleware — most importantly a Vite dev server in middleware mode — under [Elysia](https://elysiajs.com). Zero runtime dependencies.
 
+App servers should use [`@typeway/vite`](../vite) (`viteDev()` / `viteProd()`). This package is the Connect bridge those plugins sit on, and the eject hatch if you want the middleware host without the Vite conventions.
+
 ```ts
 import { connect } from "@typeway/connect";
 import { Elysia } from "elysia";
@@ -15,7 +17,9 @@ const app = new Elysia()
     connect(vite.middlewares, {
       // runs when middleware next()s through — e.g. SSR
       fallback: async (request) => {
-        const { default: entry } = await vite.ssrLoadModule("./src/server.ts");
+        const { default: entry } = await vite.environments.ssr.runner.import(
+          "./src/server.ts",
+        );
         return entry.fetch(request);
       },
     }),

@@ -33,11 +33,13 @@ jobs:
             bun-version: canary
             install: |
               (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
+              (cd packages/vite && bun add --peer elysia@latest && bun add -d elysia@latest)
               (cd apps/playground-with-tanstack && bun add elysia@latest)
 
           - name: vite-latest
             bun-version: canary
             install: |
+              (cd packages/vite && bun add --peer vite@latest && bun add -d vite@latest)
               (cd apps/playground-with-tanstack && bun add -d vite@latest)
 
           - name: tanstack-latest
@@ -49,6 +51,7 @@ jobs:
             bun-version: canary
             install: |
               (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
+              (cd packages/vite && bun add --peer elysia@latest vite@latest && bun add -d elysia@latest vite@latest)
               (cd apps/playground-with-tanstack && bun add elysia@latest @tanstack/react-start@latest @tanstack/react-router@latest)
               (cd apps/playground-with-tanstack && bun add -d vite@latest)
 
@@ -85,7 +88,7 @@ jobs:
           bun pm ls --all | grep -Ei 'elysia|^\s*├──\s*vite@|vite@|@tanstack/react-(start|router)@' || true
           bun --version
 
-      - name: Unit tests (@typeway/connect)
+      - name: Unit tests (packages/)
         run: bun test packages/
 
       - name: Integration smoke test

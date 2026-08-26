@@ -56,9 +56,9 @@ Notes worth knowing:
 - **SSG only exists in a production build.** `bun run dev` renders every page per
   request; prerendering runs at the end of `bun run build`, writing
   `dist/client/rendering/ssg/index.html`.
-- `server.prod.ts` registers that file under its clean URL (`/rendering/ssg`), so
-  the request is answered by Elysia's static route and never reaches the SSR
-  handler.
+- `@typeway/vite`'s `viteProd()` registers that file under its clean URL
+  (`/rendering/ssg`), so the request is answered by Elysia's static route and
+  never reaches the SSR handler.
 - `crawlLinks` is off for the prerendered page — left on (the default), the
   prerenderer follows every `<a>` in the rendered HTML and statically generates
   the whole site.

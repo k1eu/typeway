@@ -43,10 +43,11 @@ typeway console             # REPL with app context and models preloaded
 Bun workspaces monorepo:
 
 - `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
+- `packages/vite` — `@typeway/vite`, thin Elysia plugins that host Vite + TanStack Start (`viteDev()`, `viteProd()`)
 - `apps/playground` — scratch app for trying packages during development
-- `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through the bridge: Vite middleware + SSR fallback in dev, `Bun.file` static + built handler in prod
-- `plans/` — execution-ready plans for upcoming work (integration tests, feature coverage, benchmarks)
+- `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through `@typeway/vite`: Vite middleware + SSR fallback in dev, `dist/client` manifest + `.mount()`ed handler in prod
+- `plans/` — execution-ready plans for upcoming work
 
 ## Status
 
-Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Next up (see `plans/`): integration test suite + version-compat CI, TanStack feature-coverage suite, and throughput benchmarks. After that: extracting `@typeway/vite` so app servers shrink to a few lines.
+Early. The Connect bridge and `@typeway/vite` host are functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, registered-route bypass, and app servers that are a few lines of `.use(await viteDev())` / `.use(await viteProd({ handler }))` (import from `@typeway/vite/dev` and `@typeway/vite/prod` so the prod bundle never sees `vite`). Test plans 01–03 have landed (integration smoke, TanStack feature coverage, paired A/B benches). Next: conventions and generators on top of that host — `typeway new`, models, auth as a `typeway add`.

@@ -24,7 +24,7 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
 
-      - name: Unit tests (@typeway/connect)
+      - name: Unit tests (packages/)
         run: bun test packages/
 
       - name: Integration smoke test

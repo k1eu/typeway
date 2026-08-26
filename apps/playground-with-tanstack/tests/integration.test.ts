@@ -2,7 +2,7 @@
  * Integration smoke test — plan 01.
  *
  * Boots the real servers as subprocesses and asserts the contract that
- * "Elysia + Vite + TanStack Start work through @typeway/connect":
+ * "Elysia + Vite + TanStack Start work through @typeway/vite":
  *   - Elysia routes bypass the bridge
  *   - Vite dev middleware serves through the bridge (transforms, 304s)
  *   - everything else falls through to TanStack SSR

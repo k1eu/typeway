@@ -50,4 +50,4 @@ Bun workspaces monorepo:
 
 ## Status
 
-Early. The Connect bridge and `@typeway/vite` host are functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, registered-route bypass, and app servers that are a few lines of `.use(await viteDev())` / `.use(await viteProd({ handler }))`. Test plans 01–03 have landed (integration smoke, TanStack feature coverage, paired A/B benches). Next: conventions and generators on top of that host — `typeway new`, models, auth as a `typeway add`.
+Early. The Connect bridge and `@typeway/vite` host are functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, registered-route bypass, and app servers that are a few lines of `.use(await viteDev())` / `.use(await viteProd({ handler }))` (import from `@typeway/vite/dev` and `@typeway/vite/prod` so the prod bundle never sees `vite`). Test plans 01–03 have landed (integration smoke, TanStack feature coverage, paired A/B benches). Next: conventions and generators on top of that host — `typeway new`, models, auth as a `typeway add`.

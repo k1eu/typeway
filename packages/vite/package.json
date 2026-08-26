@@ -5,7 +5,9 @@
   "type": "module",
   "module": "src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./dev": "./src/dev.ts",
+    "./prod": "./src/prod.ts"
   },
   "dependencies": {
     "@typeway/connect": "workspace:*"

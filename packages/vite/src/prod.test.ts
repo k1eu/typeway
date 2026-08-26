@@ -126,4 +126,23 @@ describe("viteProd", () => {
 
 		expect(await res.text()).toBe("<!doctype html>home");
 	});
+
+	it("bun build of the prod entry does not pull vite or rolldown", async () => {
+		const dir = clientDir();
+		const entry = join(dir, "boot.ts");
+		await Bun.write(
+			entry,
+			`import { viteProd } from ${JSON.stringify(new URL("./prod.ts", import.meta.url).pathname)};\nexport { viteProd };\n`,
+		);
+
+		const result = await Bun.build({
+			entrypoints: [entry],
+			outdir: dir,
+			target: "bun",
+		});
+		expect(result.success).toBe(true);
+		const bundle = await Bun.file(join(dir, "boot.js")).text();
+		expect(bundle).not.toMatch(/createServer/);
+		expect(bundle).not.toMatch(/rolldown/i);
+	});
 });

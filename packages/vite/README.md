@@ -4,9 +4,11 @@ Host a Vite + TanStack Start app under [Elysia](https://elysiajs.com). Thin glue
 
 App servers shrink to a few lines. The Vite config, the SSR entry, and the built handler stay yours.
 
+`viteDev` and `viteProd` are separate entry points. Importing `viteDev` from the package root would pull `vite` into the prod `bun build` bundle (rolldown native bindings, boot crash).
+
 ```ts
 // server.dev.ts
-import { viteDev } from "@typeway/vite";
+import { viteDev } from "@typeway/vite/dev";
 import { Elysia } from "elysia";
 import { backend } from "./server/app";
 
@@ -19,7 +21,7 @@ app.listen(Number(process.env.PORT ?? 3000));
 
 ```ts
 // server.prod.ts
-import { viteProd } from "@typeway/vite";
+import { viteProd } from "@typeway/vite/prod";
 import { Elysia } from "elysia";
 import { backend } from "./server/app";
 

@@ -1,4 +1,4 @@
-import { viteProd } from "@typeway/vite";
+import { viteProd } from "@typeway/vite/prod";
 import { Elysia } from "elysia";
 import { backend } from "./server/app";
 import { authPlugin } from "./server/auth-plugin";

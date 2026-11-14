@@ -1,0 +1,17 @@
+import { describe, expect, test } from "bun:test"
+import { backend } from "./app"
+
+describe("GET /api/hello", () => {
+  test("returns Hello world", async () => {
+    const res = await backend.handle(new Request("http://typeway.local/api/hello"))
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: "Hello world" })
+  })
+
+  test("echoes the name query", async () => {
+    const res = await backend.handle(
+      new Request("http://typeway.local/api/hello?name=typeway"),
+    )
+    expect(await res.json()).toEqual({ message: "Hello typeway" })
+  })
+})

@@ -1,0 +1,18 @@
+import { db as rootDb, type Tx } from "../config/database"
+import { getContext, runWithContext } from "./context"
+
+/**
+ * Nested calls reuse the outer transaction. getDb() is the tx client
+ * inside. Sync: bun-sqlite rejects async transaction callbacks.
+ */
+export function transaction<T>(fn: () => T): T {
+  const ctx = getContext()
+  if (ctx.txDepth > 0) return fn()
+
+  const run = rootDb.transaction.bind(rootDb) as (
+    transaction: (tx: Tx) => T,
+  ) => T
+  return run((tx) =>
+    runWithContext({ ...ctx, db: tx, txDepth: ctx.txDepth + 1 }, fn),
+  )
+}

@@ -1,0 +1,19 @@
+{
+	"name": "typeway",
+	"version": "0.1.0",
+	"description": "Typeway CLI — scaffold apps, wrap conventions, introspect routes",
+	"type": "module",
+	"bin": {
+		"typeway": "./src/cli.ts"
+	},
+	"files": ["src", "templates"],
+	"exports": {
+		".": "./src/cli.ts"
+	},
+	"dependencies": {
+		"elysia": "2.0.0-rc.4"
+	},
+	"devDependencies": {
+		"@elysia/eden": "2.0.0-rc.1"
+	}
+}

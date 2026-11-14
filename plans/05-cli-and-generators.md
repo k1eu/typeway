@@ -262,10 +262,12 @@ scope**.
 
 ## Done when
 
-- PR open against `cursor/extract-server-5aa9` (or `main` once 15/16
-  have landed — follow the stack in flight).
-- `packages/cli` exists; `typeway new` + `generate model` +
-  `generate resource` covered by tests above.
+- PR open against `cursor/conventions-spec-1208` (or `main` once
+  15/16/18 have landed — follow the stack in flight).
+- Slice 1: `packages/cli` exists; `typeway new` + `dev` / `build` /
+  `start` / `routes --json` covered by unit + CLI integration tests.
+  Slice 2/3 (`generate model` / `generate resource`) are a follow-up
+  PR — do not mix them into slice 1.
 - Conventions spec open questions 1 and 10 either resolved in the
   spec or explicitly still open with a fixture pointing at them.
 - `bun run typecheck`, `test:unit`, `test:integration`,
@@ -276,3 +278,47 @@ scope**.
 
 This **docs** PR (the one that added `docs/conventions.md` and this
 plan) is **not** slice 1. Do not start `packages/cli` here.
+
+## Slice 1 — shipped (this PR)
+
+`packages/cli` exists. `typeway new | dev | build | start | routes`
+are implemented. Generators are **not** — that is the next PR against
+this branch.
+
+Learnings and deltas vs the sketch above:
+
+- **Root package name.** The repo root was also `typeway`. The CLI
+  package is named `typeway` (so `bun add -d typeway` works later);
+  the root is `@typeway/workspace`.
+- **`--workspace`.** Unpublished `@typeway/server` cannot be
+  `file:`-linked from a temp dir because it depends on
+  `@typeway/connect` via `workspace:*`. The integration test creates
+  a throwaway Bun workspace, **copies** (does not symlink)
+  `packages/{cli,server,connect}`, and runs `typeway new app
+  --workspace`. A symlink lets the fixture `bun install` rewrite the
+  real packages' `node_modules` to `/tmp/...` paths that vanish.
+- **Templates are `*.tmpl`.** Otherwise `bun test packages/` picks up
+  `templates/app/**/*.test.ts` and `bun check` typechecks them in the
+  CLI package.
+- **Elysia 2 RC `backend.routes`.** Each row is `{ method, path,
+  handler, hooks }`. `path` already includes the prefix (`/api/hello`).
+  Schemas live on `hooks.query` / `params` / `body` / `headers` /
+  `response` as JSON Schema (TypeBox `~kind` is non-enumerable and
+  drops out of `JSON.stringify`). `file` stays `null` until
+  `.typeway/generate.json`.
+- **Eden treaty path (hub Q1).** Locked in
+  `packages/cli/src/eden-path.test.ts`: `treaty(backend)` + prefix
+  `/api` is `api.api.hello.get()`. `@elysia/eden@2.0.0-rc.1` is a CLI
+  *devDependency* for that fixture only — the CLI does not wrap Eden.
+- **Empty Drizzle.** `defineRelations(schema, () => ({}))` and
+  `migrate()` on a migrations folder that only has `.gitkeep` both
+  work. No bootstrap SQL in `new`.
+- **Test `DATABASE_URL`.** `config/env.ts` defaults to `:memory:`
+  when `NODE_ENV === "test"` so in-process tests do not write
+  `data/app.sqlite`. Integration helpers still pass a temp file.
+- **Error codes** added to `docs/errors.md`:
+  `typeway.unknown_command`, `typeway.usage`, `typeway.new.*`,
+  `typeway.dev.missing`, `typeway.build.missing`,
+  `typeway.start.missing`, `typeway.write_failed` (exit 2).
+- **PR base.** Open against `cursor/conventions-spec-1208` (the
+  conventions spec), not `cursor/extract-server-5aa9`.

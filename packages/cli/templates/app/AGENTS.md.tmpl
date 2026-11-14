@@ -1,0 +1,38 @@
+# {{name}}
+
+Typeway app. Humans edit above and below the managed block, never inside it.
+
+<!-- typeway:conventions:start -->
+## Layout
+
+app/           domain logic. models, context, use cases.
+config/        typed configuration. env is validated at boot.
+db/            schema and migrations. one table per file.
+server/        http. elysia routes, the `backend` instance.
+src/           frontend. src/server.ts is the SSR entry — do not rename it.
+tests/         process-level integration. unit tests live beside sources.
+
+## Rules
+
+- Models are `app/models/<singular>.ts` and export queries, never a bare table.
+  The table lives in `db/schema/`.
+- Database access goes through `getDb()`. Never import the connection directly.
+- Validation is TypeBox (`import { t } from "elysia"`,
+  `import type { Static } from "typebox"`). Do not add a second
+  validation library. Infer with `Static<typeof schema>`, not `.static`.
+- Domain data goes through Elysia `/api` routes. Pages call them with Eden
+  (`src/lib/api.ts`). Do not call models from loaders. Do not put CRUD in
+  `createServerFn`.
+- Routes are registered on `backend`; anything unmatched is the frontend.
+  Do not add a catch-all route.
+- Errors are `HTTPError.id("<code>", status)`. Return them from handlers.
+
+## Commands
+
+  bun run dev          api + ssr + hmr, one process
+  bun run build        client, ssr, and `dist/app`
+  bun test             unit and integration
+  typeway routes --json
+  typeway models --json
+  typeway generate     scaffolds code and this section
+<!-- typeway:conventions:end -->

@@ -1,0 +1,24 @@
+import { HTTPError } from "elysia"
+
+HTTPError.typeBase = "https://typeway.dev/errors"
+
+export class EnvInvalid extends HTTPError.id("typeway.env.invalid", 500) {
+  constructor(readonly errors: string[]) {
+    super(errors.join("; "))
+  }
+}
+
+export class Unauthenticated extends HTTPError.id(
+  "typeway.auth.unauthenticated",
+  401,
+) {
+  constructor() {
+    super("Sign in to continue")
+  }
+}
+
+export class Forbidden extends HTTPError.id("typeway.auth.forbidden", 403) {
+  constructor() {
+    super("You cannot perform this action")
+  }
+}

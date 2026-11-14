@@ -11,7 +11,7 @@ Plan 05 is the next package. The conventions it implements are
 2. [02-tanstack-feature-coverage.md](./02-tanstack-feature-coverage.md) — **done.** Kitchen-sink fixture app (`apps/e2e-tanstack`) exercising TanStack Start features that traverse `@typeway/connect`, tested in both dev and prod.
 3. [03-throughput-benchmarks.md](./03-throughput-benchmarks.md) — **done.** Paired A/B benchmarks in `bench/` measuring glue cost vs clean Elysia and standalone TanStack.
 4. [04-extract-server.md](./04-extract-server.md) — **done.** `@typeway/server`: `typeway({ app, frontend: tanstack() })`, frontend adapter, split dev/prod entries.
-5. [05-cli-and-generators.md](./05-cli-and-generators.md) — **next.** `packages/cli`: `typeway new|dev|build|start|routes --json`, then `generate model` and `generate resource`.
+5. [05-cli-and-generators.md](./05-cli-and-generators.md) — **slice 1 done** (`packages/cli`: `new` / `dev` / `build` / `start` / `routes --json`). `generate model` / `generate resource` are the next PR.
 
 ## Shared repo context (read first)
 

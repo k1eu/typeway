@@ -1,0 +1,182 @@
+import { mkdtempSync } from "node:fs"
+import { tmpdir } from "node:os"
+import { join } from "node:path"
+
+const APP_DIR = new URL("..", import.meta.url).pathname
+
+const live = new Set<Bun.Subprocess>()
+
+let exitHooksInstalled = false
+
+function installExitHooks() {
+  if (exitHooksInstalled) return
+  exitHooksInstalled = true
+  const reap = () => {
+    for (const proc of live) {
+      try {
+        proc.kill("SIGKILL")
+      } catch {
+        // already gone
+      }
+    }
+    live.clear()
+  }
+  process.on("exit", reap)
+  process.on("SIGINT", () => {
+    reap()
+    process.exit(130)
+  })
+  process.on("SIGTERM", () => {
+    reap()
+    process.exit(143)
+  })
+}
+
+async function freePort(): Promise<number> {
+  const listener = Bun.listen({
+    hostname: "127.0.0.1",
+    port: 0,
+    socket: { data() {} },
+  })
+  const port = listener.port
+  listener.stop(true)
+  return port
+}
+
+export interface ServerHandle {
+  url: string
+  port: number
+  output: () => string
+  stop: () => Promise<void>
+}
+
+interface SpawnOptions {
+  cmd: string[]
+  env?: Record<string, string>
+  readyTimeoutMs?: number
+  label: string
+}
+
+function drain(stream: ReadableStream<Uint8Array> | undefined, sink: string[]) {
+  if (!stream) return
+  const decoder = new TextDecoder()
+  void (async () => {
+    try {
+      for await (const chunk of stream) sink.push(decoder.decode(chunk))
+    } catch {
+      // stream closed with the process
+    }
+  })()
+}
+
+async function spawnServer({
+  cmd,
+  env,
+  readyTimeoutMs = 60_000,
+  label,
+}: SpawnOptions): Promise<ServerHandle> {
+  installExitHooks()
+
+  const port = await freePort()
+  const hmrPort = await freePort()
+  const url = `http://127.0.0.1:${port}`
+  const logs: string[] = []
+  const databaseUrl =
+    env?.DATABASE_URL ??
+    join(mkdtempSync(join(tmpdir(), "tw-app-")), "test.sqlite")
+
+  const proc = Bun.spawn(cmd, {
+    cwd: APP_DIR,
+    env: {
+      ...process.env,
+      ...env,
+      PORT: String(port),
+      HMR_PORT: String(hmrPort),
+      DATABASE_URL: databaseUrl,
+      BETTER_AUTH_SECRET:
+        env?.BETTER_AUTH_SECRET ??
+        "dev-only-better-auth-secret-key-not-for-prod",
+    },
+    stdout: "pipe",
+    stderr: "pipe",
+  })
+  live.add(proc)
+  drain(proc.stdout as ReadableStream<Uint8Array>, logs)
+  drain(proc.stderr as ReadableStream<Uint8Array>, logs)
+
+  const output = () => logs.join("")
+
+  const stop = async () => {
+    if (!live.has(proc)) return
+    live.delete(proc)
+    proc.kill()
+    const timer = setTimeout(() => {
+      try {
+        proc.kill("SIGKILL")
+      } catch {
+        // already gone
+      }
+    }, 5_000)
+    await proc.exited
+    clearTimeout(timer)
+  }
+
+  const deadline = Date.now() + readyTimeoutMs
+  while (Date.now() < deadline) {
+    if (proc.exitCode !== null) {
+      await stop()
+      throw new Error(
+        `${label} exited early (code ${proc.exitCode}) before serving ${url}\n--- output ---\n${output()}`,
+      )
+    }
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(5_000) })
+      void res.body?.cancel()
+      return { url, port, output, stop }
+    } catch {
+      await Bun.sleep(100)
+    }
+  }
+
+  await stop()
+  throw new Error(
+    `${label} did not become ready on ${url} within ${readyTimeoutMs}ms\n--- output ---\n${output()}`,
+  )
+}
+
+export function startDevServer(readyTimeoutMs = 90_000): Promise<ServerHandle> {
+  return spawnServer({
+    label: "dev server",
+    cmd: ["bun", "--bun", "run", "server.dev.ts"],
+    env: { NODE_ENV: "development" },
+    readyTimeoutMs,
+  })
+}
+
+export async function buildApp(): Promise<void> {
+  const proc = Bun.spawn(["bun", "run", "build"], {
+    cwd: APP_DIR,
+    env: { ...process.env, NODE_ENV: "production" },
+    stdout: "pipe",
+    stderr: "pipe",
+  })
+  const [stdout, stderr] = await Promise.all([
+    new Response(proc.stdout as ReadableStream<Uint8Array>).text(),
+    new Response(proc.stderr as ReadableStream<Uint8Array>).text(),
+  ])
+  const code = await proc.exited
+  if (code !== 0) {
+    throw new Error(`build failed (code ${code})\n${stdout}\n${stderr}`)
+  }
+}
+
+export function startProdServer(
+  readyTimeoutMs = 30_000,
+): Promise<ServerHandle> {
+  return spawnServer({
+    label: "prod server",
+    cmd: ["bun", "dist/app"],
+    env: { NODE_ENV: "production" },
+    readyTimeoutMs,
+  })
+}

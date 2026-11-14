@@ -22,6 +22,15 @@ handler so Eden types the status.
 | `typeway.generate.exists` | CLI 1 | Generate refused to overwrite |
 | `typeway.generate.invalid_name` | CLI 1 | Name is not `/^[a-z][a-z0-9-]*$/` |
 | `typeway.routes.unreadable` | CLI 1 | Cannot import `server/app.ts` |
+| `typeway.unknown_command` | CLI 1 | Argv is not a known command |
+| `typeway.usage` | CLI 1 | Bad flags or extra arguments |
+| `typeway.new.missing_name` | CLI 1 | `typeway new` without `<dir>` |
+| `typeway.new.invalid_name` | CLI 1 | Directory basename is not a safe path segment |
+| `typeway.new.exists` | CLI 1 | Target dir exists and `--force` was not passed |
+| `typeway.dev.missing` | CLI 1 | `server.dev.ts` missing in cwd |
+| `typeway.build.missing` | CLI 1 | `server.prod.ts` / `package.json` missing in cwd |
+| `typeway.start.missing` | CLI 1 | `dist/app` missing — run `typeway build` |
+| `typeway.write_failed` | CLI 2 | Failed to write a file during `new` |
 
 ## App (`{resource}.{reason}`)
 

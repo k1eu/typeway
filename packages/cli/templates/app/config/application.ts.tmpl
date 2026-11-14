@@ -1,0 +1,19 @@
+import { env, betterAuthUrl, trustedOrigins } from "./env"
+import development from "./environments/development"
+import test from "./environments/test"
+import production from "./environments/production"
+
+const files = { development, test, production } as const
+
+export const config = {
+  env: env.NODE_ENV,
+  port: env.PORT,
+  hmrPort: env.HMR_PORT,
+  db: { url: env.DATABASE_URL },
+  auth: {
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: betterAuthUrl,
+    trustedOrigins,
+  },
+  ...files[env.NODE_ENV],
+} as const

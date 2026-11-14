@@ -1,0 +1,43 @@
+import { AsyncLocalStorage } from "node:async_hooks"
+import { db as rootDb, type Db, type Tx } from "../config/database"
+import type { Backend } from "../server/app"
+
+export type AppContext = {
+  db: Db | Tx
+  txDepth: number
+  request?: Request
+  backend?: Backend
+}
+
+const g = globalThis as typeof globalThis & {
+  __typewayContext?: AsyncLocalStorage<AppContext>
+}
+const storage = (g.__typewayContext ??= new AsyncLocalStorage<AppContext>())
+
+const defaultContext = (): AppContext => ({ db: rootDb, txDepth: 0 })
+
+export function getContext(): AppContext {
+  return storage.getStore() ?? defaultContext()
+}
+
+export function getDb(): Db | Tx {
+  return getContext().db
+}
+
+export function getRequest(): Request | undefined {
+  return getContext().request
+}
+
+export function getBackend(): Backend {
+  const backend = getContext().backend
+  if (!backend) {
+    throw new Error(
+      "getBackend() called outside a request — wrap with runWithContext",
+    )
+  }
+  return backend
+}
+
+export function runWithContext<T>(ctx: AppContext, fn: () => T): T {
+  return storage.run(ctx, fn)
+}

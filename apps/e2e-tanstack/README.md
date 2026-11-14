@@ -1,18 +1,20 @@
 # e2e-tanstack
 
 Kitchen-sink fixture app: one route per TanStack Start feature that crosses HTTP,
-so we can prove each one survives `@typeway/connect`. It is a **test fixture, not
-a demo** — no styling, no dependencies beyond what a feature needs. Human-facing
-examples belong in `apps/playground-with-tanstack`.
+so we can prove each one survives `@typeway/server` / `@typeway/connect`. It is a
+**test fixture, not a demo** — no styling, no dependencies beyond what a feature
+needs. Human-facing examples belong in `apps/playground-with-tanstack`.
 
 ```sh
 bun run --filter e2e-tanstack test:integration   # dev + prod, ~5s incl. build
 ```
 
 Every test runs against both servers, because they are different failure
-surfaces: dev is Vite middlewareMode through `connect()` with SSR in the
-`fallback`, prod is the built handler `.mount()`ed on Elysia behind a boot-time
-manifest of `dist/client` as static routes (no bridge at all).
+surfaces: dev is `typeway({ frontend: tanstack() }).dev()` (Vite middlewareMode
+through `connect()`, SSR in the fallback), prod is
+`typeway({ frontend: tanstack({ handler }) }).prod()` (built handler `.mount()`ed
+on Elysia behind a boot-time manifest of `dist/client` as static routes; no
+bridge at all).
 
 | Route / fixture | Feature |
 |---|---|

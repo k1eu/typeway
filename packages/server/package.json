@@ -1,0 +1,23 @@
+{
+  "name": "@typeway/server",
+  "version": "0.1.0",
+  "description": "Host an Elysia app with a pluggable frontend — Vite middleware in dev, statics + mount in prod",
+  "type": "module",
+  "module": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./dev": "./src/dev.ts",
+    "./tanstack": "./src/tanstack.ts"
+  },
+  "dependencies": {
+    "@typeway/connect": "workspace:*"
+  },
+  "peerDependencies": {
+    "elysia": "2.0.0-rc.4",
+    "vite": "^8.0.0"
+  },
+  "devDependencies": {
+    "elysia": "2.0.0-rc.4",
+    "vite": "^8.3.8"
+  }
+}

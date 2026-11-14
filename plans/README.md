@@ -1,13 +1,13 @@
 # Typeway test infrastructure plans
 
-Plans 01–03 are **done**. They shipped the integration smoke suite, TanStack
-feature coverage, and paired throughput benchmarks that now live in CI /
-`bun run bench`. Keep this file as shared context for the glue, not as a
-queue of unfinished test work.
+Plans 01–04 are **done**. They shipped the integration smoke suite, TanStack
+feature coverage, paired throughput benchmarks, and `@typeway/server`. Keep
+this file as shared context for the glue, not as a queue of unfinished work.
 
 1. [01-integration-smoke-test.md](./01-integration-smoke-test.md) — **done.** Elysia + Vite + TanStack smoke checks, PR CI, scheduled version-compatibility matrix.
 2. [02-tanstack-feature-coverage.md](./02-tanstack-feature-coverage.md) — **done.** Kitchen-sink fixture app (`apps/e2e-tanstack`) exercising TanStack Start features that traverse `@typeway/connect`, tested in both dev and prod.
 3. [03-throughput-benchmarks.md](./03-throughput-benchmarks.md) — **done.** Paired A/B benchmarks in `bench/` measuring glue cost vs clean Elysia and standalone TanStack.
+4. [04-extract-server.md](./04-extract-server.md) — **done.** `@typeway/server`: `typeway({ app, frontend: tanstack() })`, frontend adapter, split dev/prod entries.
 
 ## Shared repo context (read first)
 
@@ -17,8 +17,9 @@ queue of unfinished test work.
   - Request bodies are forwarded to middleware as **raw streams** (`req.on("data"...)`), never pre-parsed.
   - Responses stream: the web `Response` resolves on first `res.write()`/`flushHeaders()`/`end()`.
   - Source: `src/index.ts` (plugin), `src/request.ts`, `src/response.ts`, `src/chain.ts`. Unit tests with reusable patterns: `src/index.test.ts`.
-- **`apps/playground-with-tanstack`** — TanStack Start app hosted under Elysia:
-  - Dev: `bun run dev` → `server.dev.ts`: Vite in `middlewareMode` through `connect()`, TanStack SSR via `ssrEnv.runner.import(entry.SOURCE)` in the `fallback`. Respects `PORT` env (default 3000).
+- **`packages/server`** — `@typeway/server`. `typeway({ app, frontend: tanstack() })` from `@typeway/server/dev` (dev) or `@typeway/server` (prod). Prod barrel must not re-export `/dev` (Vite/rolldown in `dist/app`). The prod handler import stays a literal `./dist/server/server.js` in the app so `bun build` can inline it.
+- **`apps/playground-with-tanstack`** — TanStack Start app hosted under Elysia via `@typeway/server`:
+  - Dev: `bun run dev` → `server.dev.ts`: `typeway({ app, frontend: tanstack(), serve: listen }).dev()`. Respects `PORT` env (default 3000).
   - Prod: `bun run build` (vite build + `bun build --target bun --outfile dist/app server.prod.ts`), then `bun run start` (`bun dist/app` — note: `bun build` output is NOT executable directly, must run through `bun`).
   - Demo API route: `GET /api/hello?name=x` → `{"message":"Hello x"}` (in `server/app.ts`).
 

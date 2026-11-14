@@ -4,7 +4,8 @@ import handler, { createServerEntry } from "@tanstack/react-start/server-entry";
  * TanStack Start's SSR entry. Named `server.ts` by convention — the Vite plugin
  * resolves `src/server.{ts,tsx,...}` as the SSR build input, so this one file is
  * what runs in *both* modes: dev imports the source through Vite's SSR module
- * runner, prod runs its compiled output. See ../server/entry.ts.
+ * runner, prod runs its compiled output. See `@typeway/server`'s
+ * `DEFAULT_SSR_ENTRY`.
  *
  * `/__entry` is load-bearing for the test suite, not decoration: it is the only
  * way to prove from outside that dev and prod run the same entry module. Before

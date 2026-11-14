@@ -13,7 +13,7 @@
       "dependencies": {
         "@tanstack/react-router": "^1.170.46",
         "@tanstack/react-start": "^1.169.5",
-        "@typeway/connect": "workspace:*",
+        "@typeway/server": "workspace:*",
         "elysia": "2.0.0-rc.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
@@ -45,7 +45,7 @@
         "@tanstack/react-router": "^1.170.46",
         "@tanstack/react-router-devtools": "^1.167.3",
         "@tanstack/react-start": "^1.169.5",
-        "@typeway/connect": "workspace:*",
+        "@typeway/server": "workspace:*",
         "better-auth": "^1.7.23",
         "drizzle-orm": "1.0.0-rc.5",
         "elysia": "2.0.0-rc.4",
@@ -75,6 +75,21 @@
       },
       "peerDependencies": {
         "elysia": "2.0.0-rc.4",
+      },
+    },
+    "packages/server": {
+      "name": "@typeway/server",
+      "version": "0.1.0",
+      "dependencies": {
+        "@typeway/connect": "workspace:*",
+      },
+      "devDependencies": {
+        "elysia": "2.0.0-rc.4",
+        "vite": "^8.3.8",
+      },
+      "peerDependencies": {
+        "elysia": "2.0.0-rc.4",
+        "vite": "^8.0.0",
       },
     },
   },
@@ -446,6 +461,8 @@
     "@typeway/connect": ["@typeway/connect@workspace:packages/connect"],
 
     "@typeway/playground": ["@typeway/playground@workspace:apps/playground"],
+
+    "@typeway/server": ["@typeway/server@workspace:packages/server"],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@6.0.5", "", { "dependencies": { "@rolldown/pluginutils": "^1.0.1" }, "peerDependencies": { "@rolldown/plugin-babel": "^0.1.7 || ^0.2.0", "babel-plugin-react-compiler": "^1.0.0", "vite": "^8.0.0" }, "optionalPeers": ["@rolldown/plugin-babel", "babel-plugin-react-compiler"] }, "sha512-BOVzne/NL162sMdResB25mUv+vWMF5NoAjNf09TeGlE7ZpszZWSD3winycicLJw72yeVsoCn/2kOhEuCvEShMA=="],
 

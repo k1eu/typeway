@@ -43,11 +43,12 @@ typeway console             # REPL with app context and models preloaded
 Bun workspaces monorepo:
 
 - `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
+- `packages/server` — `@typeway/server`, the Elysia host: `typeway({ app, frontend: tanstack() })`. Vite middleware + SSR fallback in dev, boot-time `dist/client` manifest + `.mount()` in prod. Frontend is an adapter so other bundlers can plug in later.
 - `apps/playground` — scratch app for trying packages during development
-- `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through the bridge: Vite middleware + SSR fallback in dev, `Bun.file` static + built handler in prod
+- `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through `@typeway/server`
 - `apps/e2e-tanstack` — kitchen-sink fixture app for TanStack features that cross HTTP
-- `plans/` — remaining work after the test-infrastructure plans (01–03 are done)
+- `plans/` — remaining work after the test-infrastructure plans (01–03 are done; 04 extracted `@typeway/server`)
 
 ## Status
 
-Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). Next up: extracting `@typeway/vite` so app servers shrink to a few lines.
+Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). App servers are `typeway({ app, frontend: tanstack() })` via `@typeway/server`.

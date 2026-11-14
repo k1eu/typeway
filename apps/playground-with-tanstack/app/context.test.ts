@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test"
 import { db as rootDb, resetNotesTable } from "../config/database"
-import { getDb, runWithContext } from "./context"
+import { getDb, getRequest, runWithContext } from "./context"
 import { Note } from "./models/note"
 import { transaction } from "./transaction"
 
@@ -19,6 +19,21 @@ describe("AsyncLocalStorage context", () => {
       expect(getDb()).toBe(sentinel)
     })
     expect(getDb()).toBe(rootDb)
+  })
+
+  test("ALS lives on globalThis so Vite SSR and the host share one store", () => {
+    const slot = globalThis as typeof globalThis & {
+      __typewayContext?: unknown
+    }
+    expect(slot.__typewayContext).toBeDefined()
+  })
+
+  test("getRequest() is the request put on context", () => {
+    const request = new Request("http://typeway.local/api/notes")
+    runWithContext({ db: rootDb, txDepth: 0, request }, () => {
+      expect(getRequest()).toBe(request)
+    })
+    expect(getRequest()).toBeUndefined()
   })
 })
 

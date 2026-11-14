@@ -22,7 +22,8 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 + Ely
 - `apps/playground-with-tanstack` — dogfood app: `server.dev.ts` / `server.prod.ts` are `typeway({ app, frontend: tanstack() })` (custom `serve: listen` for ALS), plus `/rendering` — one page each for SSG (prerendered via `pages` in `vite.config.ts`, served in prod as a static route at its clean URL), SSR and SPA (`ssr: false`). Human playground — keep it small; new protocol fixtures go in `apps/e2e-tanstack`.
 - `apps/e2e-tanstack` — kitchen-sink fixture app: one route per TanStack feature that crosses HTTP (streaming SSR, server fns, redirects, `notFound()`, cookies, multipart, SSE, binary assets), tested in dev *and* prod
 - `bench/` — paired A/B benchmarks; deliberately **not** a workspace member (see its README)
-- `plans/` — self-contained plans for pending work; `plans/README.md` has shared context and gotchas
+- `docs/` — conventions spec. Start at [`docs/conventions.md`](./docs/conventions.md). Generators and the CLI are built against it, not against the playground's current shortcuts.
+- `plans/` — self-contained plans for pending work; `plans/README.md` has shared context and gotchas. Plan 05 is the CLI (`new` / `dev` / `build` / `start` / `routes --json`) then `generate model` / `generate resource`.
 
 ## Conventions & gotchas
 
@@ -37,7 +38,8 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 + Ely
 - **TanStack disables streaming SSR for bots.** It runs `isbot(user-agent)` and, on a match, waits for React's `allReady` before sending anything — so the whole document arrives as one chunk. Bun's default `Bun/x.y.z` UA and curl both match. Any streaming assertion must send a browser UA (`BROWSER_UA` in `apps/e2e-tanstack/tests/helpers.ts`); otherwise the test silently measures the non-streaming path and passes for the wrong reason.
 - TanStack server functions are POSTed to compiler-generated `/_serverFn/<id>` URLs and need `sec-fetch-site: same-origin` (CSRF) plus `x-tsr-serverFn: true`; payloads are seroval-encoded in and out.
 - Responses from `connect()`'s `fallback` (i.e. all TanStack SSR) never travel through `BridgeResponse`/`BridgeRequest` — the bridge only hands the fallback the `Request`. Tests meant to cover bridge streaming or raw-body behavior must go through actual Connect middleware, not through SSR.
-- Tests live next to source (`src/*.test.ts`), `bun:test`. When changing bridge behavior, `packages/connect/src/index.test.ts` is the behavioral contract.
+- Tests live next to source (`src/*.test.ts`), `bun:test`. When changing bridge behavior, `packages/connect/src/index.test.ts` is the behavioral contract. App request specs are Eden in-process next to the route (`server/routes/<resource>.test.ts`); `tests/` is process-level integration only. See [`docs/conventions/testing.md`](./docs/conventions/testing.md).
+- Domain data has one door: typed Elysia `/api` routes. TanStack pages and loaders call them through Eden (`treaty(getBackend())` on the server, HTTP in the browser). `createServerFn` is UI-local glue, not CRUD. See [`docs/conventions/data-path.md`](./docs/conventions/data-path.md).
 - Don't add runtime dependencies to `packages/connect` without strong justification.
 
 ## Cursor Cloud specific instructions

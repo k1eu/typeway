@@ -4,10 +4,14 @@ Plans 01–04 are **done**. They shipped the integration smoke suite, TanStack
 feature coverage, paired throughput benchmarks, and `@typeway/server`. Keep
 this file as shared context for the glue, not as a queue of unfinished work.
 
+Plan 05 is the next package. The conventions it implements are
+[`docs/conventions.md`](../docs/conventions.md), not an invention of the CLI.
+
 1. [01-integration-smoke-test.md](./01-integration-smoke-test.md) — **done.** Elysia + Vite + TanStack smoke checks, PR CI, scheduled version-compatibility matrix.
 2. [02-tanstack-feature-coverage.md](./02-tanstack-feature-coverage.md) — **done.** Kitchen-sink fixture app (`apps/e2e-tanstack`) exercising TanStack Start features that traverse `@typeway/connect`, tested in both dev and prod.
 3. [03-throughput-benchmarks.md](./03-throughput-benchmarks.md) — **done.** Paired A/B benchmarks in `bench/` measuring glue cost vs clean Elysia and standalone TanStack.
 4. [04-extract-server.md](./04-extract-server.md) — **done.** `@typeway/server`: `typeway({ app, frontend: tanstack() })`, frontend adapter, split dev/prod entries.
+5. [05-cli-and-generators.md](./05-cli-and-generators.md) — **next.** `packages/cli`: `typeway new|dev|build|start|routes --json`, then `generate model` and `generate resource`.
 
 ## Shared repo context (read first)
 

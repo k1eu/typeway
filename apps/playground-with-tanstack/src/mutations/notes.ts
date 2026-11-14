@@ -7,6 +7,6 @@ export const createNote = createServerFn({ method: 'POST' })
     if (!body) throw new Error('body is required')
     return { body }
   })
-  .handler(async ({ data }) => {
+  .handler(({ data }) => {
     return Note.createWithAudit(data.body)
   })

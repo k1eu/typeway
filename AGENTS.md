@@ -1,6 +1,6 @@
 # Typeway
 
-Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 canary + Elysia 2.0 beta + Vite + TypeBox), unified conventions, docs, and generators. AI agents are first-class users — conventions must stay deterministic and greppable. The product is conventions and generators, **not wrappers**: integrations stay thin and ejectable.
+Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 + Elysia 2.0 RC + Vite 8 + TypeBox), unified conventions, docs, and generators. AI agents are first-class users — conventions must stay deterministic and greppable. The product is conventions and generators, **not wrappers**: integrations stay thin and ejectable.
 
 ## Commands
 
@@ -9,6 +9,7 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 canar
 - `bun run test:unit` — `packages/` unit tests only
 - `bun run test:integration` — boots the playground's real dev + prod servers and asserts the Elysia/Vite/TanStack contract
 - `bun run test:e2e-tanstack` — TanStack feature coverage (`apps/e2e-tanstack`) against both dev and prod
+- `bun run typecheck` — `bun check` over `packages/`, `apps/playground`, and the two TanStack apps
 - `bun run bench` — paired A/B throughput benchmarks (needs `oha`; falls back to a built-in load generator). See `bench/README.md`.
 - `cd apps/playground-with-tanstack && bun run dev` — TanStack-under-Elysia dev server (port 3000, `PORT` env respected)
 - `cd apps/playground-with-tanstack && bun run build && bun run start` — prod build + serve (`bun build` output is not executable; always run via `bun dist/app`)
@@ -24,7 +25,7 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 canar
 
 ## Conventions & gotchas
 
-- Elysia is pinned to `^2.0.0-beta.1` — check API against v2, not v1 docs (e.g. plugin hooks, `.all("*")`).
+- Elysia is pinned exactly to `2.0.0-rc.4` — npm `latest` is 1.4 again (reset after RC briefly owned the tag). Install with `elysia@rc` or the exact version, never `elysia@latest`. Check API against v2, not v1 docs (e.g. plugin hooks, `.all("*")`; route config is the second argument, handler third).
 - `packages/connect` source uses tabs; playground apps use spaces. Match the file you're in.
 - Workspace scripts from root: `bun run --filter <pkg-name> <script>` (`bun --cwd` needs an absolute path).
 - Vite dev serves CSS imports as JS modules — don't assert `text/css` in dev-mode tests.
@@ -40,7 +41,7 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 canar
 
 ## Cursor Cloud specific instructions
 
-- Runtime is Bun canary (targets 1.4), installed to `~/.bun/bin` and symlinked to `/usr/local/bin/bun` so it resolves in non-interactive shells. The startup update script only runs `bun install`; if `bun` is ever missing, reinstall with `curl -fsSL https://bun.sh/install | bash -s -- canary`. Node is not used to run anything here.
-- Standard lint/test/build/run commands live in the `## Commands` section above — reuse those. There is no separate lint/typecheck step in this repo (CI runs only unit + integration + e2e).
+- Runtime is Bun 1.4.4 stable, installed to `~/.bun/bin` and symlinked to `/usr/local/bin/bun` so it resolves in non-interactive shells. The startup update script only runs `bun install`; if `bun` is ever missing, reinstall with `curl -fsSL https://bun.sh/install | bash`. Node is not used to run anything here.
+- Standard lint/test/build/run commands live in the `## Commands` section above — reuse those. CI runs `bun run typecheck` (`bun check`) plus unit + integration + e2e.
 - All three apps (`apps/playground`, `apps/playground-with-tanstack`, `apps/e2e-tanstack`) default to port 3000, so only one dev server can run on the default port at a time. Set `PORT` (and `HMR_PORT` for the tanstack apps) to run several concurrently. Manual sanity check: `curl localhost:3000/api/hello` returns `{"message":"Hello world"}` and `GET /` is TanStack SSR.
 - Integration smoke (`test:integration`) asserts a bodyless 304 on Vite conditional requests; Vite may omit `Content-Length` on those responses, so the test accepts absent or `"0"`.

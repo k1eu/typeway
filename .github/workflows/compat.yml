@@ -26,31 +26,40 @@ jobs:
           # Control cell: lockfile versions, same as CI. If this fails, the
           # failure is ours, not upstream's.
           - name: pinned
-            bun-version: canary
+            bun-version: 1.4.4
             install: ""
 
+          # npm `latest` is Elysia 1.4 (reset after 2.0.0-rc.4 briefly owned it).
+          # `rc` is the v2 line this repo pins; `next` is still 2.0.0-beta.
           - name: elysia-latest
-            bun-version: canary
+            bun-version: 1.4.4
             install: |
-              (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
-              (cd apps/playground-with-tanstack && bun add elysia@latest)
+              (cd packages/connect && bun add --peer elysia@rc && bun add -d elysia@rc)
+              (cd apps/playground && bun add elysia@rc)
+              (cd apps/playground-with-tanstack && bun add elysia@rc)
+              (cd apps/e2e-tanstack && bun add elysia@rc)
 
           - name: vite-latest
-            bun-version: canary
+            bun-version: 1.4.4
             install: |
               (cd apps/playground-with-tanstack && bun add -d vite@latest)
+              (cd apps/e2e-tanstack && bun add -d vite@latest)
 
           - name: tanstack-latest
-            bun-version: canary
+            bun-version: 1.4.4
             install: |
               (cd apps/playground-with-tanstack && bun add @tanstack/react-start@latest @tanstack/react-router@latest)
+              (cd apps/e2e-tanstack && bun add @tanstack/react-start@latest @tanstack/react-router@latest)
 
           - name: all-latest
-            bun-version: canary
+            bun-version: 1.4.4
             install: |
-              (cd packages/connect && bun add --peer elysia@latest && bun add -d elysia@latest)
-              (cd apps/playground-with-tanstack && bun add elysia@latest @tanstack/react-start@latest @tanstack/react-router@latest)
+              (cd packages/connect && bun add --peer elysia@rc && bun add -d elysia@rc)
+              (cd apps/playground && bun add elysia@rc)
+              (cd apps/playground-with-tanstack && bun add elysia@rc @tanstack/react-start@latest @tanstack/react-router@latest)
               (cd apps/playground-with-tanstack && bun add -d vite@latest)
+              (cd apps/e2e-tanstack && bun add elysia@rc @tanstack/react-start@latest @tanstack/react-router@latest)
+              (cd apps/e2e-tanstack && bun add -d vite@latest)
 
           # Second bun dimension: lockfile deps on the latest stable Bun.
           - name: bun-stable
@@ -84,6 +93,9 @@ jobs:
         run: |
           bun pm ls --all | grep -Ei 'elysia|^\s*├──\s*vite@|vite@|@tanstack/react-(start|router)@' || true
           bun --version
+
+      - name: Type check
+        run: bun run typecheck
 
       - name: Unit tests (@typeway/connect)
         run: bun test packages/

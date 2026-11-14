@@ -17,7 +17,7 @@ export const Note = {
   },
 
   /** Demonstrates nested `transaction()` — read-back inside the same tx. */
-  async createWithAudit(body: string): Promise<NoteRow> {
+  createWithAudit(body: string): NoteRow {
     return transaction(() => {
       const note = Note.create(body)
       const found = getDb()

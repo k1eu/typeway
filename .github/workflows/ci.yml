@@ -18,11 +18,13 @@ jobs:
 
       - uses: oven-sh/setup-bun@v2
         with:
-          # Repo targets Bun 1.4 canary; switch to a pin once 1.4 is stable.
-          bun-version: canary
+          bun-version: 1.4.4
 
       - name: Install
         run: bun install --frozen-lockfile
+
+      - name: Type check
+        run: bun run typecheck
 
       - name: Unit tests (@typeway/connect)
         run: bun test packages/

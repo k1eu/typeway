@@ -24,4 +24,14 @@ describe("Eden treaty path for a prefixed backend", () => {
 		expect(error).toBeNull();
 		expect(data).toEqual({ message: "Hello world" });
 	});
+
+	test("nested resource prefix is api.api.articles.get()", async () => {
+		const backend = new Elysia({ prefix: "/api" }).use(
+			new Elysia({ prefix: "/articles" }).get("/", () => [{ id: 1, title: "Hi" }]),
+		);
+		const api = treaty(backend);
+		const { data, error } = await api.api.articles.get();
+		expect(error).toBeNull();
+		expect(data).toEqual([{ id: 1, title: "Hi" }]);
+	});
 });

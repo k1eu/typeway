@@ -40,6 +40,7 @@
     "apps/playground-with-tanstack": {
       "name": "playground-with-tanstack",
       "dependencies": {
+        "@elysia/eden": "2.0.0-rc.1",
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/react-devtools": "^0.10.14",
         "@tanstack/react-router": "^1.170.46",

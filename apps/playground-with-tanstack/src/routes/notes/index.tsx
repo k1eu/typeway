@@ -1,11 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
-import { listNotes } from '../../data/notes'
-import { createNote } from '../../mutations/notes'
+import { api } from '../../lib/api'
 
 export const Route = createFileRoute('/notes/')({
-  loader: () => listNotes(),
+  loader: async () => {
+    const { data, error } = await api().api.notes.get()
+    if (error) throw error
+    return data
+  },
   component: NotesPage,
 })
 
@@ -27,15 +30,21 @@ function NotesPage() {
           <code className="rounded bg-[var(--chip-bg)] px-1.5 py-0.5 text-sm">
             AsyncLocalStorage
           </code>{' '}
-          once per request, so this loader,{' '}
+          once per request, so this loader and{' '}
           <code className="rounded bg-[var(--chip-bg)] px-1.5 py-0.5 text-sm">
             POST /api/notes
-          </code>
-          , and the create mutation below all call{' '}
-          <code className="rounded bg-[var(--chip-bg)] px-1.5 py-0.5 text-sm">
-            getDb()
           </code>{' '}
-          without passing a connection around.
+          both call Eden (`api().api.notes`) — in-process on the server, HTTP
+          in the browser. There is no parallel server-function CRUD path.
+        </p>
+
+        <p className="mt-4">
+          <Link
+            to="/notes/new"
+            className="text-sm font-semibold text-[var(--lagoon-deep)]"
+          >
+            New note page
+          </Link>
         </p>
 
         <ul
@@ -48,7 +57,13 @@ function NotesPage() {
               className="demo-card text-[var(--sea-ink)]"
               data-note-id={note.id}
             >
-              {note.body}
+              <Link
+                to="/notes/$id"
+                params={{ id: String(note.id) }}
+                className="text-[var(--sea-ink)] no-underline"
+              >
+                {note.body}
+              </Link>
             </li>
           ))}
         </ul>
@@ -60,7 +75,10 @@ function NotesPage() {
             if (!draft.trim()) return
             setPending(true)
             try {
-              await createNote({ data: { body: draft.trim() } })
+              const { error } = await api().api.notes.post({
+                body: draft.trim(),
+              })
+              if (error) throw error
               setDraft('')
               await router.invalidate()
             } finally {
@@ -72,7 +90,7 @@ function NotesPage() {
             name="body"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Add a note via TanStack server fn…"
+            placeholder="Add a note via Eden…"
             className="min-w-0 flex-1 rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] px-4 py-2.5 text-[var(--sea-ink)]"
           />
           <button

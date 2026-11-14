@@ -3,11 +3,24 @@ import type { Backend } from "../../server/app"
 
 export type Api = ReturnType<typeof treaty<Backend>>
 
+type ServerApiSlot = typeof globalThis & {
+  __typewayServerApi?: () => Api
+}
+
+/**
+ * Isomorphic Eden client. Browser: HTTP to the same origin. SSR: the host
+ * process registers `globalThis.__typewayServerApi` from `server/listen.ts`
+ * (Vite SSR is ESM — `require()` is not defined, spec Q10).
+ */
 export function api(): Api {
   if (import.meta.env.SSR) {
-    // Dead-stripped from the client bundle. Implementation in api.server.ts
-    // so Vite does not follow bun:sqlite into dist/client.
-    return require("./api.server").api() as Api
+    const serverApi = (globalThis as ServerApiSlot).__typewayServerApi
+    if (!serverApi) {
+      throw new Error(
+        "getBackend() Eden client is not wired — server/listen.ts must register __typewayServerApi",
+      )
+    }
+    return serverApi()
   }
   return treaty<Backend>(window.location.origin)
 }

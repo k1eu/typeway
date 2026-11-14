@@ -31,10 +31,14 @@ Use it when the destination is a Bun workspace member.
 | `typeway build` | `bun run build`. |
 | `typeway start` | `bun dist/app` after asserting `dist/app` exists. |
 | `typeway routes --json` | Import `./server/app.ts`, print the Elysia route table. |
+| `typeway generate model <Name> [field:type …]` | Table, relations, TypeBox, model, factory, bootstrap SQL, test, doc stub. |
+| `typeway generate resource <Name> [field:type …]` | Model plus five-action `/api` routes, Eden pages, tests, docs, AGENTS.md. |
+| `typeway models --json` | List models from `.typeway/generate.json` or `app/models/`. |
 | `typeway --help` | Human text. `--json` prints `{ ok, commands }`. |
 
-`generate model` / `generate resource` are **not** in this package yet.
-See [plans/05-cli-and-generators.md](../../plans/05-cli-and-generators.md).
+Generators: [docs/generators.md](../../docs/generators.md). `--dry-run --json`
+is the planning API. Re-running without `--force` skips existing files and
+converges patches.
 
 ## JSON contract
 
@@ -44,11 +48,13 @@ See [plans/05-cli-and-generators.md](../../plans/05-cli-and-generators.md).
 { "ok": false, "error": { "code": "typeway.routes.unreadable", "message": "…", "docs": "https://typeway.dev/errors/typeway.routes.unreadable" } }
 ```
 
-Exit `0` on `ok: true`, `1` on usage/validation, `2` on a failed write.
+Exit `0` on `ok: true`, `1` on usage/validation, `2` on a failed write,
+`3` when generated tests fail.
 
-Route rows: `{ method, path, file, auth, schemas }`. `file` is `null` until
-`.typeway/generate.json` exists. `schemas` is JSON Schema cloned from
-Elysia `hooks.query` / `params` / `body` / `headers` / `response`.
+Route rows: `{ method, path, file, auth, schemas }`. `file` comes from
+`.typeway/generate.json` (`GET /api/hello` → `server/app.ts`). `schemas`
+is JSON Schema cloned from Elysia `hooks.query` / `params` / `body` /
+`headers` / `response`.
 
 ## Layout of a generated app
 

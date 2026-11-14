@@ -16,10 +16,13 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as RenderingRouteImport } from './routes/rendering'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as NotesIndexRouteImport } from './routes/notes/index'
+import { Route as NotesIdRouteImport } from './routes/notes/$id'
+import { Route as NotesNewRouteImport } from './routes/notes/new'
 import { Route as RenderingIndexRouteImport } from './routes/rendering/index'
 import { Route as RenderingSpaRouteImport } from './routes/rendering/spa'
 import { Route as RenderingSsgRouteImport } from './routes/rendering/ssg'
 import { Route as RenderingSsrRouteImport } from './routes/rendering/ssr'
+import { Route as NotesIdEditRouteImport } from './routes/notes/$id.edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -56,6 +59,16 @@ const NotesIndexRoute = NotesIndexRouteImport.update({
   path: '/notes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NotesIdRoute = NotesIdRouteImport.update({
+  id: '/notes/$id',
+  path: '/notes/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesNewRoute = NotesNewRouteImport.update({
+  id: '/notes/new',
+  path: '/notes/new',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RenderingIndexRoute = RenderingIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -76,6 +89,11 @@ const RenderingSsrRoute = RenderingSsrRouteImport.update({
   path: '/ssr',
   getParentRoute: () => RenderingRoute,
 } as any)
+const NotesIdEditRoute = NotesIdEditRouteImport.update({
+  id: '/edit',
+  path: '/edit',
+  getParentRoute: () => NotesIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -84,11 +102,14 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/rendering': typeof RenderingRouteWithChildren
   '/signup': typeof SignupRoute
+  '/notes/$id': typeof NotesIdRouteWithChildren
+  '/notes/new': typeof NotesNewRoute
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
   '/notes/': typeof NotesIndexRoute
   '/rendering/': typeof RenderingIndexRoute
+  '/notes/$id/edit': typeof NotesIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -96,11 +117,14 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/notes/$id': typeof NotesIdRouteWithChildren
+  '/notes/new': typeof NotesNewRoute
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
   '/notes': typeof NotesIndexRoute
   '/rendering': typeof RenderingIndexRoute
+  '/notes/$id/edit': typeof NotesIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -110,11 +134,14 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/rendering': typeof RenderingRouteWithChildren
   '/signup': typeof SignupRoute
+  '/notes/$id': typeof NotesIdRouteWithChildren
+  '/notes/new': typeof NotesNewRoute
   '/rendering/spa': typeof RenderingSpaRoute
   '/rendering/ssg': typeof RenderingSsgRoute
   '/rendering/ssr': typeof RenderingSsrRoute
   '/notes/': typeof NotesIndexRoute
   '/rendering/': typeof RenderingIndexRoute
+  '/notes/$id/edit': typeof NotesIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -125,11 +152,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/rendering'
     | '/signup'
+    | '/notes/$id'
+    | '/notes/new'
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
     | '/notes/'
     | '/rendering/'
+    | '/notes/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -137,11 +167,14 @@ export interface FileRouteTypes {
     | '/account'
     | '/login'
     | '/signup'
+    | '/notes/$id'
+    | '/notes/new'
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
     | '/notes'
     | '/rendering'
+    | '/notes/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -150,11 +183,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/rendering'
     | '/signup'
+    | '/notes/$id'
+    | '/notes/new'
     | '/rendering/spa'
     | '/rendering/ssg'
     | '/rendering/ssr'
     | '/notes/'
     | '/rendering/'
+    | '/notes/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -164,6 +200,8 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   RenderingRoute: typeof RenderingRouteWithChildren
   SignupRoute: typeof SignupRoute
+  NotesIdRoute: typeof NotesIdRouteWithChildren
+  NotesNewRoute: typeof NotesNewRoute
   NotesIndexRoute: typeof NotesIndexRoute
 }
 
@@ -218,6 +256,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NotesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/notes/$id': {
+      id: '/notes/$id'
+      path: '/notes/$id'
+      fullPath: '/notes/$id'
+      preLoaderRoute: typeof NotesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes/new': {
+      id: '/notes/new'
+      path: '/notes/new'
+      fullPath: '/notes/new'
+      preLoaderRoute: typeof NotesNewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rendering/': {
       id: '/rendering/'
       path: '/'
@@ -246,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RenderingSsrRouteImport
       parentRoute: typeof RenderingRoute
     }
+    '/notes/$id/edit': {
+      id: '/notes/$id/edit'
+      path: '/edit'
+      fullPath: '/notes/$id/edit'
+      preLoaderRoute: typeof NotesIdEditRouteImport
+      parentRoute: typeof NotesIdRoute
+    }
   }
 }
 
@@ -267,6 +326,17 @@ const RenderingRouteWithChildren = RenderingRoute._addFileChildren(
   RenderingRouteChildren,
 )
 
+interface NotesIdRouteChildren {
+  NotesIdEditRoute: typeof NotesIdEditRoute
+}
+
+const NotesIdRouteChildren: NotesIdRouteChildren = {
+  NotesIdEditRoute: NotesIdEditRoute,
+}
+
+const NotesIdRouteWithChildren =
+  NotesIdRoute._addFileChildren(NotesIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -274,6 +344,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   RenderingRoute: RenderingRouteWithChildren,
   SignupRoute: SignupRoute,
+  NotesIdRoute: NotesIdRouteWithChildren,
+  NotesNewRoute: NotesNewRoute,
   NotesIndexRoute: NotesIndexRoute,
 }
 export const routeTree = rootRouteImport

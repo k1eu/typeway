@@ -1,19 +1,48 @@
-import { Elysia } from "elysia"
+import { Elysia, t } from "elysia"
 import { Note } from "../../app/models/note"
-import { NoteCreate } from "../../app/schemas/note"
+import { NoteNotFound } from "../../app/errors"
+import {
+  Note as NoteSchema,
+  NoteCreate,
+  NoteParams,
+  NoteUpdate,
+} from "../../app/schemas/note"
 
 /**
- * Elysia JSON API for notes. Handlers call `Note.*` directly — `getDb()` works
+ * Elysia JSON API for notes. Handlers call `Note.*` — `getDb()` works
  * because `server/listen.ts` entered ALS at the fetch wrapper.
  *
- * Generated apps expose this as the only typed door; TanStack pages call it
- * through Eden. This playground still also has `src/data/notes.ts` server fns
- * (see docs/conventions.md playground gaps).
+ * TanStack pages call this through Eden (`src/lib/api.ts`). POST still uses
+ * `createWithAudit` so the nested-transaction demo stays in the playground.
  */
 export const notesApi = new Elysia({ prefix: "/notes" })
-  .get("/", () => Note.all())
+  .get("/", { response: t.Array(NoteSchema) }, () => Note.all())
   .post(
     "/",
-    { body: NoteCreate },
+    { body: NoteCreate, response: NoteSchema },
     ({ body }) => Note.createWithAudit(body.body),
   )
+  .get("/:id", { params: NoteParams, response: NoteSchema }, ({ params }) => {
+    const row = Note.find(params.id)
+    if (!row) return new NoteNotFound(params.id)
+    return row
+  })
+  .patch(
+    "/:id",
+    { params: NoteParams, body: NoteUpdate, response: NoteSchema },
+    ({ params, body }) => {
+      if (body.body === undefined) {
+        const row = Note.find(params.id)
+        if (!row) return new NoteNotFound(params.id)
+        return row
+      }
+      const row = Note.update(params.id, body.body)
+      if (!row) return new NoteNotFound(params.id)
+      return row
+    },
+  )
+  .delete("/:id", { params: NoteParams, response: NoteSchema }, ({ params }) => {
+    const row = Note.destroy(params.id)
+    if (!row) return new NoteNotFound(params.id)
+    return row
+  })

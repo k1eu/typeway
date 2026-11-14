@@ -1,6 +1,8 @@
-import { Elysia, t } from "elysia";
+import { Elysia, t, HTTPError } from "elysia";
 import { auth } from "./auth";
 import { notesApi } from "./routes/notes";
+
+HTTPError.typeBase = "https://typeway.dev/errors";
 
 export const backend = new Elysia({ prefix: "/api" })
   .get(

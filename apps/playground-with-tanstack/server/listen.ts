@@ -1,5 +1,12 @@
 import type { Elysia } from "elysia"
+import { backend } from "./app"
 import { withFetchContext } from "./fetch-context"
+import { api as serverApi } from "../src/lib/api.server"
+
+const g = globalThis as typeof globalThis & {
+  __typewayServerApi?: typeof serverApi
+}
+g.__typewayServerApi = serverApi
 
 /** Bun.serve entry with ALS — replaces bare `app.listen()` in boot files. */
 export function listen(
@@ -10,7 +17,7 @@ export function listen(
   const server = Bun.serve({
     port,
     fetch(request) {
-      return withFetchContext(request, () => app.fetch(request))
+      return withFetchContext(request, backend, () => app.fetch(request))
     },
   })
 

@@ -87,9 +87,16 @@ export type Api = ReturnType<typeof treaty<Backend>>
 
 export function api(): Api {
   if (import.meta.env.SSR) {
-    // Dead-stripped from the client bundle. Implementation in api.server.ts
-    // so Vite does not follow bun:sqlite into dist/client.
-    return require("./api.server").api() as Api
+    // Vite SSR is ESM — `require()` is not defined (open question 10).
+    // `server/listen.ts` registers the in-process client on globalThis so
+    // this module never imports bun:sqlite into the client graph.
+    const serverApi = (globalThis as typeof globalThis & {
+      __typewayServerApi?: () => Api
+    }).__typewayServerApi
+    if (!serverApi) {
+      throw new Error("in-process Eden is not wired")
+    }
+    return serverApi()
   }
   return treaty<Backend>(window.location.origin)
 }
@@ -222,7 +229,6 @@ The `/rendering/*` demo pages may keep a local server fn that stamps
 
 ## Playground
 
-`src/data/notes.ts` and `src/mutations/notes.ts` call `Note.*`
-through `createServerFn`. That is the dual path. Leave it until
-`generate resource` dogfoods Eden on notes. Integration tests that
-hit `POST /api/notes` already cover the Elysia side.
+Notes pages call `api().api.notes` (in-process treaty on SSR, HTTP
+in the browser). `src/data/session.ts` still uses `createServerFn`
+for Better Auth UI glue — that is allowed. Domain CRUD does not.

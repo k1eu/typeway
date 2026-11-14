@@ -6,6 +6,8 @@ export const COMMANDS = [
 	"build",
 	"start",
 	"routes",
+	"generate",
+	"models",
 	"help",
 ] as const;
 
@@ -20,6 +22,9 @@ export type ParsedArgv = {
 	help: boolean;
 	version: boolean;
 	workspace: boolean;
+	plural?: string;
+	writeAgents: boolean;
+	skipTest: boolean;
 };
 
 const COMMAND_SET = new Set<string>(COMMANDS);
@@ -38,18 +43,14 @@ export function parseArgv(argv: string[]): ParsedArgv {
 		help: false,
 		version: false,
 		workspace: false,
+		writeAgents: false,
+		skipTest: false,
 	};
 
 	for (let i = 0; i < argv.length; i++) {
 		const token = argv[i]!;
 		if (!isFlag(token)) {
 			if (parsed.command === null) {
-				if (token === "generate" || token === "models") {
-					throw new CliError(
-						"typeway.unknown_command",
-						`"${token}" is not implemented yet — slice 1 is new/dev/build/start/routes. See plans/05-cli-and-generators.md.`,
-					);
-				}
 				if (!COMMAND_SET.has(token)) {
 					throw new CliError(
 						"typeway.unknown_command",
@@ -60,6 +61,11 @@ export function parseArgv(argv: string[]): ParsedArgv {
 			} else {
 				parsed.args.push(token);
 			}
+			continue;
+		}
+
+		if (token.startsWith("--plural=")) {
+			parsed.plural = token.slice("--plural=".length);
 			continue;
 		}
 
@@ -83,6 +89,24 @@ export function parseArgv(argv: string[]): ParsedArgv {
 				break;
 			case "--workspace":
 				parsed.workspace = true;
+				break;
+			case "--plural": {
+				const value = argv[i + 1];
+				if (!value || value.startsWith("-")) {
+					throw new CliError(
+						"typeway.usage",
+						"--plural requires a value (e.g. --plural people).",
+					);
+				}
+				parsed.plural = value;
+				i++;
+				break;
+			}
+			case "--write-agents":
+				parsed.writeAgents = true;
+				break;
+			case "--skip-test":
+				parsed.skipTest = true;
 				break;
 			default:
 				throw new CliError(
@@ -108,7 +132,7 @@ export function assertNoForce(command: string, force: boolean) {
 	if (force) {
 		throw new CliError(
 			"typeway.usage",
-			`--force is only valid for typeway new (got "${command}").`,
+			`--force is only valid for typeway new and typeway generate (got "${command}").`,
 		);
 	}
 }

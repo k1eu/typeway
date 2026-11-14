@@ -8,10 +8,31 @@ export const Note = {
     return getDb().select().from(notes).orderBy(desc(notes.createdAt)).all()
   },
 
+  find(id: number): NoteRow | undefined {
+    return getDb().select().from(notes).where(eq(notes.id, id)).get()
+  },
+
   create(body: string): NoteRow {
     return getDb()
       .insert(notes)
       .values({ body })
+      .returning()
+      .get()
+  },
+
+  update(id: number, body: string): NoteRow | undefined {
+    return getDb()
+      .update(notes)
+      .set({ body })
+      .where(eq(notes.id, id))
+      .returning()
+      .get()
+  },
+
+  destroy(id: number): NoteRow | undefined {
+    return getDb()
+      .delete(notes)
+      .where(eq(notes.id, id))
       .returning()
       .get()
   },

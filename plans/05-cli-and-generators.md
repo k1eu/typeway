@@ -279,11 +279,32 @@ scope**.
 This **docs** PR (the one that added `docs/conventions.md` and this
 plan) is **not** slice 1. Do not start `packages/cli` here.
 
-## Slice 1 — shipped (this PR)
+## Slice 2/3 — shipped (generators PR)
+
+`typeway generate model|resource`, `typeway models --json`,
+`.typeway/generate.json`, managed AGENTS.md inventory, bootstrap SQL,
+Eden pages (index/show/new/edit), and the playground notes dogfood
+(Eden instead of `createServerFn` CRUD).
+
+Deltas vs the sketch:
+
+- **`field:type` args** are in scope (`title:string body:text`). Default
+  remains title+body when omitted. `--columns` as a flag is still unused.
+- **Bootstrap SQL** is hand-authored `migration.sql` + a v7 snapshot so
+  `migrate()` and a later `drizzle-kit generate` have a baseline. The
+  folder name is `YYYYMMDDHHMMSS_create_<plural>` (drizzle-orm reads
+  the first 14 chars as UTC). We do not wrap drizzle-kit.
+- **Pages include new/edit** as well as index/show.
+- **`--skip-test`** skips the generated `bun:test` run (exit 3 still
+  means tests failed when they do run).
+- **Playground notes** were moved onto Eden in this PR (the plan called
+  that a follow-up; the stacked generators slice includes it).
+
+## Slice 1 — shipped (CLI PR)
 
 `packages/cli` exists. `typeway new | dev | build | start | routes`
-are implemented. Generators are **not** — that is the next PR against
-this branch.
+are implemented. Generators landed in the follow-up PR against this
+branch.
 
 Learnings and deltas vs the sketch above:
 

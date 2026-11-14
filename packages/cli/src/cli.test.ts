@@ -55,12 +55,32 @@ describe("parseArgv", () => {
 			help: false,
 			version: false,
 			workspace: false,
+			writeAgents: false,
+			skipTest: false,
 			args: ["my-app"],
 		});
 	});
 
+	test("generate flags with values", () => {
+		expect(
+			parseArgv([
+				"generate",
+				"resource",
+				"Post",
+				"title:string",
+				"--plural",
+				"posts",
+				"--skip-test",
+			]),
+		).toMatchObject({
+			command: "generate",
+			args: ["resource", "Post", "title:string"],
+			plural: "posts",
+			skipTest: true,
+		});
+	});
+
 	test("unknown command", () => {
-		expect(() => parseArgv(["generate"])).toThrow(/not implemented yet/);
 		expect(() => parseArgv(["bogus"])).toThrow(/Unknown command/);
 	});
 
@@ -92,6 +112,8 @@ describe("typeway --help", () => {
 			"build",
 			"start",
 			"routes",
+			"generate",
+			"models",
 			"help",
 		]);
 	});

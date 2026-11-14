@@ -5,6 +5,8 @@ import { runDev } from "./dev";
 import { CliError, EXIT } from "./errors";
 import { defaultIo, type IO } from "./io";
 import { printError } from "./json";
+import { runGenerate } from "./generate";
+import { runModels } from "./models";
 import { runNew } from "./new";
 import {
 	findCommandHelp,
@@ -74,6 +76,10 @@ async function dispatch(parsed: ParsedArgv, io: IO): Promise<number> {
 			return runStart(io, parsed);
 		case "routes":
 			return runRoutes(io, parsed);
+		case "generate":
+			return runGenerate(io, parsed);
+		case "models":
+			return runModels(io, parsed);
 		default: {
 			const _never: never = parsed.command;
 			throw new CliError(

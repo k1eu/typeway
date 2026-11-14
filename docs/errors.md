@@ -21,6 +21,15 @@ handler so Eden types the status.
 | `internal-server-error` | 500 | Unhandled |
 | `typeway.generate.exists` | CLI 1 | Generate refused to overwrite |
 | `typeway.generate.invalid_name` | CLI 1 | Name is not `/^[a-z][a-z0-9-]*$/` |
+| `typeway.generate.invalid_field` | CLI 1 | `field:type` token is malformed, reserved, or duplicate |
+| `typeway.generate.unknown_type` | CLI 1 | Field type is not string/text/integer/boolean/timestamp/real |
+| `typeway.generate.missing_name` | CLI 1 | `generate` without `<Name>` |
+| `typeway.generate.missing_kind` | CLI 1 | `generate` without `model` or `resource` |
+| `typeway.generate.markers_missing` | CLI 1 | AGENTS.md missing managed markers (pass `--write-agents`) |
+| `typeway.generate.not_an_app` | CLI 1 | cwd is not a Typeway app |
+| `typeway.generate.patch_failed` | CLI 1 | Could not patch `relations.ts` / `server/app.ts` |
+| `typeway.generate.test_failed` | CLI 3 | Generated `bun:test` files failed; files left in place |
+| `typeway.models.unreadable` | CLI 1 | `typeway models` run outside a Typeway app |
 | `typeway.routes.unreadable` | CLI 1 | Cannot import `server/app.ts` |
 | `typeway.unknown_command` | CLI 1 | Argv is not a known command |
 | `typeway.usage` | CLI 1 | Bad flags or extra arguments |

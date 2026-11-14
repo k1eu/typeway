@@ -45,9 +45,12 @@ describe("Elysia 2 RC route table", () => {
 			"POST /api/articles",
 			"GET /api/hello",
 		]);
-		expect(routes.every((r) => r.file === null && r.auth === false)).toBe(true);
-
+		expect(routes.every((r) => r.auth === false)).toBe(true);
 		const hello = routes.find((r) => r.path === "/api/hello")!;
+		expect(hello.file).toBe("server/app.ts");
+		const articles = routes.find((r) => r.path === "/api/articles")!;
+		expect(articles.file).toBeNull();
+
 		expect(hello.schemas?.query).toMatchObject({
 			type: "object",
 			properties: { name: { type: "string" } },

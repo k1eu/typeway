@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { assertNoDryRun, assertNoForce } from "./argv";
 import { CliError } from "./errors";
+import { fileForRoute, readManifest } from "./generate/manifest";
 import type { IO } from "./io";
 import { printJson } from "./json";
 
@@ -58,7 +59,10 @@ export function schemasFromHooks(
 	return present ? schemas : null;
 }
 
-export function introspectRoutes(backend: { routes?: readonly unknown[] }): IntrospectedRoute[] {
+export function introspectRoutes(
+	backend: { routes?: readonly unknown[] },
+	manifest?: { resources: { plural: string; file: string }[] } | null,
+): IntrospectedRoute[] {
 	const routes = Array.isArray(backend.routes) ? backend.routes : [];
 	const out: IntrospectedRoute[] = [];
 	for (const raw of routes) {
@@ -69,7 +73,7 @@ export function introspectRoutes(backend: { routes?: readonly unknown[] }): Intr
 		out.push({
 			method,
 			path,
-			file: null,
+			file: fileForRoute(path, manifest ?? null),
 			auth: false,
 			schemas: schemasFromHooks(route.hooks),
 		});
@@ -125,7 +129,7 @@ export async function runRoutes(
 		);
 	}
 
-	const routes = introspectRoutes(mod.backend);
+	const routes = introspectRoutes(mod.backend, readManifest(io.cwd));
 	if (opts.json) {
 		printJson(io, { ok: true, routes });
 	} else {

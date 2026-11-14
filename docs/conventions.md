@@ -209,18 +209,17 @@ contracts. The execution plan is
 [plans/05-cli-and-generators.md](../plans/05-cli-and-generators.md).
 
 1. **`packages/cli`** — **done (slice 1).** `typeway` bin: `new`, `dev`,
-   `build`, `start`, `routes --json`. No generate yet. See
-   [docs/cli.md](./cli.md).
-2. **`typeway models --json`** — scan `app/models/` + `db/schema/`.
-   Needed before generate so idempotence can see the world.
-3. **`typeway generate model <name>`** — table, relations stub,
-   TypeBox schema, model module, factory, unit test, AGENTS.md
-   rewrite. Stops before HTTP.
-4. **`typeway generate resource <name>`** — everything `generate
-   model` does, plus the Elysia resource, Eden request spec,
-   `backend` wiring, TanStack index + `$id` pages that call
-   `api()`, and a loader test. This is the first generator that
-   enforces the one data path.
+   `build`, `start`, `routes --json`. See [docs/cli.md](./cli.md).
+2. **`typeway models --json`** — **done.** Reads `.typeway/generate.json`
+   or scans `app/models/`.
+3. **`typeway generate model <Name> [field:type …]`** — **done.** Table,
+   relations stub, TypeBox schema, model module, factory, unit test,
+   bootstrap SQL, AGENTS.md rewrite. Stops before HTTP.
+4. **`typeway generate resource <Name> [field:type …]`** — **done.**
+   Everything `generate model` does, plus the Elysia five-action
+   resource, Eden request spec, `backend` wiring, TanStack
+   index / show / new / edit pages that call `api()`, and a docs
+   page. See [docs/generators.md](./generators.md).
 
 Do not start `generate job`, `generate mailer`, or `add auth` until
 resource round-trips through Eden in the playground.
@@ -234,13 +233,10 @@ playground is still allowed to differ in these ways:
 | --- | --- |
 | `db/schema.ts` (single file) + `drizzle/` at app root | `db/schema/<table>.ts` + `db/migrations/` |
 | `config/env.ts` is a hand-built object | TypeBox parse at boot |
-| Notes page loads via TanStack server fn that calls `Note.*` | Loader calls Eden `api().api.notes.get()` |
-| `src/data/`, `src/mutations/` | Do not generate these for domain data |
-| No `app/errors.ts` / `HTTPError.typeBase` | Elysia `HTTPError.id` catalog |
-| ALS is on `globalThis`, but `backend` is not in context yet | `getBackend()` from ALS for in-process Eden |
-
-Do not "fix" the notes page onto Eden in this docs PR. That is the
-first `generate resource` dogfood.
+| Notes are a five-action Eden resource (dogfood) | Same |
+| `src/data/session.ts` still uses `createServerFn` | UI glue only — domain CRUD uses Eden |
+| `app/errors.ts` has `NoteNotFound` / `HTTPError.typeBase` | Same |
+| `getBackend()` is in ALS for in-process Eden | Same |
 
 ## Open questions
 
@@ -280,14 +276,13 @@ generator until the spec is updated.
    Strip them after `auth generate` until upstream uses
    `defineRelations`. Playground documents this in
    `db/auth.schema.ts`.
-10. **Isomorphic `api()` and the client bundle.** `src/lib/api.ts`
-    must not pull `bun:sqlite` into the Vite client build. The
-    generator's contract includes a test that the client chunk
-    does not contain `bun:sqlite` or `drizzle`. If Vite still
-    follows the server branch, fall back to two explicit imports
-    (`api.ts` HTTP-only in loaders that also run on the client,
-    `api.server.ts` only from `.server.ts` modules) and record
-    that as a spec amendment.
+10. **Isomorphic `api()` and the client bundle.** **Locked.** Vite SSR
+    is ESM (`require is not defined`). `server/listen.ts` assigns
+    `globalThis.__typewayServerApi` from `src/lib/api.server.ts`
+    (host graph). `src/lib/api.ts` calls that global on
+    `import.meta.env.SSR` and `treaty(origin)` in the browser. The
+    CLI integration test asserts `dist/client` contains neither
+    `bun:sqlite` nor `drizzle-orm`.
 11. **`typebox` as a direct app dependency.** Elysia 2 already
     depends on it. Generated apps should list `typebox` so
     `import type { Static } from "typebox"` is not a transitive

@@ -1,5 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks"
 import { db as rootDb, type Db, type Tx } from "../config/database"
+import type { Backend } from "../server/app"
 
 export type AppContext = {
   db: Db | Tx
@@ -7,6 +8,8 @@ export type AppContext = {
   txDepth: number
   /** Incoming HTTP request, when ALS was entered at the fetch wrapper. */
   request?: Request
+  /** Host `backend` instance for in-process Eden (`treaty(getBackend())`). */
+  backend?: Backend
 }
 
 /**
@@ -33,6 +36,16 @@ export function getDb(): Db | Tx {
 
 export function getRequest(): Request | undefined {
   return getContext().request
+}
+
+export function getBackend(): Backend {
+  const backend = getContext().backend
+  if (!backend) {
+    throw new Error(
+      "getBackend() called outside a request — wrap with runWithContext",
+    )
+  }
+  return backend
 }
 
 export function runWithContext<T>(ctx: AppContext, fn: () => T): T {

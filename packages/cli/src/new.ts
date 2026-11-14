@@ -3,7 +3,7 @@ import { basename, isAbsolute, resolve } from "node:path";
 import { CliError, EXIT } from "./errors";
 import type { IO } from "./io";
 import { printJson } from "./json";
-import { applyWrites, planWrites, type PlannedWrite } from "./template";
+import { applyWrites, formatHumanWrites, planWrites } from "./template";
 
 const NAME_RE = /^[a-zA-Z0-9._-]+$/;
 
@@ -27,15 +27,6 @@ export function typewayDeps(workspace: boolean) {
 		server: "0.1.0",
 		cli: "0.1.0",
 	};
-}
-
-function formatHumanWrites(writes: PlannedWrite[]) {
-	return writes
-		.map((w) => {
-			const col = w.action.padEnd(6);
-			return w.reason ? `${col} ${w.path}  (${w.reason})` : `${col} ${w.path}`;
-		})
-		.join("\n");
 }
 
 export async function runNew(

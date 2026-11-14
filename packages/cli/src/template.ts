@@ -1,4 +1,10 @@
-import { mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import {
+	mkdirSync,
+	readdirSync,
+	readFileSync,
+	statSync,
+	writeFileSync,
+} from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
 
 export type WriteAction = "create" | "update" | "skip";
@@ -8,6 +14,62 @@ export type PlannedWrite = {
 	path: string;
 	reason?: string;
 };
+
+export type PlannedFile = {
+	relative: string;
+	contents: string;
+	kind: "file" | "patch";
+};
+
+export function formatHumanWrites(writes: PlannedWrite[]) {
+	return writes
+		.map((w) => {
+			const col = w.action.padEnd(6);
+			return w.reason ? `${col} ${w.path}  (${w.reason})` : `${col} ${w.path}`;
+		})
+		.join("\n");
+}
+
+function fileExists(path: string) {
+	try {
+		return statSync(path).isFile();
+	} catch {
+		return false;
+	}
+}
+
+export function planFileList(
+	destDir: string,
+	items: PlannedFile[],
+	force: boolean,
+): { writes: PlannedWrite[]; files: { relative: string; contents: string }[] } {
+	const writes: PlannedWrite[] = [];
+	const files: { relative: string; contents: string }[] = [];
+
+	for (const item of items) {
+		files.push({ relative: item.relative, contents: item.contents });
+		const dest = join(destDir, item.relative);
+		const exists = fileExists(dest);
+		if (exists) {
+			const current = readFileSync(dest, "utf8");
+			if (current === item.contents) {
+				writes.push({ action: "skip", path: item.relative, reason: "unchanged" });
+				continue;
+			}
+			if (item.kind === "file" && !force) {
+				writes.push({ action: "skip", path: item.relative, reason: "exists" });
+				continue;
+			}
+			writes.push({ action: "update", path: item.relative });
+		} else {
+			writes.push({ action: "create", path: item.relative });
+		}
+	}
+
+	writes.sort((a, b) => a.path.localeCompare(b.path));
+	files.sort((a, b) => a.relative.localeCompare(b.relative));
+	return { writes, files };
+}
 
 export type TemplateVars = Record<string, string>;
 

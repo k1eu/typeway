@@ -33,18 +33,18 @@ Every Rails app looks the same, so every Rails developer is productive on day on
 The spec generators and the CLI will be built against:
 
 - **[docs/conventions.md](./docs/conventions.md)** — layout, the one data path (Elysia + Eden, in-process on the server), models, routes, env, testing, agent-first rules, generator order
-- **[plans/05-cli-and-generators.md](./plans/05-cli-and-generators.md)** — execution plan for `packages/cli` (`new` / `dev` / `build` / `start` / `routes --json`), then `generate model` and `generate resource`
+- **[plans/05-cli-and-generators.md](./plans/05-cli-and-generators.md)** — `packages/cli` (`new` / `dev` / `build` / `start` / `routes` / `generate` / `models`)
+- **[docs/generators.md](./docs/generators.md)** — `generate model` / `generate resource`, flags, field types
 
 ## CLI
 
-Slice 1 lives in [`packages/cli`](./packages/cli/README.md) (`typeway`
-bin). Generators are the next PR.
+The bin lives in [`packages/cli`](./packages/cli/README.md).
 
 ```sh
-typeway new my-app          # scaffold the canonical tree
-typeway dev | build | start # aliases for the app scripts
-typeway routes --json       # Elysia route table
-typeway generate model post # next PR
+typeway new my-app
+typeway generate resource Post title:string body:text
+typeway routes --json
+typeway models --json
 typeway add auth            # later
 ```
 
@@ -56,7 +56,7 @@ Bun workspaces monorepo:
 
 - `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
 - `packages/server` — `@typeway/server`, the Elysia host: `typeway({ app, frontend: tanstack() })`. Vite middleware + SSR fallback in dev, boot-time `dist/client` manifest + `.mount()` in prod. Frontend is an adapter so other bundlers can plug in later.
-- `packages/cli` — `typeway` bin: `new`, `dev`, `build`, `start`, `routes --json`. Generators not yet.
+- `packages/cli` — `typeway` bin: `new`, `dev`, `build`, `start`, `routes`, `generate`, `models`
 - `apps/playground` — scratch app for trying packages during development
 - `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through `@typeway/server`
 - `apps/e2e-tanstack` — kitchen-sink fixture app for TanStack features that cross HTTP

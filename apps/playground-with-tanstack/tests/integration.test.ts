@@ -134,7 +134,7 @@ describe("dev server (Vite middlewareMode through connect)", () => {
     )
   })
 
-  test("GET /notes SSR loads notes via TanStack server fn + shared DB", async () => {
+  test("GET /notes SSR loads notes via Eden + shared DB", async () => {
     const res = await fetch(server.url + "/notes")
     expect(res.status).toBe(200)
     const html = await res.text()

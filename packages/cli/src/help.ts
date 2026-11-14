@@ -56,6 +56,36 @@ export const COMMAND_HELP: CommandHelp[] = [
 		flags: [{ flag: "--json", description: "Stable JSON contract for agents" }],
 	},
 	{
+		name: "generate",
+		usage: "typeway generate model|resource <Name> [field:type ...]",
+		description:
+			"Scaffold a Drizzle model, or a five-action Elysia resource + Eden pages.",
+		flags: [
+			{ flag: "--dry-run", description: "Print the write list; create nothing" },
+			{ flag: "--json", description: "Machine-readable write list" },
+			{ flag: "--force", description: "Overwrite existing generated files" },
+			{
+				flag: "--plural <name>",
+				description: "Override default plural (name + \"s\")",
+			},
+			{
+				flag: "--write-agents",
+				description: "Insert the managed AGENTS.md block if markers are missing",
+			},
+			{
+				flag: "--skip-test",
+				description: "Do not run the generated bun:test files before exit 0",
+			},
+		],
+	},
+	{
+		name: "models",
+		usage: "typeway models [--json]",
+		description:
+			"List models from .typeway/generate.json (or scan app/models/).",
+		flags: [{ flag: "--json", description: "Stable JSON contract for agents" }],
+	},
+	{
 		name: "help",
 		usage: "typeway help [command]",
 		description: "Show this help, or help for one command.",
@@ -95,7 +125,7 @@ export function printRootHelp(io: IO, json: boolean) {
 		"",
 		"Commands:",
 		...COMMAND_HELP.map(
-			(c) => `  ${c.name.padEnd(10)} ${c.description}`,
+			(c) => `  ${c.name.padEnd(12)} ${c.description}`,
 		),
 		"",
 		"Global flags:",

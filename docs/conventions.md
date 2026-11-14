@@ -208,11 +208,9 @@ Implement in this order. Later generators consume earlier JSON
 contracts. The execution plan is
 [plans/05-cli-and-generators.md](../plans/05-cli-and-generators.md).
 
-1. **`packages/cli`** — `typeway` bin: `new`, `dev`, `build`,
-   `start`, `routes --json`. No generate yet. `new` writes this
-   tree (minus jobs/mailers bodies) and a managed `AGENTS.md`.
-   `dev`/`build`/`start` shell out to the app scripts that already
-   exist; do not wrap Vite.
+1. **`packages/cli`** — **done (slice 1).** `typeway` bin: `new`, `dev`,
+   `build`, `start`, `routes --json`. No generate yet. See
+   [docs/cli.md](./cli.md).
 2. **`typeway models --json`** — scan `app/models/` + `db/schema/`.
    Needed before generate so idempotence can see the world.
 3. **`typeway generate model <name>`** — table, relations stub,
@@ -249,12 +247,13 @@ first `generate resource` dogfood.
 These are unresolved on purpose. Do not invent an answer in a
 generator until the spec is updated.
 
-1. **Eden treaty path for a prefixed `backend`.** Elysia stores the
-   full path (`/api/notes`). Treaty property access may be
-   `api.api.notes.get()` or, with a base URL of `${origin}/api`,
-   `api.notes.get()`. Lock this with a fixture in `packages/cli`
-   before generating pages. Snippets in this spec use
-   `api.api.notes.get()` against `treaty(backend)` / `treaty(origin)`.
+1. **Eden treaty path for a prefixed `backend`.** **Locked.**
+   `packages/cli/src/eden-path.test.ts` constructs `new Elysia({ prefix:
+   "/api" }).get("/hello", …)`, treaties it, and calls
+   `api.api.hello.get()`. Generators must emit that chain
+   (`api.api.<plural>.get()`), not `api.<plural>.get()`. Snippets in
+   this spec already match. A `treaty(\`${origin}/api\`)` client would
+   drop the extra `.api` — do not generate that.
 2. **`@elysia/eden` version.** Pinned conceptually at `2.0.0-rc.1`
    (`@elysia/eden@rc`). Elysia itself is `2.0.0-rc.4`. Confirm types
    line up before `packages/cli` depends on it. Never install

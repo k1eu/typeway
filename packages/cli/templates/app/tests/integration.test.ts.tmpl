@@ -1,0 +1,70 @@
+import { afterAll, beforeAll, describe, expect, test } from "bun:test"
+import {
+  buildApp,
+  startDevServer,
+  startProdServer,
+  type ServerHandle,
+} from "./helpers"
+
+const HOME_SSR_TEXT = "Welcome to {{name}}"
+
+function expectSsrDocument(html: string) {
+  expect(html.slice(0, 200)).toContain("<!DOCTYPE html")
+  expect(html).toContain("$_TSR")
+  expect(html).toMatch(/<script[^>]*type="module"/)
+}
+
+describe("dev server", () => {
+  let server: ServerHandle
+
+  beforeAll(async () => {
+    server = await startDevServer()
+  }, 120_000)
+
+  afterAll(async () => {
+    await server?.stop()
+  })
+
+  test("GET / is server-rendered by TanStack", async () => {
+    const res = await fetch(server.url + "/")
+    expect(res.status).toBe(200)
+    expect(res.headers.get("content-type")).toContain("text/html")
+    const html = await res.text()
+    expectSsrDocument(html)
+    expect(html).toContain(HOME_SSR_TEXT)
+  })
+
+  test("GET /api/hello bypasses the frontend (registered Elysia route wins)", async () => {
+    const res = await fetch(server.url + "/api/hello?name=ci")
+    expect(res.status).toBe(200)
+    expect(res.headers.get("content-type")).toContain("application/json")
+    expect(await res.json()).toEqual({ message: "Hello ci" })
+  })
+})
+
+describe.skipIf(process.env.SKIP_BUILD === "1")("prod server", () => {
+  let server: ServerHandle
+
+  beforeAll(async () => {
+    await buildApp()
+    server = await startProdServer()
+  }, 300_000)
+
+  afterAll(async () => {
+    await server?.stop()
+  })
+
+  test("GET / is server-rendered by the built TanStack handler", async () => {
+    const res = await fetch(server.url + "/")
+    expect(res.status).toBe(200)
+    const html = await res.text()
+    expectSsrDocument(html)
+    expect(html).toContain(HOME_SSR_TEXT)
+  })
+
+  test("GET /api/hello is handled by Elysia", async () => {
+    const res = await fetch(server.url + "/api/hello?name=prod")
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ message: "Hello prod" })
+  })
+})

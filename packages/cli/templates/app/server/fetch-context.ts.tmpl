@@ -1,0 +1,19 @@
+import type { Backend } from "./app"
+import { db as rootDb } from "../config/database"
+import { runWithContext, type AppContext } from "../app/context"
+
+export async function buildAppContext(
+  request: Request,
+  backend: Backend,
+): Promise<AppContext> {
+  return { db: rootDb, txDepth: 0, request, backend }
+}
+
+export async function withFetchContext(
+  request: Request,
+  backend: Backend,
+  handler: () => Response | Promise<Response>,
+): Promise<Response> {
+  const ctx = await buildAppContext(request, backend)
+  return runWithContext(ctx, handler)
+}

@@ -1,0 +1,21 @@
+# {{name}}
+
+Typeway app. Canonical layout (do not invent synonyms):
+
+- app/ domain. models, context, transaction, errors. jobs/ and mailers/ reserved.
+- config/ env.ts TypeBox-parses process.env. environments/*.ts are non-secrets.
+- db/schema/<plural>.ts tables. db/schema/relations.ts is defineRelations.
+- server/app.ts exports backend and type Backend. JSON under /api.
+- src/server.ts is the load-bearing TanStack SSR entry. Do not rename it.
+- src/lib/api.ts is the only Eden helper pages import.
+- tests/ boots real servers. Unit tests live next to source.
+
+Rules:
+- One data path: Elysia /api + Eden. No CRUD in createServerFn. No models in loaders.
+- getDb() is the only connection. Nested transaction() joins the outer tx (sync sqlite).
+- Validation is `import { t } from "elysia"`. Infer with Static<typeof schema>.
+- Registered Elysia routes win. Do not add a catch-all.
+- Errors are HTTPError.id. Return them from handlers.
+- typeway routes --json is the route table. Do not scrape source.
+
+Commands: bun run dev | build | start | test. typeway routes --json.

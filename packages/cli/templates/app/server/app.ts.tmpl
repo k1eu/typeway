@@ -1,0 +1,18 @@
+import { Elysia, t, HTTPError } from "elysia"
+
+HTTPError.typeBase = "https://typeway.dev/errors"
+
+export const backend = new Elysia({ prefix: "/api" }).get(
+  "/hello",
+  {
+    query: t.Object({
+      name: t.Optional(t.String()),
+    }),
+    response: t.Object({
+      message: t.String(),
+    }),
+  },
+  ({ query }) => ({ message: `Hello ${query.name ?? "world"}` }),
+)
+
+export type Backend = typeof backend

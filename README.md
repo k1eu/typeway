@@ -37,15 +37,18 @@ The spec generators and the CLI will be built against:
 
 ## CLI
 
-Not shipped yet. Planned shape (see the spec and plan 05):
+Slice 1 lives in [`packages/cli`](./packages/cli/README.md) (`typeway`
+bin). Generators are the next PR.
 
 ```sh
-typeway new my-app          # scaffold an opinionated app
-typeway generate model post # generators for models, routes, jobs, ...
-typeway add auth            # add integrated, documented capabilities
-typeway db migrate          # database workflows
-typeway console             # REPL with app context and models preloaded
+typeway new my-app          # scaffold the canonical tree
+typeway dev | build | start # aliases for the app scripts
+typeway routes --json       # Elysia route table
+typeway generate model post # next PR
+typeway add auth            # later
 ```
+
+See [docs/cli.md](./docs/cli.md). From this repo: `bun packages/cli/src/cli.ts new apps/demo --workspace`.
 
 ## Repository layout
 
@@ -53,6 +56,7 @@ Bun workspaces monorepo:
 
 - `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
 - `packages/server` — `@typeway/server`, the Elysia host: `typeway({ app, frontend: tanstack() })`. Vite middleware + SSR fallback in dev, boot-time `dist/client` manifest + `.mount()` in prod. Frontend is an adapter so other bundlers can plug in later.
+- `packages/cli` — `typeway` bin: `new`, `dev`, `build`, `start`, `routes --json`. Generators not yet.
 - `apps/playground` — scratch app for trying packages during development
 - `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through `@typeway/server`
 - `apps/e2e-tanstack` — kitchen-sink fixture app for TanStack features that cross HTTP
@@ -61,4 +65,4 @@ Bun workspaces monorepo:
 
 ## Status
 
-Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). App servers are `typeway({ app, frontend: tanstack() })` via `@typeway/server`. The conventions spec is written; the CLI is next.
+Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). App servers are `typeway({ app, frontend: tanstack() })` via `@typeway/server`. The conventions spec is written; `typeway new` / `dev` / `build` / `start` / `routes --json` ship in `packages/cli`. Generators are next.

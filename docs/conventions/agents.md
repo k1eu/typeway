@@ -75,8 +75,7 @@ Framework packages keep a README next to the code:
 - `packages/connect/README.md` — bridge invariants
 - `packages/server/README.md` — `typeway({ app, frontend })`, split
   entries, literal handler import
-- `packages/cli/README.md` (when it exists) — argv, JSON schemas,
-  exit codes
+- `packages/cli/README.md` — argv, JSON schemas, exit codes
 
 Do not add a generated docs site as a prerequisite for the CLI.
 App-level knowledge lives in the app. Package-level knowledge

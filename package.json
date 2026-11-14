@@ -1,5 +1,5 @@
 {
-  "name": "typeway",
+  "name": "@typeway/workspace",
   "private": true,
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {

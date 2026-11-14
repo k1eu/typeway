@@ -1,0 +1,11 @@
+import { tanstack, typeway } from "@typeway/server/dev"
+import { Elysia } from "elysia"
+import { backend } from "./server/app"
+import { listen } from "./server/listen"
+
+// typeway add auth: `.use(authPlugin)` on the host, before `.use(backend)`.
+await typeway({
+  app: new Elysia().use(backend),
+  frontend: tanstack(),
+  serve: listen,
+}).dev()

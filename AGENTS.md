@@ -13,17 +13,19 @@ Rails-like TypeScript framework: thin glue over blessed libraries (Bun 1.4 + Ely
 - `bun run bench` — paired A/B throughput benchmarks (needs `oha`; falls back to a built-in load generator). See `bench/README.md`.
 - `cd apps/playground-with-tanstack && bun run dev` — TanStack-under-Elysia dev server (port 3000, `PORT` env respected)
 - `cd apps/playground-with-tanstack && bun run build && bun run start` — prod build + serve (`bun build` output is not executable; always run via `bun dist/app`)
+- `bun packages/cli/src/cli.ts new <dir> --workspace` — scaffold a Typeway app (workspace links for `@typeway/*`). `typeway dev | build | start | routes --json` after install.
 
 ## Layout
 
 - `packages/connect` — `@typeway/connect`: Connect/Express middleware under Elysia. Zero runtime deps (only `elysia` peer). Read its README before touching it; key invariants: wildcard-route mounting (registered routes bypass the bridge), raw streamed request bodies (never pre-parse), streaming responses (Response resolves on first write), Set-Cookie arrays preserved, empty-body statuses (204/304) get null bodies.
 - `packages/server` — `@typeway/server`: Elysia host for a pluggable frontend. `typeway({ app, frontend: tanstack() })`. Dev (`@typeway/server/dev`) is Vite middlewareMode through `@typeway/connect` with TanStack SSR in the fallback; prod is a boot-time `dist/client` manifest + `.mount()`ed handler. The frontend is an adapter (`{ name, dev, prod, build }`); `tanstack()` is the first implementation. Do not re-export `/dev` from the package root — that pulls Vite/rolldown into the prod `bun build`. Read its README before touching it.
+- `packages/cli` — `typeway` bin (`new`, `dev`, `build`, `start`, `routes --json`). Templates in `packages/cli/templates/app`. CLI source uses tabs; generated app files use spaces. `--json` / `--dry-run` / error codes: [docs/cli.md](./docs/cli.md). Generators are not implemented yet.
 - `apps/playground` — minimal Elysia scratch app
 - `apps/playground-with-tanstack` — dogfood app: `server.dev.ts` / `server.prod.ts` are `typeway({ app, frontend: tanstack() })` (custom `serve: listen` for ALS), plus `/rendering` — one page each for SSG (prerendered via `pages` in `vite.config.ts`, served in prod as a static route at its clean URL), SSR and SPA (`ssr: false`). Human playground — keep it small; new protocol fixtures go in `apps/e2e-tanstack`.
 - `apps/e2e-tanstack` — kitchen-sink fixture app: one route per TanStack feature that crosses HTTP (streaming SSR, server fns, redirects, `notFound()`, cookies, multipart, SSE, binary assets), tested in dev *and* prod
 - `bench/` — paired A/B benchmarks; deliberately **not** a workspace member (see its README)
 - `docs/` — conventions spec. Start at [`docs/conventions.md`](./docs/conventions.md). Generators and the CLI are built against it, not against the playground's current shortcuts.
-- `plans/` — self-contained plans for pending work; `plans/README.md` has shared context and gotchas. Plan 05 is the CLI (`new` / `dev` / `build` / `start` / `routes --json`) then `generate model` / `generate resource`.
+- `plans/` — self-contained plans for pending work; `plans/README.md` has shared context and gotchas. Plan 05 slice 1 (`packages/cli`) is done; `generate model` / `generate resource` are next.
 
 ## Conventions & gotchas
 

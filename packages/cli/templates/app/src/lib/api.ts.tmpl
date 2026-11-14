@@ -1,0 +1,13 @@
+import { treaty } from "@elysia/eden"
+import type { Backend } from "../../server/app"
+
+export type Api = ReturnType<typeof treaty<Backend>>
+
+export function api(): Api {
+  if (import.meta.env.SSR) {
+    // Dead-stripped from the client bundle. Implementation in api.server.ts
+    // so Vite does not follow bun:sqlite into dist/client.
+    return require("./api.server").api() as Api
+  }
+  return treaty<Backend>(window.location.origin)
+}

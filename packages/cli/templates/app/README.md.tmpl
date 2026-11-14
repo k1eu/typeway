@@ -1,0 +1,20 @@
+# {{name}}
+
+A [Typeway](https://github.com/k1eu/typeway) app: Elysia `/api` + TanStack Start pages, one process.
+
+## Commands
+
+```sh
+bun install
+bun run dev          # http://localhost:3000 — PORT / HMR_PORT respected
+bun test             # unit (next to source) + integration (tests/)
+bun run build
+bun run start        # bun dist/app — not executable on its own
+typeway routes --json
+```
+
+`GET /api/hello` is the smoke probe. `GET /` is TanStack SSR.
+
+## Layout
+
+See `AGENTS.md`. Domain data goes through typed Elysia routes; pages call them with Eden (`src/lib/api.ts`). Do not rename `src/server.ts`.

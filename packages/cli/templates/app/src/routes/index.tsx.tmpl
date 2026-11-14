@@ -1,0 +1,15 @@
+import { createFileRoute } from "@tanstack/react-router"
+
+export const Route = createFileRoute("/")({ component: Home })
+
+function Home() {
+  return (
+    <main>
+      <h1>Welcome to {{name}}</h1>
+      <p>
+        GET <code>/api/hello</code> is the smoke probe. Pages call Elysia
+        through Eden; do not put CRUD in <code>createServerFn</code>.
+      </p>
+    </main>
+  )
+}

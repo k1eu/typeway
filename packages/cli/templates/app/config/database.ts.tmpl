@@ -1,0 +1,30 @@
+import { mkdirSync } from "node:fs"
+import { dirname } from "node:path"
+import { fileURLToPath } from "node:url"
+import { Database } from "bun:sqlite"
+import { drizzle } from "drizzle-orm/bun-sqlite"
+import { migrate } from "drizzle-orm/bun-sqlite/migrator"
+import { relations } from "../db/schema/relations"
+import { env } from "./env"
+import { config } from "./application"
+import { seed } from "../db/seeds/development"
+
+if (env.DATABASE_URL !== ":memory:") {
+  mkdirSync(dirname(env.DATABASE_URL), { recursive: true })
+}
+
+export const sqlite = new Database(env.DATABASE_URL)
+export const db = drizzle({ client: sqlite, relations })
+export type Db = typeof db
+export type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0]
+
+const migrationsFolder = fileURLToPath(
+  new URL("../db/migrations", import.meta.url),
+)
+
+export function ensureSchema() {
+  migrate(db, { migrationsFolder })
+}
+
+ensureSchema()
+if (config.seed) seed()

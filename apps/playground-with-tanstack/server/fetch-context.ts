@@ -5,8 +5,8 @@ import { runWithContext, type AppContext } from "../app/context"
  * Build per-request context once at the HTTP edge.
  * Session / tenant resolution would live here later.
  */
-export async function buildAppContext(_request: Request): Promise<AppContext> {
-  return { db: rootDb, txDepth: 0 }
+export async function buildAppContext(request: Request): Promise<AppContext> {
+  return { db: rootDb, txDepth: 0, request }
 }
 
 /**

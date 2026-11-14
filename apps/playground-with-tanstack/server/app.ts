@@ -22,3 +22,5 @@ export const backend = new Elysia({ prefix: "/api" })
     if (!session) return status(401);
     return { user: session.user };
   });
+
+export type Backend = typeof backend;

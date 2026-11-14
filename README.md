@@ -28,7 +28,16 @@ Every Rails app looks the same, so every Rails developer is productive on day on
 - **Security defaults** — CORS, secure headers, rate limiting on by default
 - **Observability** — structured logging and OpenTelemetry as a convention
 
+## Conventions
+
+The spec generators and the CLI will be built against:
+
+- **[docs/conventions.md](./docs/conventions.md)** — layout, the one data path (Elysia + Eden, in-process on the server), models, routes, env, testing, agent-first rules, generator order
+- **[plans/05-cli-and-generators.md](./plans/05-cli-and-generators.md)** — execution plan for `packages/cli` (`new` / `dev` / `build` / `start` / `routes --json`), then `generate model` and `generate resource`
+
 ## CLI
+
+Not shipped yet. Planned shape (see the spec and plan 05):
 
 ```sh
 typeway new my-app          # scaffold an opinionated app
@@ -47,8 +56,9 @@ Bun workspaces monorepo:
 - `apps/playground` — scratch app for trying packages during development
 - `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through `@typeway/server`
 - `apps/e2e-tanstack` — kitchen-sink fixture app for TanStack features that cross HTTP
-- `plans/` — remaining work after the test-infrastructure plans (01–03 are done; 04 extracted `@typeway/server`)
+- `docs/` — conventions spec (`docs/conventions.md`) and error catalog
+- `plans/` — remaining work (01–04 are done; 05 is the CLI and generators)
 
 ## Status
 
-Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). App servers are `typeway({ app, frontend: tanstack() })` via `@typeway/server`.
+Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). App servers are `typeway({ app, frontend: tanstack() })` via `@typeway/server`. The conventions spec is written; the CLI is next.

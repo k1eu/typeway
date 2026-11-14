@@ -7,11 +7,12 @@
     "test:unit": "bun test packages/",
     "test:integration": "bun run --filter playground-with-tanstack test:integration",
     "test:e2e-tanstack": "bun run --filter e2e-tanstack test:integration",
+    "typecheck": "bun check -p tsconfig.json && bun check -p apps/playground-with-tanstack && bun check -p apps/e2e-tanstack",
     "bench": "bun bench/run.ts",
     "bench:micro": "cd bench && bun install && bun micro.ts",
     "dev": "bun run --filter @typeway/playground dev"
   },
   "devDependencies": {
-    "bun-types": "^1.4.0-canary.20260519T150915"
+    "@types/bun": "^1.4.4"
   }
 }

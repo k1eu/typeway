@@ -10,9 +10,9 @@ Every Rails app looks the same, so every Rails developer is productive on day on
 
 ## Core stack
 
-- **[Bun](https://bun.sh) 1.4** (currently `--canary`) — runtime, package manager, test runner, bundler. Also collapses a lot of glue: built-in SQLite, Postgres and S3 clients, `--compile` for single-binary deploys.
-- **[Elysia](https://elysiajs.com) 2.0** (beta) — the core HTTP host. End-to-end type safety, plugin system, Eden for a fully typed client.
-- **[Vite](https://vite.dev)** — frontend dev server and bundling, hosted *under* Elysia via a Connect middleware bridge (`packages/connect`), so dev runs as one process with HMR.
+- **[Bun](https://bun.sh) 1.4** (1.4.4) — runtime, package manager, test runner, bundler, and `bun check` type checker. Also collapses a lot of glue: built-in SQLite, Postgres and S3 clients, `--compile` for single-binary deploys.
+- **[Elysia](https://elysiajs.com) 2.0** (RC, pinned to `2.0.0-rc.4` — npm `latest` is 1.4) — the core HTTP host. End-to-end type safety, plugin system, Eden for a fully typed client.
+- **[Vite](https://vite.dev) 8** — frontend dev server and bundling, hosted *under* Elysia via a Connect middleware bridge (`packages/connect`), so dev runs as one process with HMR.
 - **[TypeBox](https://github.com/sinclairzx81/typebox)** — validation everywhere: request schemas, typed config/env, model validation.
 
 ## Planned under the umbrella
@@ -45,8 +45,9 @@ Bun workspaces monorepo:
 - `packages/connect` — `@typeway/connect`, the Connect middleware bridge for Elysia (zero runtime deps; see its README)
 - `apps/playground` — scratch app for trying packages during development
 - `apps/playground-with-tanstack` — TanStack Start hosted under Elysia through the bridge: Vite middleware + SSR fallback in dev, `Bun.file` static + built handler in prod
-- `plans/` — execution-ready plans for upcoming work (integration tests, feature coverage, benchmarks)
+- `apps/e2e-tanstack` — kitchen-sink fixture app for TanStack features that cross HTTP
+- `plans/` — remaining work after the test-infrastructure plans (01–03 are done)
 
 ## Status
 
-Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Next up (see `plans/`): integration test suite + version-compat CI, TanStack feature-coverage suite, and throughput benchmarks. After that: extracting `@typeway/vite` so app servers shrink to a few lines.
+Early. The Connect bridge is functional and dogfooded by the TanStack playground: streaming responses, raw body forwarding, and registered-route bypass are in place. Integration smoke tests, TanStack feature coverage (dev + prod), version-compat CI, and throughput benchmarks are in the tree (`bun run test:integration`, `bun run test:e2e-tanstack`, `bun run bench`). Next up: extracting `@typeway/vite` so app servers shrink to a few lines.

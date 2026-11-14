@@ -82,12 +82,14 @@ export default function Header() {
             <>
               <Link
                 to="/login"
+                search={{ redirect: '/account' }}
                 className="rounded-xl border border-[var(--line)] bg-[var(--chip-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--sea-ink)] no-underline"
               >
                 Sign in
               </Link>
               <Link
                 to="/signup"
+                search={{ redirect: '/account' }}
                 className="hidden rounded-xl border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-3 py-1.5 text-xs font-semibold text-[var(--lagoon-deep)] no-underline sm:inline"
               >
                 Sign up

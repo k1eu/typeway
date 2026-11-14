@@ -14,5 +14,5 @@ export const notesApi = new Elysia({ prefix: "/notes" })
         body: t.String({ minLength: 1 }),
       }),
     },
-    async ({ body }) => Note.createWithAudit(body.body),
+    ({ body }) => Note.createWithAudit(body.body),
   )

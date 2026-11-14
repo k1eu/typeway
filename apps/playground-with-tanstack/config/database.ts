@@ -15,7 +15,7 @@ if (env.DATABASE_URL !== ":memory:") {
 /** Shared Bun SQLite handle — Drizzle (notes + Better Auth). */
 export const sqlite = new Database(env.DATABASE_URL)
 
-export const db = drizzle(sqlite, { schema })
+export const db = drizzle({ client: sqlite })
 export type Db = typeof db
 export type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0]
 

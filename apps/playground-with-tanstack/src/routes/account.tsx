@@ -79,7 +79,10 @@ function AccountPage() {
               setPending(true)
               try {
                 await signOut()
-                await navigate({ to: '/login' })
+                await navigate({
+                  to: '/login',
+                  search: { redirect: '/account' },
+                })
               } finally {
                 setPending(false)
               }

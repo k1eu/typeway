@@ -8,9 +8,9 @@
     ".": "./src/index.ts"
   },
   "peerDependencies": {
-    "elysia": "^2.0.0-beta.1"
+    "elysia": "2.0.0-rc.4"
   },
   "devDependencies": {
-    "elysia": "^2.0.0-beta.1"
+    "elysia": "2.0.0-rc.4"
   }
 }

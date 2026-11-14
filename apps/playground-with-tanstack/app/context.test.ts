@@ -23,10 +23,10 @@ describe("AsyncLocalStorage context", () => {
 })
 
 describe("transaction()", () => {
-  test("nested transaction() joins the outer tx — getDb() stays on tx inside", async () => {
-    await transaction(async () => {
+  test("nested transaction() joins the outer tx — getDb() stays on tx inside", () => {
+    transaction(() => {
       const outerDb = getDb()
-      await transaction(async () => {
+      transaction(() => {
         expect(getDb()).toBe(outerDb)
         Note.create("inside nested tx")
       })
@@ -35,8 +35,8 @@ describe("transaction()", () => {
     })
   })
 
-  test("createWithAudit persists through getDb() inside the tx", async () => {
-    const note = await Note.createWithAudit("audited")
+  test("createWithAudit persists through getDb() inside the tx", () => {
+    const note = Note.createWithAudit("audited")
     expect(note.body).toBe("audited")
     expect(Note.all().some((row) => row.id === note.id)).toBe(true)
   })
